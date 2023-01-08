@@ -1,0 +1,7 @@
+;   This is assembly for zora i32 bit virtual machine
+
+    push 10 ;   Push 10 to stack
+    push 20 ;   Push 20 to stack
+    add ;      Add 10 and 20
+    print ;    Print result
+    exit ; Exit

@@ -1,68 +1,27 @@
+#include "./source/fs.c"
+#include "./source/lexer/lexer.h"
+#include "./source/vm.c"
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "./include/zvm.h"
+int ZVM(Zvm *vm, int argc, char *argv[]) {
 
-void vm_exec(Zvm *vm, Inst *inst){
-    int i;
-    switch(inst->op){
-        case OP_Push:
-            stack_push(vm, inst->val);
-            break;
-        case OP_Pop:
-            stack_pop(vm);
-            break;
-        case OP_Move:
-            vm->stack_size = inst->val;
-            break;
-        case OP_Add:
-            vm->stack[vm->stack_size - 2] += vm->stack[vm->stack_size - 1];
-            vm->stack_size--;
-            break;
-        case OP_Sub:
-            vm->stack[vm->stack_size - 2] -= vm->stack[vm->stack_size - 1];
-            vm->stack_size--;
-            break;
-        case OP_Mul:
-            vm->stack[vm->stack_size - 2] *= vm->stack[vm->stack_size - 1];
-            vm->stack_size--;
-            break;
-        case OP_Div:
-            vm->stack[vm->stack_size - 2] /= vm->stack[vm->stack_size - 1];
-            vm->stack_size--;
-            break;
-        case OP_Mod:
-            vm->stack[vm->stack_size - 2] %= vm->stack[vm->stack_size - 1];
-            vm->stack_size--;
-            break;
-        case OP_Log:
-            printf("\n[Stack]:\n");
-            for (i = 0; i < vm->stack_size; i++){
-                printf("\t");
-                printf("%d", vm->stack[i]);
-                printf("\n");
-            }
-            break;
-        default:
-            printf("\nUnknown instruction\n");
-            break;
-    }
+  int i;
+
+  for (i = 0; i < argc; i++) {
+
+    char *source = filereader(argv[1]);
+    file_t *file = file_obj(source, argv[1]);
+    lexer_struct *lexer = (lexer_struct *)init_lexer(file);
+
+    vm_run(lexer);
+
+    free(file);
+    free(lexer);
+    free(source);
+  }
+
+  return 0;
 }
 
-Zvm* zvm_new(){
-    Zvm* _zvm = (Zvm*) calloc(1, sizeof(Zvm) * sizeof(i32) * STACK_SIZE);
-    _zvm->stack_size = 0;
-    return _zvm;
-}
-
-Inst *inst_new(){
-    Inst *inst = (Inst*) calloc(1, sizeof(Inst)* sizeof(st));
-    inst->op = OP_Log;
-    inst->val = 0;
-    return inst;
-}
-
-void zvm_free(Zvm* vm, Inst* inst){
-    free(vm);
-    free(inst);
-}
+int main(int argc, char *argv[]) { return ZVM(zvm_new(), argc, argv); }
