@@ -1,5 +1,5 @@
 CC = gcc
-ZVM-FL = zvm
+ZVM-FL = main
 DISTDIR = out
 L = c
 CFLAGS = -Wall

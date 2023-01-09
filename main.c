@@ -5,9 +5,8 @@
 #include <stdlib.h>
 
 int ZVM(Zvm *vm, int argc, char *argv[]) {
-
+  
   int i;
-
   for (i = 0; i < argc; i++) {
 
     char *source = filereader(argv[1]);
@@ -15,7 +14,8 @@ int ZVM(Zvm *vm, int argc, char *argv[]) {
     lexer_struct *lexer = (lexer_struct *)init_lexer(file);
 
     vm_run(lexer);
-
+    
+    //freeingg
     free(file);
     free(lexer);
     free(source);
