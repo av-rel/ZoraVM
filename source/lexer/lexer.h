@@ -1,5 +1,5 @@
-#ifndef LEXER_STRUCT
-#define LEXER_STRUCT
+#ifndef LEXER_H
+#define LEXER_H
 
 #include <stdlib.h>
 #include <string.h>

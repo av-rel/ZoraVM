@@ -1,27 +1,34 @@
-#include "./source/fs.c"
-#include "./source/lexer/lexer.h"
-#include "./source/vm.c"
 #include <stdio.h>
 #include <stdlib.h>
 
-int ZVM(Zvm *vm, int argc, char *argv[]) {
-  
-  int i;
-  for (i = 0; i < argc; i++) {
+#include "./source/fs.c"
+#include "./source/lexer/lexer.h"
+#include "./source/reserved.c"
+#include "./source/vm.c"
 
-    char *source = filereader(argv[1]);
-    file_t *file = file_obj(source, argv[1]);
-    lexer_struct *lexer = (lexer_struct *)init_lexer(file);
+Inst insts[] = {
+    // {OP_PUSH, 10}
+};
 
-    vm_run(lexer);
-    
-    //freeingg
-    free(file);
-    free(lexer);
-    free(source);
+void ZVM(Zvm *vm, int argc, char *argv[]) {
+
+  for (int i = 1; i < argc; i++) {
+
+    // char *source = filereader(argv[i]);
+    // file_t *file = file_obj(source, argv[i]);
+    // lexer_struct *lexer = (lexer_struct *)init_lexer(file);
+
+    vm_run(vm, insts);
+
+    // free(file);
+    // free(lexer);
+    // free(source);
   }
-
-  return 0;
 }
 
-int main(int argc, char *argv[]) { return ZVM(zvm_new(), argc, argv); }
+int main(int argc, char *argv[]) {
+  Zvm *vm = zvm_new();
+  ZVM(vm, argc, argv);
+  free(vm);
+  return 0;
+}

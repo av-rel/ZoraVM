@@ -1,4 +1,3 @@
-// stack functions for i32bit
 #ifndef STACK_C
 #define STACK_C
 
@@ -18,8 +17,7 @@ void overflow(bool overflow) {
 void stack_push(Zvm *vm, int val) {
   if (vm->size >= STACK_SIZE)
     overflow(true);
-  vm->inst.val = val;
-  vm->stack[vm->size++] = vm->inst.val;
+  vm->stack[vm->size] = val;
 }
 
 void stack_pop(Zvm *vm) {
@@ -56,7 +54,7 @@ void stack_add(Zvm *vm) {
   if (vm->size <= 1)
     overflow(false);
   vm->stack[vm->size - 2] += vm->stack[vm->size - 1];
-  vm->size++;
+  vm->size--;
 }
 
 void stack_sub(Zvm *vm) {
@@ -87,7 +85,6 @@ void stack_mod(Zvm *vm) {
   vm->size--;
 }
 
-// printing the stack
 void stack_print(Zvm *vm) {
   int i;
 
