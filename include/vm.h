@@ -18,8 +18,10 @@ typedef enum {
   OP_DIV,
   OP_MOD,
   OP_PRINT,
-  OP_HALT,
+  OP_SCAN,
   OP_NONE,
+  OP_HALT,
+  OP_LOG
 } OP_Type;
 
 typedef struct {
@@ -29,8 +31,8 @@ typedef struct {
 } Zvm;
 
 typedef struct {
-  OP_Type op;
-  i32 val;
+  OP_Type operation;
+  i32 operand;
 } Inst;
 
 #define PUSH(vm, val) stack_push(vm, val);
@@ -43,6 +45,8 @@ typedef struct {
 #define MUL(vm) stack_mul(vm);
 #define DIV(vm) stack_div(vm);
 #define MOD(vm) stack_mod(vm);
-#define LOG(vm) stack_print(vm);
+#define LOG(vm) stack_log(vm);
+
+void vm_exec(Zvm *vm, Inst *inst);
 
 #endif

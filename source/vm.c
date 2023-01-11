@@ -17,15 +17,11 @@ Zvm *zvm_new() {
   return _zvm;
 }
 
-void vm_run(Zvm *vm, Inst *inst) {
-
-  int lenOfInst = (int)sizeof(*inst) / sizeof(inst[0]);
-
-  printf("lenOfInst: %d", lenOfInst);
-  assert(lenOfInst > 0);
-
-  for (int i = 0; i < lenOfInst; i++) {
-  }
+Inst *inst_new() {
+  Inst *inst = (Inst *)calloc(1, sizeof(Inst));
+  inst->operation = OP_HALT;
+  inst->operand = 0;
+  return inst;
 }
 
 // void vm_run(lexer_struct *lexer) {
@@ -38,41 +34,42 @@ void vm_run(Zvm *vm, Inst *inst) {
 //   }
 // }
 
-// unused for now
-// void vm_exec(Zvm *vm) {
-//   switch (vm->inst.op) {
-//   case OP_Push:
-//     stack_push(vm, vm->inst.val);
-//     break;
-//   case OP_Pop:
-//     stack_pop(vm);
-//     break;
-//   case OP_Move:
-//     stack_move(vm);
-//     break;
-//   case OP_Add:
-//     stack_add(vm);
-//     break;
-//   case OP_Sub:
-//     stack_sub(vm);
-//     break;
-//   case OP_Mul:
-//     stack_mul(vm);
-//     break;
-//   case OP_Div:
-//     stack_div(vm);
-//     break;
-//   case OP_Mod:
-//     stack_mod(vm);
-//     break;
-//   case OP_Print:
-//     stack_print(vm);
-//     break;
-//   case OP_Silent:
-//     break;
-//   default:
-//     printf("Unknown instruction %d\n", vm->inst.op);
-//   }
-// }
+void vm_exec(Zvm *vm, Inst *program) {
+  switch (program->operand) {
+  case OP_PUSH:
+    stack_push(vm, program);
+    break;
+  case OP_POP:
+    stack_pop(vm, program);
+    break;
+  case OP_MOVE:
+    stack_move(vm, program);
+    break;
+  case OP_ADD:
+    stack_add(vm, program);
+    break;
+  case OP_SUB:
+    stack_sub(vm, program);
+    break;
+  case OP_MUL:
+    stack_mul(vm, program);
+    break;
+  case OP_DIV:
+    stack_div(vm, program);
+    break;
+  case OP_MOD:
+    stack_mod(vm, program);
+    break;
+  case OP_PRINT:
+    stack_print(program);
+  case OP_LOG:
+    stack_log(vm, program);
+    break;
+  case OP_NONE:
+    break;
+  default:
+    printf("Unknown instruction %d\n", program->operand);
+  }
+}
 
 #endif
