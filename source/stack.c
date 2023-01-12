@@ -13,7 +13,7 @@
 void stack_push(Zvm *vm, Inst *inst) {
   if (vm->size >= STACK_SIZE)
     activateTrap(TRAP_STACKOVERFLOW);
-  vm->stack[vm->size] = inst->operand;
+  vm->stack[vm->size] = inst->op;
   vm->size++;
 }
 
@@ -42,8 +42,9 @@ void stack_dup(Zvm *vm, Inst *inst) {
 void stack_swap(Zvm *vm, Inst *inst) {
   if (vm->size <= 1)
     activateTrap(TRAP_STACKUNDERFLOW);
-  vm->stack[vm->size - 2] -= vm->stack[vm->size - 1];
-  vm->stack[vm->size - 1] += vm->stack[vm->size - 2];
+  vm->stack[vm->size - 1] -= vm->stack[vm->size - 2];
+  vm->stack[vm->size - 2] += vm->stack[vm->size - 1];
+  vm->stack[vm->size - 1] = vm->stack[vm->size - 2] - vm->stack[vm->size - 1];
 }
 
 void stack_add(Zvm *vm, Inst *inst) {
@@ -88,7 +89,9 @@ void stack_pow(Zvm *vm, Inst *inst) {
   vm->size--;
 }
 
-void stack_print(Inst *inst) { printf("%d", inst->operation); }
+void stack_print(Inst *inst) {
+  printf("Current number in stack -> %d", inst->type);
+}
 
 void stack_scan(int scanno) { scanf("%d", &scanno); }
 

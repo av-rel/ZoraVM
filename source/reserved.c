@@ -7,9 +7,9 @@
 
 #include "../include/reserved.h"
 
-const char *keywords[] = {"push", "pop", "add",   "sub", "mul",
-                          "div",  "mod", "print", "halt"};
-const size_t keyword_size = 9;
+const char *keywords[] = {"push", "pop", "add",   "sub",  "mul", "div",
+                          "mod",  "pow", "print", "scan", "halt"};
+const size_t keyword_size = 11;
 
 bool isKeyword(char *c) {
   for (int i = 0; i < keyword_size; i++) {
@@ -19,6 +19,7 @@ bool isKeyword(char *c) {
   }
   return false;
 };
+
 K_KEYWORD getKeyword(char *c) {
   if (strcmp(c, "push") == 0)
     return K_PUSH;
@@ -34,6 +35,8 @@ K_KEYWORD getKeyword(char *c) {
     return K_DIV;
   else if (strcmp(c, "mod") == 0)
     return K_MOD;
+  else if (strcmp(c, "pow") == 0)
+    return K_POW;
   else if (strcmp(c, "print") == 0)
     return K_PRINT;
   else if (strcmp(c, "scan") == 0)

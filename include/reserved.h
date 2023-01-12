@@ -13,6 +13,7 @@ typedef enum {
   K_MUL,
   K_DIV,
   K_MOD,
+  K_POW,
   K_PRINT,
   K_SCAN,
   K_HALT,

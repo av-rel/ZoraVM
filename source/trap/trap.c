@@ -8,19 +8,19 @@
 
 void activateTrap(TRAP_TYPE trap) {
   switch (trap) {
-  case TRAP_OK: {
-  }
+  case TRAP_OK:
+    return;
   case TRAP_STACKOVERFLOW: {
-    printf("[Trap] StackOverflow\n");
+    printf("[Trap Activated] StackOverflow\n");
     break;
   }
   case TRAP_STACKUNDERFLOW: {
-    printf("[Trap] StackUnderflow\n");
+    printf("[Trap Activated] StackUnderflow\n");
     break;
   }
   case TRAP_UNKNOWN:
   default:
-    printf("[Trap] Unknown Trap Activated");
+    printf("[Trap Activated] Unknown Trap Detected");
   }
   exit(0);
 }

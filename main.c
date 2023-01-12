@@ -6,26 +6,29 @@
 #include "./source/reserved.c"
 #include "./source/vm.c"
 
-#define nA(ele) (int)sizeof(ele) / sizeof(ele[0])
-#define prog(op, val)                                                          \
-  { .operation = op, .operand = val }
+#define ArraySize(ele) (int)sizeof(ele) / sizeof(ele[0])
 
-Inst program[] = {prog(OP_LOG, 10)};
+Inst program[] = {
+    {OP_PUSH, 10}, {OP_PUSH, 11}, {OP_LOG, 0},{OP_SWAP}, {OP_LOG, 0}, {OP_HALT, 0}};
 
 int ZVM(int argc, char *argv[]) {
 
-  // for (int i = 0; i < argc; i++) {
   Zvm *zvm = zvm_new();
 
   // char *source = filereader(argv[i]);
   // file_t *file = file_obj(source, argv[i]);
   // lexer_struct *lexer = (lexer_struct *)init_lexer(file);
 
+  int p = 0;
+  while (program[p].type != OP_HALT) {
+    vm_exec(zvm, &program[p]);
+    p++;
+  }
+
   // free(file);
   // free(lexer);
   // free(source);
   free(zvm);
-  // }
   return 0;
 }
 
