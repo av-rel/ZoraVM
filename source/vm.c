@@ -68,6 +68,7 @@ void vm_exec(Zvm *vm, Inst *inst) {
     break;
   default:
     printf("Unknown instruction %d\n", inst->op);
+    exit(0);
   }
 }
 

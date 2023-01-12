@@ -8,8 +8,8 @@
 
 #define ArraySize(ele) (int)sizeof(ele) / sizeof(ele[0])
 
-Inst program[] = {
-    {OP_PUSH, 10}, {OP_PUSH, 11}, {OP_LOG, 0},{OP_SWAP}, {OP_LOG, 0}, {OP_HALT, 0}};
+Inst program[] = {{OP_PUSH, 10}, {OP_PUSH, 11}, {OP_LOG, 0},
+                  {OP_SWAP},     {OP_LOG, 0},   {OP_HALT, 0}};
 
 int ZVM(int argc, char *argv[]) {
 

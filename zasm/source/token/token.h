@@ -22,4 +22,8 @@ typedef enum {
 
 bool isKeyword(char *str);
 
+typedef struct {
+  
+} token_struct;
+
 #endif

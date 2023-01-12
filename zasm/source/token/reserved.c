@@ -5,14 +5,22 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "../include/reserved.h"
+#include "./token.h"
+
+bool isNumber(char c) {
+  return (c == '0' || c == '1' || c == '2' || c == '3' || c == '4' ||
+          c == '5' || c == '6' || c == '7' || c == '8' || c == '9')
+             ? true
+             : false;
+}
 
 const char *keywords[] = {"push", "pop", "move", "swap",  "add",  "sub", "mul",
                           "div",  "mod", "pow",  "print", "scan", "halt"};
 const size_t keyword_size = sizeof(keywords) / sizeof(char *);
 
 bool isKeyword(char *c) {
-  for (int i = 0; i < keyword_size; i++) {
+  int i;
+  for (i = 0; i < keyword_size; i++) {
     if (strcmp(c, keywords[i]) == 0) {
       return true;
     }
