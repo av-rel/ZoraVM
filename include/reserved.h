@@ -5,10 +5,7 @@
 
 typedef enum {
   K_NONE,
-  K_PUSH,
-  K_POP,
-  K_MOVE,
-  K_SWAP,
+  K_STORE,
   K_ADD,
   K_SUB,
   K_MUL,
@@ -18,7 +15,7 @@ typedef enum {
   K_PRINT,
   K_SCAN,
   K_HALT,
-} K_KEYWORD;
+};
 
 bool isKeyword(char *str);
 
