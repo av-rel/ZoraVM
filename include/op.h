@@ -2,7 +2,7 @@
 #define OP_H
 
 typedef enum {
-  OP_MOVEIP,
+  OP_DEBUG,
   OP_STORE,
   OP_DISPOSE,
   OP_ADD,

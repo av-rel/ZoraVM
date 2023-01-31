@@ -6,16 +6,16 @@
 #include "./src/lexer.c"
 #include "./src/op.c"
 #include "./src/token.c"
-#include "./src/op.c"
+#include "./include/op.h"
 
 Program program[] = {
-  {OP_STORE, 10},
-  {OP_STORE, 20},
-  {OP_STORE, 10011},
-  {OP_MOVEIP, 2},
-  {OP_PRINT}
-  /* {OP_PRINT}, */
-  /* {OP_EXIT} */
+  /* {OP_STORE, 0}, */
+  /* {OP_STORE, 1}, */
+  /* {OP_DEBUG}, */
+  /* {OP_DIV}, */
+  {OP_STORE, 19911},
+  /* {OP_POW}, */
+  {OP_DEBUG}
 };
 
 int ZVM(int argc, char *argv[]) {
@@ -30,6 +30,7 @@ int ZVM(int argc, char *argv[]) {
   for (int i = 0; i < ArraySize(program); i++){
     zvm_exec(zvm, program[i]);
   }
+
 
   /* free(lexer->tokens); */
   /* free(lexer); */

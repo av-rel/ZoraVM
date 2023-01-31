@@ -6,8 +6,10 @@
 
 #define ArraySize(ele) (int)sizeof(ele) / sizeof(ele[0])
 
+#define VM_CAP 2048
+
 typedef struct {
-  int* globals;
+  long long int globals[VM_CAP];
   int ip;
   int len;
 } Zvm;
