@@ -1,7 +1,0 @@
-; Zora Assembly for ZVM
-
-    push 10     ; pushes 10 to the stack
-    push 20     ; pushes 20 to the stack
-    log         ; logs the current state to the console
-    swap        ; swaps the top 2 stack values
-    log         ; <3>

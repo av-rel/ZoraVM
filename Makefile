@@ -2,11 +2,13 @@ CC = gcc
 ZVM-FL = main
 DISTDIR = out
 L = c
-CFLAGS = -Wall -std=c99 -g -O0
+CFLAGS = -Wall -std=c99
 DIST = o
-ARGS = examples/basic.zasm
+ARGS = examples/stack.zam
 
-vm:
+.SILENT:
+all:
+	mkdir -p out
 	$(CC) $(ZVM-FL).$(L) -o ./$(DISTDIR)/$(ZVM-FL).$(DIST) $(CFLAGS)
 	./$(DISTDIR)/$(ZVM-FL).$(DIST) $(ARGS)
 

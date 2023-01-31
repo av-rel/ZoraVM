@@ -1,0 +1,7 @@
+
+    store @num_one, 10
+    store @num_two, 20
+    add @num_three, @num_one @num_two  
+    print @num_three
+
+    exit 

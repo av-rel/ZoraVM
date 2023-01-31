@@ -1,11 +1,11 @@
 #ifndef FS_C
 #define FS_C
 
-#include "./lexer/lexer.h"
+#include "../include/lexer.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-char *filereader(char *path) {
+static char *filereader(char *path) {
   FILE *file = fopen(path, "r");
 
   if (!file) {
@@ -17,7 +17,7 @@ char *filereader(char *path) {
   int file_size = ftell(file);
   rewind(file);
 
-  char *buffer = (char *)calloc(1, file_size);
+  char *buffer = (char *) malloc(file_size);
   int bytes_read = fread(buffer, 1, file_size, file);
 
   fclose(file);
@@ -26,8 +26,8 @@ char *filereader(char *path) {
   return buffer;
 }
 
-file_t *file_obj(char *src, char *name) {
-  file_t *fileinfo = (file_t *)calloc(1, sizeof(file_t));
+static file_t *file_obj(char *src, char *name) {
+  file_t *fileinfo = (file_t *) malloc(sizeof(file_t));
   fileinfo->name = name;
   fileinfo->src = src;
   fileinfo->size = strlen(src);

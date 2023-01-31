@@ -1,0 +1,5 @@
+    
+    push 10 ; push 10 to the stack
+    push 20 ; push 20 to the stach
+    add     ; pop, add and push to the stack
+    print

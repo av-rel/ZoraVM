@@ -3,5 +3,8 @@
     store @num1, 10;   stores 10 to @num1
     store @num2, 20 ;   stores 20 to @num2
     add @num3, @num1 @num2;      Add 10 and 20 and store value to @num3
+
     print @num3 ;    Print result
+
+    dispose @num1, @num2, @num3 ; dispose the variables
     exit ; Exit

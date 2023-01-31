@@ -1,35 +1,41 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
-#include "./source/fs.c"
-#include "./source/lexer/lexer.h"
-#include "./source/reserved.c"
 #include "./source/vm.c"
-
-#define ArraySize(ele) (int)sizeof(ele) / sizeof(ele[0])
-
-Inst program[] = {{OP_PUSH, 10}, {OP_PUSH, 11}, {OP_LOG, 0},
-                  {OP_SWAP},     {OP_LOG, 0},   {OP_HALT, 0}};
+#include "./source/fs.c"
+#include "./source/lexer.c"
+#include "./source/op.c"
+#include "./source/token.c"
+#include "include/token.h"
+#include "include/vm.h"
 
 int ZVM(int argc, char *argv[]) {
-
   Zvm *zvm = zvm_new();
 
-  // char *source = filereader(argv[i]);
-  // file_t *file = file_obj(source, argv[i]);
-  // lexer_struct *lexer = (lexer_struct *)init_lexer(file);
+  char *source = filereader(argv[1]);
+  file_t *file = file_obj(source, argv[1]);
+  lexer_struct *lexer = (lexer_struct *)init_lexer(file);
 
-  int p = 0;
-  while (program[p].type != OP_HALT) {
-    vm_exec(zvm, &program[p]);
-    p++;
-  }
+  /* token_struct* tokens = tokenize(lexer); */
 
-  // free(file);
-  // free(lexer);
-  // free(source);
+  free(lexer->tokens);
+  free(lexer);
+  free(file);
+  free(source);
+  free(zvm->globals);
   free(zvm);
+
   return 0;
 }
 
-int main(int argc, char *argv[]) { return ZVM(argc, argv); }
+
+int main(int argc, char *argv[]) { 
+  
+  if (argc < 2){
+    fprintf(stderr, "No files specified");
+    return 0;
+  }
+
+  return ZVM(argc, argv); 
+}

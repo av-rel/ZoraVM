@@ -1,38 +1,23 @@
-#ifndef ZVM_H
-#define ZVM_H
+#ifndef VM_H
+#define VM_H
 
 #include <stdint.h>
+#include "../source/op.c"
 
-#define STACK_SIZE 1024
-
-typedef enum {
-  OP_PUSH,
-  OP_POP,
-  OP_MOVE,
-  OP_DUP,
-  OP_SWAP,
-  OP_ADD,
-  OP_SUB,
-  OP_MUL,
-  OP_DIV,
-  OP_MOD,
-  OP_POW,
-  OP_PRINT,
-  OP_SCAN,
-  OP_NONE,
-  OP_HALT,
-  OP_LOG
-} OP_Type;
+#define ArraySize(ele) (int)sizeof(ele) / sizeof(ele[0])
 
 typedef struct {
-  int stack[STACK_SIZE];
-  int size;
+  int* globals;
   int ip;
 } Zvm;
 
 typedef struct {
   OP_Type type;
-  int op;
 } Inst;
+
+typedef struct {
+  OP_Type inst;
+  int val;
+} Program;
 
 #endif
