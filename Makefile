@@ -2,7 +2,7 @@ CC = gcc
 ZVM-FL = main
 DISTDIR = out
 L = c
-CFLAGS = -Wall -std=c99
+CFLAGS = -Wall -std=c99 -g
 DIST = o
 ARGS = examples/stack.zam
 
