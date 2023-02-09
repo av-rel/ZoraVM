@@ -26,14 +26,4 @@ void activateTrap(TRAP trap) {
   exit(0);
 }
 
-void handle_trap(VM *vm) {
-  //   if (vm->len == 0) {
-  //     activateTrap(TRAP_STACK_UNDERFLOW);
-  //   } else if (vm->stack[vm->len - 1] == 0) {
-  //     activateTrap(TRAP_DIV_BY_0);
-  //   } else if (vm->len > STACK_SIZE) {
-  //     activateTrap(TRAP_STACK_OVERFLOW);
-  //   }
-}
-
 #endif

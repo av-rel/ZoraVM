@@ -24,23 +24,25 @@ int Zvm(Program program[]) {
 
 int main(int argc, char *argv[]) {
   Program program[] = {{
-                           .inst = INST_STORE,
-                           .operand = 10,
+                           INST_PUSH,
+                           10,
                        },
                        {
-                           .inst = INST_STORE,
-                           .operand = 20,
+                           INST_PUSH,
+                           20,
                        },
                        {
-                           .inst = INST_ADD,
+                           INST_ADD,
                        },
+                       {INST_PUSH, 20},
                        {
-                           .inst = INST_PRINT,
+                           INST_PRINT,
                        },
+                       {INST_DIV, 02},
                        {
-                           .inst = INST_DUMP,
+                           INST_DUMP,
                        },
-                       {.inst = INST_HALT, 0}};
+                       {INST_HALT, 0}};
 
   return Zvm(program);
 }
@@ -56,67 +58,82 @@ VM *init_vm() {
 void vm_exec(VM *vm, Program prog) {
   // TODO: Add trap handler
   switch (prog.inst) {
-  case INST_STORE:
-    handle_trap(vm);
+  case INST_PUSH:
+    // check if stack is full
+    if (vm->sp >= STACK_SIZE)
+      activateTrap(TRAP_STACK_OVERFLOW);
     vm->stack[vm->sp++] = prog.operand;
     vm->ip++;
     break;
   case INST_LOAD:
-    // handle_trap(vm);
+    if (vm->sp >= STACK_SIZE)
+      activateTrap(TRAP_STACK_OVERFLOW);
     vm->stack[vm->sp++] = vm->stack[prog.operand];
     vm->ip++;
     break;
   case INST_PRINT:
-    // handle_trap(vm);
+    if (vm->sp < 1)
+      activateTrap(TRAP_STACK_UNDERFLOW);
     printf("%d\n", vm->stack[vm->sp - 1]);
     vm->ip++;
     break;
   case INST_SCAN:
-    // handle_trap(vm);
+    if (vm->sp >= STACK_SIZE)
+      activateTrap(TRAP_STACK_OVERFLOW);
     scanf("%d", &vm->stack[vm->sp++]);
     vm->ip++;
     break;
   case INST_ADD:
+    if (vm->sp < 2)
+      activateTrap(TRAP_STACK_UNDERFLOW);
     vm->stack[vm->sp - 2] += vm->stack[vm->sp - 1];
     vm->sp--;
     vm->ip++;
-    // handle_trap(vm);
     break;
   case INST_SUB:
+    if (vm->sp < 2)
+      activateTrap(TRAP_STACK_UNDERFLOW);
     vm->stack[vm->sp - 2] -= vm->stack[vm->sp - 1];
     vm->sp--;
     vm->ip++;
-    // handle_trap(vm);
     break;
   case INST_MUL:
+    if (vm->sp < 2)
+      activateTrap(TRAP_STACK_UNDERFLOW);
     vm->stack[vm->sp-- - 2] *= vm->stack[vm->sp - 1];
     vm->sp--;
     vm->ip++;
-    // handle_trap(vm);
     break;
   case INST_DIV: {
+    if (vm->sp < 2)
+      activateTrap(TRAP_STACK_UNDERFLOW);
+    else if (vm->stack[vm->sp - 1] == 0)
+      activateTrap(TRAP_DIV_BY_0);
     vm->stack[vm->sp - 2] /= vm->stack[vm->sp - 1];
     vm->sp--;
     vm->ip++;
-    // handle_trap(vm);
     break;
   }
   case INST_MOD:
+    if (vm->sp < 2)
+      activateTrap(TRAP_STACK_UNDERFLOW);
+    else if (vm->stack[vm->sp - 1] == 0)
+      activateTrap(TRAP_DIV_BY_0);
     vm->stack[vm->sp - 2] %= vm->stack[vm->sp - 1];
     vm->sp--;
     vm->ip++;
-    // handle_trap(vm);
     break;
   case INST_RET:
+    if (vm->sp < 1)
+      activateTrap(TRAP_STACK_UNDERFLOW);
     vm->ip = vm->stack[--vm->sp];
-    // handle_trap(vm);
     break;
   case INST_HALT:
-    vm->stack[vm->sp++] = prog.operand;
-    vm->ip++;
     vm->state = 0;
+    vm->stack[vm->sp++] = prog.operand;
     break;
   case INST_NONE:
+    vm->ip++;
     break;
   case INST_DUMP: {
     printf("\n[Stack]:\n");

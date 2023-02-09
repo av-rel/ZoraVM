@@ -2,7 +2,8 @@
 #define INST_H
 
 typedef enum {
-  INST_STORE,
+  INST_PUSH = 0,
+  INST_POP,
   INST_LOAD,
   INST_RET,
   INST_PRINT,
