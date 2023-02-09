@@ -1,5 +1,11 @@
-# ZVM ( Zora Virtual Machine )
+# ZoraVM ( Zora Virtual Machine )
 
-## ZVM is a virtual machine written for Zora programming language for crossplatform support
+# Description
+## ZVM is a virtual machine written for Zora Programming Language using its own assembly code for cross-platform compatibility.
 
-## It uses .zasm file as Assembly code
+# Features
+- [x] Universal Assembly Code
+- [x] Cross-platform
+- [x] Fast
+- [x] Implemented in C
+- [x] Reusable

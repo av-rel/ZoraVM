@@ -1,25 +1,16 @@
-CC = gcc
-ZVM-FL = main
-DISTDIR = out
+CC = clang
+DIR = src
+FILE = vm
+DISTDIR = bin
 L = c
-CFLAGS = -Wall -std=c99 -g
-DIST = o
-ARGS = examples/stack.zam
+CFLAGS = -Wall -std=c99
+DIST = out
+ARGS = 
 
 .SILENT:
-all:
-	mkdir -p out
-	$(CC) $(ZVM-FL).$(L) -o ./$(DISTDIR)/$(ZVM-FL).$(DIST) $(CFLAGS)
-	./$(DISTDIR)/$(ZVM-FL).$(DIST) $(ARGS)
-
-d:
-	$(CC) $(ZVM-FL).$(L) -o ./$(DISTDIR)/$(ZVM-FL).$(DIST)
-
 build:
-	$(CC) $(ZVM-FL).$(L) -o ./$(DISTDIR)/$(ZVM-FL).$(DIST) $(CFLAGS)
-
-run:
-	./$(DISTDIR)/$(ZVM-FL).$(DIST)
+	mkdir -p $(DISTDIR)
+	$(CC) $(CFLAGS) $(DIR)/$(FILE).$(L) -o $(DISTDIR)/$(FILE).$(DIST)
 	
 clean:
 	rm -rf ./$(DISTDIR)/*

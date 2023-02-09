@@ -3,9 +3,7 @@
 
 typedef enum {
   TRAP_OK,
-  TRAP_STACKOVERFLOW,
-  TRAP_STACKUNDERFLOW,
   TRAP_DIV_BY_0,
-} TRAP_TYPE;
+} TRAP;
 
 #endif
