@@ -1,0 +1,31 @@
+#ifndef INST_H
+#define INST_H
+
+typedef enum {
+  INST_STORE,
+  INST_LOAD,
+  INST_RET,
+  INST_PRINT,
+  INST_SCAN,
+  INST_HALT,
+  INST_ADD,
+  INST_SUB,
+  INST_MUL,
+  INST_DIV,
+  INST_MOD,
+  INST_JMP,
+  INST_CMP,
+  INST_NCMP,
+  INST_JZ,
+  INST_JNZ,
+  INST_JE,
+  INST_JNE,
+  INST_JG,
+  INST_JGE,
+  INST_JL,
+  INST_JLE,
+  INST_DUMP,
+  INST_NONE,
+} Inst;
+
+#endif

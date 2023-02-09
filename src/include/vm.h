@@ -1,18 +1,23 @@
 #ifndef VM_H
 #define VM_H
 
-#include "./op.h"
+#include "./inst.h"
+
+#define STACK_SIZE 1024
 
 typedef struct {
+  int state;
   int ip;
+  int sp;
+  int stack[STACK_SIZE];
 } VM;
 
 typedef struct {
-  OP op;
-  int val;
+  Inst inst;
+  int operand;
 } Program;
 
-void vm_exec(VM vm, Program prog);
-VM init_vm();
+VM *init_vm();
+void vm_exec(VM *vm, Program prog);
 
 #endif

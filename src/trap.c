@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include "./include/trap.h"
+#include "./include/vm.h"
 
 void activateTrap(TRAP trap) {
   switch (trap) {
@@ -13,10 +14,26 @@ void activateTrap(TRAP trap) {
   case TRAP_DIV_BY_0:
     printf("[Trap]: Division By Zero\n");
     break;
+  case TRAP_STACK_OVERFLOW:
+    printf("[Trap]: Stack Overflow\n");
+    break;
+  case TRAP_STACK_UNDERFLOW:
+    printf("[Trap]: Stack Underflow\n");
+    break;
   default:
     printf("[Trap]: Unknown Trap Detected");
   }
   exit(0);
+}
+
+void handle_trap(VM *vm) {
+  //   if (vm->len == 0) {
+  //     activateTrap(TRAP_STACK_UNDERFLOW);
+  //   } else if (vm->stack[vm->len - 1] == 0) {
+  //     activateTrap(TRAP_DIV_BY_0);
+  //   } else if (vm->len > STACK_SIZE) {
+  //     activateTrap(TRAP_STACK_OVERFLOW);
+  //   }
 }
 
 #endif
