@@ -23,6 +23,8 @@ int Zvm(Program program[]) {
 }
 
 int main(int argc, char *argv[]) {
+  // TODO: Add a REPL for the VM
+  //  TODO: Add a way to load programs from files
   Program program[] = {{
                            INST_PUSH,
                            10,
@@ -32,16 +34,18 @@ int main(int argc, char *argv[]) {
                            20,
                        },
                        {
-                           INST_ADD,
+                           INST_MUL,
                        },
-                       {INST_PUSH, 20},
-                       {
-                           INST_PRINT,
-                       },
-                       {INST_DIV, 02},
+                       //    {
+                       //    INST_PUSH,
+                       //    30,
+                       //    },
                        {
                            INST_DUMP,
                        },
+                       //    {
+                       //    INST_DIV,
+                       //    },
                        {INST_HALT, 0}};
 
   return Zvm(program);
@@ -56,10 +60,8 @@ VM *init_vm() {
 }
 
 void vm_exec(VM *vm, Program prog) {
-  // TODO: Add trap handler
   switch (prog.inst) {
   case INST_PUSH:
-    // check if stack is full
     if (vm->sp >= STACK_SIZE)
       activateTrap(TRAP_STACK_OVERFLOW);
     vm->stack[vm->sp++] = prog.operand;
@@ -67,6 +69,8 @@ void vm_exec(VM *vm, Program prog) {
     break;
   case INST_LOAD:
     if (vm->sp >= STACK_SIZE)
+      activateTrap(TRAP_STACK_OVERFLOW);
+    if (prog.operand >= STACK_SIZE)
       activateTrap(TRAP_STACK_OVERFLOW);
     vm->stack[vm->sp++] = vm->stack[prog.operand];
     vm->ip++;
@@ -84,43 +88,38 @@ void vm_exec(VM *vm, Program prog) {
     vm->ip++;
     break;
   case INST_ADD:
-    if (vm->sp < 2)
+    if (vm->sp < 1)
       activateTrap(TRAP_STACK_UNDERFLOW);
     vm->stack[vm->sp - 2] += vm->stack[vm->sp - 1];
-    vm->sp--;
     vm->ip++;
     break;
   case INST_SUB:
-    if (vm->sp < 2)
+    if (vm->sp < 1)
       activateTrap(TRAP_STACK_UNDERFLOW);
     vm->stack[vm->sp - 2] -= vm->stack[vm->sp - 1];
-    vm->sp--;
     vm->ip++;
     break;
   case INST_MUL:
-    if (vm->sp < 2)
+    if (vm->sp < 1)
       activateTrap(TRAP_STACK_UNDERFLOW);
     vm->stack[vm->sp-- - 2] *= vm->stack[vm->sp - 1];
-    vm->sp--;
     vm->ip++;
     break;
   case INST_DIV: {
-    if (vm->sp < 2)
+    if (vm->sp < 1)
       activateTrap(TRAP_STACK_UNDERFLOW);
-    else if (vm->stack[vm->sp - 1] == 0)
+    if (vm->stack[vm->sp - 1] == 0)
       activateTrap(TRAP_DIV_BY_0);
     vm->stack[vm->sp - 2] /= vm->stack[vm->sp - 1];
-    vm->sp--;
     vm->ip++;
     break;
   }
   case INST_MOD:
-    if (vm->sp < 2)
+    if (vm->sp < 1)
       activateTrap(TRAP_STACK_UNDERFLOW);
-    else if (vm->stack[vm->sp - 1] == 0)
+    if (vm->stack[vm->sp - 1] == 0)
       activateTrap(TRAP_DIV_BY_0);
     vm->stack[vm->sp - 2] %= vm->stack[vm->sp - 1];
-    vm->sp--;
     vm->ip++;
     break;
   case INST_RET:
@@ -131,11 +130,16 @@ void vm_exec(VM *vm, Program prog) {
   case INST_HALT:
     vm->state = 0;
     vm->stack[vm->sp++] = prog.operand;
+    vm->ip++;
     break;
   case INST_NONE:
     vm->ip++;
     break;
   case INST_DUMP: {
+    vm->ip++;
+    printf("\n[Registers]:\n");
+    printf("\tIP: %d", vm->ip);
+    printf("\tSP: %d", vm->sp);
     printf("\n[Stack]:\n");
     if (vm->sp < 1) {
       printf("\t<empty>\n");
@@ -144,7 +148,6 @@ void vm_exec(VM *vm, Program prog) {
     for (int i = 0; i < vm->sp; i++) {
       printf(" \t %d\n", vm->stack[i]);
     }
-    vm->ip++;
     break;
   }
   default:
