@@ -41,8 +41,7 @@ const char *keywords[] = {
     [INST_JNLE]     =   "jnle",
 };
 
-
-_Bool is_inst(char *c) {
+_Bool Is_Inst(char *c) {
   for (int i = 0; i < sizeof(keywords)/sizeof(keywords[0]); i++)
     if (strcmp(c, keywords[i]) == 0)
       return true;

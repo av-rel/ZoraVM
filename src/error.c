@@ -13,11 +13,11 @@ char *ERROR_as_str(ERROR error) {
   case ERROR_DIV_BY_0:
     return "Division By Zero";
   case ERROR_STACK_OVERFLOW:
-    return "Stack Overflow";
+    return "Pushed To Full Stack";
   case ERROR_STACK_UNDERFLOW:
-    return "Stack Underflow";
+    return "Popped from Empty Stack";
   case ERROR_MISMATCH_TYPE:
-    return "Arithmetic with Mismatch Type";
+    return "Comparision of Mismatched Types";
   case ERROR_UNKNOWN_INST:
     return "Unknown Instruction";
   default:
