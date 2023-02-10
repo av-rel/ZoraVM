@@ -1,9 +1,12 @@
 #ifndef VM_H
 #define VM_H
 
+#include "./error.h"
 #include "./inst.h"
 
 #define STACK_SIZE 1024
+
+enum DATA_KIND { STRING = 0, INT, FLOAT };
 
 typedef struct {
   int state;
@@ -17,7 +20,7 @@ typedef struct {
   int operand;
 } Program;
 
-VM *init_vm();
-void vm_exec(VM *vm, Program prog);
+void VM_Init(VM *vm);
+ERROR VM_Execute(VM *vm, Program prog);
 
 #endif

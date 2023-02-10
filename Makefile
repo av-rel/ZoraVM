@@ -1,9 +1,9 @@
 CC = gcc
 DIR = src
-FILE = vm
+FILE = main
 DISTDIR = bin
 L = c
-CFLAGS = -Wall -std=c99 -Wno-sequence-point	 -Wno-unused-variable -Wno-unused-result -Wno-missing-field-initializers
+CFLAGS = -Wall -std=c99 -pedantic -g -O3
 DIST = out
 ARGS = 
 
