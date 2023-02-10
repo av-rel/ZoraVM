@@ -1,8 +1,6 @@
-#ifndef OP_C
-#define OP_C
+#ifndef _INST_C
+#define _INST_C
 
-#include <stdbool.h>
-#include <stdint.h>
 #include <string.h>
 
 #include "./include/inst.h"
@@ -23,8 +21,8 @@ const char *keywords[] = {
     [INST_DIV]      =   "div",
     [INST_MOD]      =   "mod",
     //
-    [INST_JMP]      =   "jmp",
     [INST_CMP]      =   "cmp",
+    [INST_JMP]      =   "jmp",
     [INST_JZ]       =   "jz",
     [INST_JE]       =   "je",
     [INST_JG]       =   "jg",
@@ -39,13 +37,38 @@ const char *keywords[] = {
     [INST_JNGE]     =   "jnge",
     [INST_JNL]      =   "jnl",
     [INST_JNLE]     =   "jnle",
+    //
+    [INST_CALL]     =   "call",
+    //
+    [INST_AND]      =   "and",
+    [INST_OR]       =   "or",
+    [INST_XOR]      =   "xor",
+    [INST_NOT]      =   "not",
+    [INST_NEG]      =   "neg",
+    [INST_SHL]      =   "shl",
+    [INST_SHR]      =   "shr",
+    //
+    [INST_INC]      =   "inc",
+    [INST_DEC]      =   "dec",
+    [INST_POW]      =   "pow",
+    //
+    [INST_FOPEN]    =   "fopen",
+    [INST_FCLOSE]   =   "fclose",
+    [INST_FREAD]    =   "fread",
+    [INST_FWRITE]   =   "fwrite",
+    [INST_FAPPEND]  =   "fappend",
+    [INST_FSEEK]    =   "fseek",
+    [INST_FTELL]    =   "ftell",
+    [INST_FFLUSH]   =   "fflush",
+    [INST_FEOF]     =   "feof",
+    //
 };
 
-_Bool Is_Inst(char *c) {
+int Is_Inst(char *c) {
   for (int i = 0; i < sizeof(keywords)/sizeof(keywords[0]); i++)
     if (strcmp(c, keywords[i]) == 0)
-      return true;
-  return false;
+      return 1;
+  return 0;
 }
 
 #endif

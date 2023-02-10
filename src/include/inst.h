@@ -1,8 +1,8 @@
-#ifndef INST_H
-#define INST_H
+#ifndef _INST_H
+#define _INST_H
 
 typedef enum {
-  //sys
+  //
   INST_PUSH = 0,
   INST_POP,
   INST_STORE,
@@ -11,20 +11,20 @@ typedef enum {
   INST_SCAN,
   INST_RET,
   INST_HALT,
-  //arithmetic
+  //
   INST_ADD,
   INST_SUB,
   INST_MUL,
   INST_DIV,
   INST_MOD,
-  //conditons
+  //
   INST_JMP,
   INST_CMP,
   INST_JZ,
   INST_JE,
   INST_JG,
-  INST_JGE,
   INST_JL,
+  INST_JGE,
   INST_JLE,
   //
   INST_NCMP,
@@ -34,8 +34,35 @@ typedef enum {
   INST_JNLE,
   INST_JNG,
   INST_JNGE,
-  //debugging only
+  //
+  INST_AND,
+  INST_OR,
+  INST_XOR,
+  INST_NOT,
+  INST_NEG,
+  INST_SHL,
+  INST_SHR,
+  //
+  INST_INC,
+  INST_DEC,
+  INST_POW,
+  //
+  INST_CALL,
+  //
+  INST_FOPEN,
+  INST_FCLOSE,
+  INST_FREAD,
+  INST_FWRITE,
+  INST_FAPPEND,
+  INST_FSEEK,
+  INST_FTELL,
+  INST_FFLUSH,
+  INST_FEOF,
+  INST_FERROR,
+  //
   INST_DUMP,
+  //
+  TOTAL_INST
 } Inst;
 
 #endif

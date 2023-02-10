@@ -18,6 +18,8 @@ char *ERROR_as_str(ERROR error) {
     return "Popped from Empty Stack";
   case ERROR_MISMATCH_TYPE:
     return "Comparision of Mismatched Types";
+  case ERROR_UNKNOWN_TYPE:
+    return "Unknown Type";
   case ERROR_UNKNOWN_INST:
     return "Unknown Instruction";
   default:
