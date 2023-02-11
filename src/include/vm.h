@@ -7,25 +7,27 @@
 #define MEM_SIZE 32
 #define STACK_SIZE 1024
 
-enum DATA_KIND { DATA_INTEGER = 0, DATA_FLOATING, DATA_STRING };
+#define VM_INIT(vm) (vm.state = 1, vm.ip = 0, vm.sp = 0, vm.mp = 0)
+
+typedef enum { DATA_INTEGER, DATA_FLOATING, DATA_STRING } DATA_KIND;
 
 typedef struct {
   // TODO: add more data types (string, float, int, function, array, struct)
-  enum DATA_KIND kind;
+  DATA_KIND kind;
   union {
     char *string;
     int integer;
     float floating;
-  } data;
+  } val;
 } Data;
 
 typedef struct {
   int state;
-  int ip; // instruction pointer
-  int sp; // stack pointer
-          //   int mp;
-          //   Data mem[MEM_SIZE];
-  Data stack[STACK_SIZE];
+  int ip;             // instruction pointer
+  int sp;             // stack pointer
+  int mp;             // mem pointer
+  Data mem[MEM_SIZE]; // mem stack
+  Data stack[];
 } VM;
 
 typedef struct {
@@ -33,7 +35,6 @@ typedef struct {
   Data entry;
 } Program;
 
-void VM_Init(VM *vm);
 ERROR VM_Execute(VM *vm, Program prog);
 
 #endif

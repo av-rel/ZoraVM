@@ -3,102 +3,127 @@
 
 #include <stdio.h>
 
+#include "./def.c"
 #include "./error.c"
 #include "./include/vm.h"
 #include "./inst.c"
 
-ERROR VM_Push(VM *vm, Program prog) {
-  if (vm->sp >= STACK_SIZE)
-    return ERROR_STACK_OVERFLOW;
-
-  //   if (vm->stack[vm->sp - 1].kind == DATA_INTEGER)
-  vm->stack[vm->sp++].data.integer = prog.entry.data.integer;
-  //   else if (vm->stack[vm->sp - 1].kind == DATA_FLOATING)
-  // vm->stack[vm->sp++].data.floating = prog.entry.data.floating;
-  //   else if (vm->stack[vm->sp - 1].kind == DATA_STRING)
-  // vm->stack[vm->sp++].data.string = prog.entry.data.string;
-
+// push to the memory stack
+ERROR VM_Push(VM *vm, Data data) {
+  if (vm->mp >= MEM_SIZE)
+    return ERROR_MEMORY_FULL;
+  switch (data.kind) {
+  case DATA_INTEGER:
+    vm->mem[vm->mp++] = (Data){DATA_INTEGER, .val.integer = data.val.integer};
+    break;
+  case DATA_FLOATING:
+    vm->mem[vm->mp++] =
+        (Data){DATA_FLOATING, .val.floating = data.val.floating};
+    break;
+  case DATA_STRING:
+    vm->mem[vm->mp++] = (Data){DATA_STRING, .val.string = data.val.string};
+    break;
+  default:
+    return ERROR_UNKNOWN_TYPE;
+  }
   vm->ip++;
-
   return ERROR_OK;
 }
 
+// pop from the memory stack
 ERROR VM_Pop(VM *vm) {
-  if (vm->sp <= 0)
-    return ERROR_STACK_UNDERFLOW;
-  vm->stack[vm->sp--] = (Data){0};
+  if (vm->mp <= 0)
+    return ERROR_MEMORY_EMPTY;
+  vm->mem[--vm->mp] = (Data){0};
   vm->ip++;
   return ERROR_OK;
 }
 
+// added the two val from mem stack and push it back to the mem stack
 ERROR VM_Add(VM *vm) {
-  if (vm->sp <= 1)
-    return ERROR_STACK_UNDERFLOW;
-  vm->stack[vm->sp - 2].data.integer += vm->stack[vm->sp - 1].data.integer;
-  vm->stack[vm->sp--] = (Data){0};
+  if (vm->mp <= 1)
+    return ERROR_MEMORY_EMPTY;
+  if (vm->mem[vm->mp - 1].kind != DATA_INTEGER)
+    return ERROR_UNIMPLEMENTED;
+  vm->mem[vm->mp - 2].val.integer += vm->mem[vm->mp - 1].val.integer;
+  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
+  vm->mem[vm->mp--] = (Data){0};
   vm->ip++;
   return ERROR_OK;
 }
 
+// subtract the two val from mem stack and push it back to the mem stack
 ERROR VM_Sub(VM *vm) {
-  if (vm->sp <= 1)
-    return ERROR_STACK_UNDERFLOW;
-  vm->stack[vm->sp - 2].data.integer -= vm->stack[vm->sp - 1].data.integer;
-  vm->stack[vm->sp--] = (Data){0};
+  if (vm->mp <= 1)
+    return ERROR_MEMORY_EMPTY;
+  if (vm->stack[vm->sp - 1].kind != DATA_INTEGER)
+    return ERROR_UNIMPLEMENTED;
+  vm->mem[vm->mp - 2].val.integer -= vm->stack[vm->sp - 1].val.integer;
+  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
+  vm->mem[vm->mp--] = (Data){0};
   vm->ip++;
   return ERROR_OK;
 }
 
+// multiply the two val from mem stack and push it back to the mem stack
 ERROR VM_Mul(VM *vm) {
-  if (vm->sp <= 1)
-    return ERROR_STACK_UNDERFLOW;
-  vm->stack[vm->sp - 2].data.integer *= vm->stack[vm->sp - 1].data.integer;
-  vm->stack[vm->sp--] = (Data){0};
+  if (vm->mp <= 1)
+    return ERROR_MEMORY_EMPTY;
+  if (vm->stack[vm->sp - 1].kind != DATA_INTEGER)
+    return ERROR_UNIMPLEMENTED;
+  vm->mem[vm->mp - 2].val.integer *= vm->mem[vm->mp - 1].val.integer;
+  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
+  vm->mem[vm->mp--] = (Data){0};
   vm->ip++;
   return ERROR_OK;
 }
 
+// divide the two val from mem stack and push it back to the mem stack
 ERROR VM_Div(VM *vm) {
   if (vm->sp <= 1)
     return ERROR_STACK_UNDERFLOW;
-  if (vm->stack[vm->sp - 1].data.integer == 0)
+  if (vm->stack[vm->sp - 1].kind != DATA_INTEGER)
+    return ERROR_UNIMPLEMENTED;
+  if (vm->stack[vm->sp - 1].val.integer == 0)
     return ERROR_DIV_BY_0;
-  vm->stack[vm->sp - 2].data.integer /= vm->stack[vm->sp - 1].data.integer;
-  vm->stack[vm->sp--] = (Data){0};
+  vm->mem[vm->mp - 2].val.integer /= vm->stack[vm->sp - 1].val.integer;
+  vm->mem[vm->mp--] = (Data){0};
   vm->ip++;
   return ERROR_OK;
 }
 
+// mod the two val from mem stack and push it back to the mem stack
 ERROR VM_Mod(VM *vm) {
   if (vm->sp <= 1)
     return ERROR_STACK_UNDERFLOW;
-  if (vm->stack[vm->sp - 1].data.integer == 0)
+  if (vm->stack[vm->sp - 1].kind != DATA_INTEGER)
+    return ERROR_UNIMPLEMENTED;
+  if (vm->stack[vm->sp - 1].val.integer == 0)
     return ERROR_DIV_BY_0;
-  vm->stack[vm->sp - 2].data.integer %= vm->stack[vm->sp - 1].data.integer;
-  vm->stack[vm->sp--] = (Data){0};
-  vm->ip++;
-  return ERROR_OK;
-}
-
-ERROR VM_Halt(VM *vm, Program prog) {
-  vm->state = 0;
-  vm->stack[vm->sp].kind = DATA_INTEGER;
-  vm->stack[vm->sp].data.integer = prog.entry.data.integer;
-  vm->sp++;
+  vm->mem[vm->mp - 2].val.integer %= vm->stack[vm->sp - 1].val.integer;
+  vm->mem[vm->mp--] = (Data){0};
   vm->ip++;
   return ERROR_OK;
 }
 
 ERROR VM_Print(VM *vm, Program prog) {
-  if (vm->sp <= 0)
-    return ERROR_STACK_UNDERFLOW;
-  if (vm->stack[vm->sp - 1].kind == DATA_INTEGER)
-    printf("%d", vm->stack[vm->sp - 1].data.integer);
-  else if (vm->stack[vm->sp - 1].kind == DATA_FLOATING)
-    printf("%f", vm->stack[vm->sp - 1].data.floating);
-  else if (vm->stack[vm->sp - 1].kind == DATA_STRING)
-    printf("%s", vm->stack[vm->sp - 1].data.string);
+  if (vm->mp <= 0)
+    return ERROR_MEMORY_EMPTY;
 
+  Data entry = prog.entry;
+  switch (entry.kind) {
+  case DATA_INTEGER:
+    printf("%d", vm->mem[--vm->mp].val.integer);
+    break;
+  case DATA_FLOATING:
+    printf("%f", vm->mem[--vm->mp].val.floating);
+    break;
+  case DATA_STRING:
+    printf("%s", vm->mem[--vm->mp].val.string);
+    break;
+  default:
+    return ERROR_UNKNOWN_TYPE;
+  }
   vm->ip++;
   return ERROR_OK;
 }
@@ -106,43 +131,43 @@ ERROR VM_Print(VM *vm, Program prog) {
 ERROR VM_Scan(VM *vm, Program prog) {
   if (vm->sp <= 0)
     return ERROR_STACK_UNDERFLOW;
-  if (vm->stack[vm->sp - 1].kind == DATA_INTEGER)
-    scanf("%d", &vm->stack[vm->sp - 1].data.integer);
-  else if (vm->stack[vm->sp - 1].kind == DATA_FLOATING)
-    scanf("%f", &vm->stack[vm->sp - 1].data.floating);
-  else if (vm->stack[vm->sp - 1].kind == DATA_STRING)
-    scanf("%s", vm->stack[vm->sp - 1].data.string);
+
+  Data entry = prog.entry;
+  switch (entry.kind) {
+  case DATA_INTEGER:
+    scanf("%d", &vm->mem[vm->mp++].val.integer);
+    break;
+  case DATA_FLOATING:
+    scanf("%f", &vm->mem[vm->mp++].val.floating);
+    break;
+  case DATA_STRING:
+    scanf("%s", vm->mem[vm->mp++].val.string);
+    break;
+  default:
+    return ERROR_UNKNOWN_TYPE;
+  }
   vm->ip++;
   return ERROR_OK;
 }
 
 ERROR VM_Call(VM *vm, Program prog) {
-  if (vm->sp >= STACK_SIZE)
-    return ERROR_STACK_OVERFLOW;
-  vm->stack[vm->sp++].data.integer = vm->ip + 1;
-  vm->ip = prog.entry.data.integer;
-  return ERROR_OK;
+  return ERROR_UNIMPLEMENTED;
+  //   return ERROR_OK;
 }
 
 ERROR VM_Jmpz(VM *vm, Program prog) {
-  if (vm->stack[vm->sp - 1].data.integer == 0)
-    vm->ip = prog.entry.data.integer;
-  else
-    vm->ip++;
-  return ERROR_OK;
+  return ERROR_UNIMPLEMENTED;
+  //   return ERROR_OK;
 }
 
 ERROR VM_Jmpnz(VM *vm, Program prog) {
-  if (vm->stack[vm->sp - 1].data.integer != 0)
-    vm->ip = prog.entry.data.integer;
-  else
-    vm->ip++;
-  return ERROR_OK;
+  return ERROR_UNIMPLEMENTED;
+  //   return ERROR_OK;
 }
 
 ERROR VM_Jmp(VM *vm, Program prog) {
-  vm->ip = prog.entry.data.integer;
-  return ERROR_OK;
+  return ERROR_UNIMPLEMENTED;
+  //   return ERROR_OK;
 }
 
 ERROR VM_Dump(VM *vm) {
@@ -156,13 +181,42 @@ ERROR VM_Dump(VM *vm) {
     return ERROR_OK;
   }
   for (int i = 0; i < vm->sp; i++) {
-    if (vm->stack[i].kind == DATA_INTEGER)
-      printf("\t%d: %d\n", i, vm->stack[i].data.integer);
-    else if (vm->stack[i].kind == DATA_FLOATING)
-      printf("\t%d: %f\n", i, vm->stack[i].data.floating);
-    else if (vm->stack[i].kind == DATA_STRING)
-      printf("\t%d: %s\n", i, vm->stack[i].data.string);
+    Data entry = vm->stack[i];
+    switch (entry.kind) {
+    case DATA_INTEGER:
+      printf("\t %d: \t %d \t [%s]\n", i, entry.val.integer,
+             DATAKIND_as_str(entry.kind));
+      break;
+    case DATA_FLOATING:
+      printf("\t %d: \t %f \t [%s]\n", i, entry.val.floating,
+             DATAKIND_as_str(entry.kind));
+      break;
+    case DATA_STRING:
+      printf("\t %d: \t %s \t [%s]\n", i, entry.val.string,
+             DATAKIND_as_str(entry.kind));
+      break;
+    default:
+      return ERROR_UNKNOWN_TYPE;
+    }
   }
+  return ERROR_OK;
+}
+
+ERROR VM_Ret(VM *vm, Program prog) {
+  vm->mem[vm->mp].kind = DATA_INTEGER;
+  vm->mem[vm->mp].val.integer = prog.entry.val.integer;
+  vm->mp++;
+  vm->ip++;
+  return ERROR_OK;
+}
+
+// halt the vm
+ERROR VM_Halt(VM *vm, Program prog) {
+  vm->state = 0;
+  vm->mem[vm->mp].kind = DATA_INTEGER;
+  vm->mem[vm->mp].val.integer = prog.entry.val.integer;
+  vm->mp++;
+  vm->ip++;
   return ERROR_OK;
 }
 
