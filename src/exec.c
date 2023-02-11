@@ -182,7 +182,7 @@ ERROR VM_Dec(VM *vm) {
 ERROR VM_Pow(VM *vm) {
   if (vm->mp <= 1)
     return ERROR_MEMORY_EMPTY;
-  if (vm->mem[vm->mp - 1].kind != DATA_INTEGER)
+  if (vm->mem[vm->mp - 1].kind != DATA_INTEGER || vm->mem[vm->mp - 2].kind != DATA_INTEGER)
     return ERROR_UNIMPLEMENTED;
 
   vm->mem[vm->mp - 2].val.integer =

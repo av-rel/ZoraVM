@@ -27,7 +27,7 @@ typedef struct {
   int sp;             // stack pointer
   int mp;             // mem pointer
   Data mem[MEM_SIZE]; // mem stack
-  Data stack[];
+  Data stack[STACK_SIZE]; //stack
 } VM;
 
 typedef struct {

@@ -13,7 +13,6 @@
 #include "./prog.c"
 
 // TODO: 2 ** 62 > NaN :: Throw Error => No. out of range
-
 const char *NAME_SPACE = "";
 
 int ZVM(char *source) {
@@ -22,7 +21,15 @@ int ZVM(char *source) {
 
   ERROR vm_err = ERROR_OK;
   Program program[] = {
-      PushStr("Hello World!\n"),
+      PushStr("\t  *   *  *\n"),
+      PushStr("\t*   *    \n"),
+      PushStr("\t  *   *  *\n"),
+      PushStr("\t*   *    \n"),
+      PushStr("\t  *   *  \n"),
+      PrintStr(),
+      PrintStr(),
+      PrintStr(),
+      PrintStr(),
       PrintStr(),
       Halt(0),
   };

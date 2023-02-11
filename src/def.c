@@ -106,6 +106,7 @@
 #define Halt(a)                                                                \
   { .inst = INST_HALT, .entry = EntryInt(a) }
 
+
 char *DATAKIND_as_str(DATA_KIND kind) {
   switch (kind) {
   case DATA_INTEGER:
@@ -118,6 +119,7 @@ char *DATAKIND_as_str(DATA_KIND kind) {
     return "UNKNOWN";
   }
 }
+
 
 static int is_num(char ch) { return ch >= '0' && ch <= '9'; }
 
