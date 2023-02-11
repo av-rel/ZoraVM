@@ -47,8 +47,6 @@ typedef enum {
   INST_DEC,
   INST_POW,
   //
-  INST_CALL,
-  //
   INST_FOPEN,
   INST_FCLOSE,
   INST_FREAD,
@@ -60,7 +58,8 @@ typedef enum {
   INST_FEOF,
   INST_FERROR,
   //
-  INST_DUMP,
+  INST_DUMP_STACK,
+  INST_DUMP_MEM,
   //
   TOTAL_INST
 } Inst;

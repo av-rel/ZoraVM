@@ -38,8 +38,6 @@ const char *keywords[] = {
     [INST_JNL]      =   "jnl",
     [INST_JNLE]     =   "jnle",
     //
-    [INST_CALL]     =   "call",
-    //
     [INST_AND]      =   "and",
     [INST_OR]       =   "or",
     [INST_XOR]      =   "xor",
@@ -62,6 +60,8 @@ const char *keywords[] = {
     [INST_FFLUSH]   =   "fflush",
     [INST_FEOF]     =   "feof",
     //
+    [INST_DUMP_STACK]   =   "dump_stack",
+    [INST_DUMP_MEM]     =   "dump_mem",
 };
 
 int Is_Inst(char *c) {

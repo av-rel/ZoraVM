@@ -1,3 +1,4 @@
+#include "include/inst.h"
 #define RUN_ZORAVM
 
 #include <assert.h>
@@ -11,14 +12,20 @@
 #include "./inst.c"
 #include "./prog.c"
 
-const char *NAME_SPACE = "ZoraVM";
+// TODO: 2 ** 62 > NaN :: Throw Error => No. out of range
+
+const char *NAME_SPACE = "";
 
 int ZVM(char *source) {
   VM vm = {0};
   VM_INIT(vm);
 
   ERROR vm_err = ERROR_OK;
-  Program program[] = {PushInt(10), PushInt(2), MulInt(), PrintInt(), Halt(0)};
+  Program program[] = {
+      PushStr("Hello World!\n"),
+      PrintStr(),
+      Halt(0),
+  };
 
   // main loop for executing instructions
   while (vm.state && vm_err == ERROR_OK)
@@ -32,13 +39,13 @@ int ZVM(char *source) {
   //   }
 
   if (vm_err != ERROR_OK) {
-    printf("%s %s %s\n", NAME_SPACE, "[ERROR]:", ERROR_as_str(vm_err));
+    printf("%s%s%s\n", NAME_SPACE, "[ERROR]: ", ERROR_as_str(vm_err));
     return vm_err;
   }
 
   if (vm.mem[vm.mp - 1].kind != DATA_INTEGER) {
-    printf("%s %s %s\n", NAME_SPACE,
-           "[ERROR]:", "Expected integer as return value\n");
+    printf("%s%s%s\n", NAME_SPACE,
+           "[ERROR]: ", "Expected integer as return value\n");
     return ERROR_UNEXPECTED_TYPE;
   }
 
@@ -60,6 +67,10 @@ ERROR VM_Execute(VM *vm, Program prog) {
     return VM_Push(vm, prog.entry);
   case INST_POP:
     return VM_Pop(vm);
+  case INST_STORE:
+    return VM_Store(vm, prog.entry);
+  case INST_LOAD:
+    return VM_Load(vm, prog.entry);
   case INST_ADD:
     return VM_Add(vm);
   case INST_SUB:
@@ -70,6 +81,12 @@ ERROR VM_Execute(VM *vm, Program prog) {
     return VM_Div(vm);
   case INST_MOD:
     return VM_Mod(vm);
+  case INST_INC:
+    return VM_Inc(vm);
+  case INST_DEC:
+    return VM_Dec(vm);
+  case INST_POW:
+    return VM_Pow(vm);
   case INST_PRINT:
     return VM_Print(vm, prog);
   case INST_SCAN:
@@ -78,8 +95,10 @@ ERROR VM_Execute(VM *vm, Program prog) {
     return VM_Ret(vm, prog);
   case INST_HALT:
     return VM_Halt(vm, prog);
-  case INST_DUMP:
-    return VM_Dump(vm);
+  case INST_DUMP_STACK:
+    return VM_Dump_Stack(vm);
+  case INST_DUMP_MEM:
+    return VM_Dump_Mem(vm);
   default:
     return ERROR_UNKNOWN_INST;
   }

@@ -4,7 +4,7 @@
 #include "./error.h"
 #include "./inst.h"
 
-#define MEM_SIZE 32
+#define MEM_SIZE 69
 #define STACK_SIZE 1024
 
 #define VM_INIT(vm) (vm.state = 1, vm.ip = 0, vm.sp = 0, vm.mp = 0)
@@ -16,13 +16,13 @@ typedef struct {
   DATA_KIND kind;
   union {
     char *string;
-    int integer;
-    float floating;
+    long long int integer;
+    double floating;
   } val;
 } Data;
 
 typedef struct {
-  int state;
+  int state;          //state of vm | HALT or not
   int ip;             // instruction pointer
   int sp;             // stack pointer
   int mp;             // mem pointer

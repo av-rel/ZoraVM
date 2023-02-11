@@ -16,6 +16,7 @@ typedef enum {
   ERROR_UNKNOWN_INST,      // unknown instruction
   ERROR_UNIMPLEMENTED,     // unimplemented instruction
   ERROR_PROGRAM_NOT_FOUND, // program not found
+  ERROR_NUMBER_OUT_OF_RANGE,
   TOTAL_ERRORNO
 } ERROR;
 

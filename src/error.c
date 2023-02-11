@@ -19,7 +19,8 @@ char *Errors[] = {
     [ERROR_UNKNOWN_TYPE] = "Unknown Type",
     [ERROR_UNKNOWN_INST] = "Unknown Instruction",
     [ERROR_UNIMPLEMENTED] = "Unimplemented Instruction",
-    [ERROR_PROGRAM_NOT_FOUND] = "No Program ",
+    [ERROR_PROGRAM_NOT_FOUND] = "No Program",
+    [ERROR_NUMBER_OUT_OF_RANGE] = "Number out of range",
 };
 
 char *ERROR_as_str(ERROR error) {
@@ -37,7 +38,7 @@ char *ERROR_as_str(ERROR error) {
   case ERROR_MEMORY_EMPTY:
     return "Memory Empty";
   case ERROR_MISMATCH_TYPE:
-    return "Comparision of Mismatched Types";
+    return "Operation between different Types";
   case ERROR_UNEXPECTED_TYPE:
     return "Unexpected Type";
   case ERROR_ILLEGAL_INST:
@@ -50,6 +51,8 @@ char *ERROR_as_str(ERROR error) {
     return "Unimplemented Instruction";
   case ERROR_PROGRAM_NOT_FOUND:
     return "No Program Found";
+  case ERROR_NUMBER_OUT_OF_RANGE:
+    return "Number out of range";
   default:
     return "Unknown ERROR Detected";
   }
