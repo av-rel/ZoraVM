@@ -19,6 +19,7 @@ typedef enum {
   INST_MOD,
   //
   INST_JMP,
+  INST_JMPIF,
   INST_CMP,
   INST_JZ,
   INST_JE,
@@ -28,6 +29,7 @@ typedef enum {
   INST_JLE,
   //
   INST_NCMP,
+  INST_JMPIFN,
   INST_JNZ,
   INST_JNE,
   INST_JNL,
