@@ -31,7 +31,7 @@ int ZVM(char *source) {
       PrintStr(),
       PrintStr(),
       PrintStr(),
-      Halt(0),
+      Halt(0)
   };
 
   // main loop for executing instructions
@@ -39,20 +39,13 @@ int ZVM(char *source) {
     vm_err = VM_Execute(&vm, program[vm.ip]);
   //
 
-  //   if (vm.ip < 1) {
-  //     vm_err = ERROR_PROGRAM_NOT_FOUND;
-  //     printf("%s %s %s\n", NAME_SPACE, "[ERROR]:", ERROR_as_str(vm_err));
-  //     return vm_err;
-  //   }
-
   if (vm_err != ERROR_OK) {
-    printf("%s%s%s\n", NAME_SPACE, "[ERROR]: ", ERROR_as_str(vm_err));
+    printf("%s%s%s\n", NAME_SPACE, "[ERROR]: ", Errors[vm_err]);
     return vm_err;
   }
 
   if (vm.mem[vm.mp - 1].kind != DATA_INTEGER) {
-    printf("%s%s%s\n", NAME_SPACE,
-           "[ERROR]: ", "Expected integer as return value\n");
+    printf("%s%s%s\n", NAME_SPACE, "[ERROR]: ", "Expected integer as return value\n");
     return ERROR_UNEXPECTED_TYPE;
   }
 
