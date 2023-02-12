@@ -62,8 +62,8 @@ const char *keywords[] = {
     [INST_FAPPEND]  =   "fappend",
     [INST_FSIZE]    =   "fsize",
     // cpu state
-    [INST_DUMP_STACK]   =   "dump_stack",
-    [INST_DUMP_MEM]     =   "dump_mem",
+    [INST_DUMP_STACK]   =   "dumpstack",
+    [INST_DUMP_MEM]     =   "dumpmem",
 };
 
 int Is_Inst(char *c) {

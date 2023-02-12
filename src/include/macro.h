@@ -58,7 +58,7 @@
 #define DivInt()                                                               \
   { .inst = INST_DIV, EntryInt(0) }
 #define DivFloat()                                                             \
-  { .inst = INST_DIV, , EntryFloat(0) }
+  { .inst = INST_DIV, EntryFloat(0) }
 #define DivStr()                                                               \
   { .inst = INST_DIV, , EntryStr(0) }
 
@@ -89,6 +89,55 @@
   { .inst = INST_POW, EntryFloat(0) }
 #define PowStr()                                                               \
   { .inst = INST_POW, EntryString(0) }
+
+#define NegInt()                                                               \
+  { .inst = INST_NEG, EntryInt(0) }
+#define NegFloat()                                                             \
+  { .inst = INST_NEG, EntryFloat(0) }
+#define NegStr()                                                               \
+  { .inst = INST_NEG, EntryStr(0) }
+
+#define NotInt()                                                               \
+  { .inst = INST_NOT, EntryInt(0) }
+#define NotFloat()                                                             \
+  { .inst = INST_NOT, EntryFloat(0) }
+#define NotStr()                                                               \
+  { .inst = INST_NOT, EntryStr(0) }
+
+#define AndInt()                                                               \
+  { .inst = INST_AND, EntryInt(0) }
+#define AndFloat()                                                             \
+  { .inst = INST_AND, EntryFloat(0) }
+#define AndStr()                                                               \
+  { .inst = INST_AND, EntryStr(0) }
+
+#define OrInt()                                                                \
+  { .inst = INST_OR, EntryInt(0) }
+#define OrFloat()                                                              \
+  { .inst = INST_OR, EntryFloat(0) }
+#define OrStr()                                                                \
+  { .inst = INST_OR, EntryStr(0) }
+
+#define XorInt()                                                               \
+  { .inst = INST_XOR, EntryInt(0) }
+#define XorFloat()                                                             \
+  { .inst = INST_XOR, EntryFloat(0) }
+#define XorStr()                                                               \
+  { .inst = INST_XOR, EntryStr(0) }
+
+#define ShlInt()                                                               \
+  { .inst = INST_SHL, EntryInt(0) }
+#define ShlFloat()                                                             \
+  { .inst = INST_SHL, EntryFloat(0) }
+#define ShlStr()                                                               \
+  { .inst = INST_SHL, EntryStr(0) }
+
+#define ShrInt()                                                               \
+  { .inst = INST_SHR, EntryInt(0) }
+#define ShrFloat()                                                             \
+  { .inst = INST_SHR, EntryFloat(0) }
+#define ShrStr()                                                               \
+  { .inst = INST_SHR, EntryStr(0) }
 
 #define PrintInt()                                                             \
   { .inst = INST_PRINT, .entry = EntryInt(0) }

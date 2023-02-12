@@ -10,14 +10,16 @@
 #include "./prog.c"
 #include "./trap.c"
 
-const char *NAME_SPACE = "";
+const char *NAME_SPACE = "ZoraVM ";
 
 int ZVM(char *source) {
   VM vm = {0};
   VM_INIT(vm);
 
   ERROR vm_err = ERROR_OK;
-  Program program[] = {DumpMem(), Halt(0)};
+  Program program[] = {
+      PushInt(0), PushInt(0), OrInt(), DumpMem(), Halt(0),
+  };
 
   // main loop for executing instructions
   while (vm.state && vm_err == ERROR_OK && vm.ip < ArraySize(program))
@@ -77,6 +79,18 @@ ERROR VM_Execute(VM *vm, Program prog) {
     return VM_Dec(vm);
   case INST_POW:
     return VM_Pow(vm);
+  case INST_AND:
+    return VM_And(vm);
+  case INST_OR:
+    return VM_Or(vm);
+  case INST_XOR:
+    return VM_Xor(vm);
+  case INST_NOT:
+    return VM_Not(vm);
+  case INST_SHL:
+    return VM_Shl(vm);
+  case INST_SHR:
+    return VM_Shr(vm);
   case INST_PRINT:
     return VM_Print(vm, prog);
   case INST_SCAN:

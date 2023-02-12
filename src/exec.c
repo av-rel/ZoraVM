@@ -224,6 +224,88 @@ ERROR VM_Pow(VM *vm) {
   return ERROR_OK;
 }
 
+ERROR VM_And(VM *vm) {
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
+  if (vm->mem[vm->mp - 1].kind != DATA_INTEGER ||
+      vm->mem[vm->mp - 2].kind != DATA_INTEGER)
+    return ERROR_UNIMPLEMENTED;
+
+  vm->mem[vm->mp - 2].val.integer &= vm->mem[vm->mp - 1].val.integer;
+  vm->mem[--vm->mp] = (Data){0};
+  vm->ip++;
+
+  return ERROR_OK;
+}
+
+ERROR VM_Or(VM *vm) {
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
+  if (vm->mem[vm->mp - 1].kind != DATA_INTEGER ||
+      vm->mem[vm->mp - 2].kind != DATA_INTEGER)
+    return ERROR_UNIMPLEMENTED;
+
+  vm->mem[vm->mp - 2].val.integer |= vm->mem[vm->mp - 1].val.integer;
+  vm->mem[--vm->mp] = (Data){0};
+  vm->ip++;
+
+  return ERROR_OK;
+}
+
+ERROR VM_Xor(VM *vm) {
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
+  if (vm->mem[vm->mp - 1].kind != DATA_INTEGER ||
+      vm->mem[vm->mp - 2].kind != DATA_INTEGER)
+    return ERROR_UNIMPLEMENTED;
+
+  vm->mem[vm->mp - 2].val.integer ^= vm->mem[vm->mp - 1].val.integer;
+  vm->mem[--vm->mp] = (Data){0};
+  vm->ip++;
+
+  return ERROR_OK;
+}
+
+ERROR VM_Not(VM *vm) {
+  if (vm->mp < 1)
+    return ERROR_MEMORY_EMPTY;
+  if (vm->mem[vm->mp - 1].kind != DATA_INTEGER)
+    return ERROR_UNIMPLEMENTED;
+
+  vm->mem[vm->mp - 1].val.integer = ~vm->mem[vm->mp - 1].val.integer;
+  vm->ip++;
+
+  return ERROR_OK;
+}
+
+ERROR VM_Shl(VM *vm) {
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
+  if (vm->mem[vm->mp - 1].kind != DATA_INTEGER ||
+      vm->mem[vm->mp - 2].kind != DATA_INTEGER)
+    return ERROR_UNIMPLEMENTED;
+
+  vm->mem[vm->mp - 2].val.integer <<= vm->mem[vm->mp - 1].val.integer;
+  vm->mem[--vm->mp] = (Data){0};
+  vm->ip++;
+
+  return ERROR_OK;
+}
+
+ERROR VM_Shr(VM *vm) {
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
+  if (vm->mem[vm->mp - 1].kind != DATA_INTEGER ||
+      vm->mem[vm->mp - 2].kind != DATA_INTEGER)
+    return ERROR_UNIMPLEMENTED;
+
+  vm->mem[vm->mp - 2].val.integer >>= vm->mem[vm->mp - 1].val.integer;
+  vm->mem[--vm->mp] = (Data){0};
+  vm->ip++;
+
+  return ERROR_OK;
+}
+
 ERROR VM_Print(VM *vm, Program prog) {
   if (vm->mp < 1)
     return ERROR_MEMORY_EMPTY;
