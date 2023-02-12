@@ -4,9 +4,9 @@
 #include <math.h>
 #include <stdio.h>
 
+#include "./include/vm.h"
 #include "./def.c"
 #include "./error.c"
-#include "./include/vm.h"
 #include "./inst.c"
 #include "include/error.h"
 
@@ -36,7 +36,7 @@ ERROR VM_Push(VM *vm, Data data) {
 
 // pop from the memory stack
 ERROR VM_Pop(VM *vm) {
-  if (vm->mp <= 0)
+  if (vm->mp < 1)
     return ERROR_MEMORY_EMPTY;
 
   vm->mem[--vm->mp] = (Data){0};
@@ -45,6 +45,8 @@ ERROR VM_Pop(VM *vm) {
   return ERROR_OK;
 }
 
+
+//store to the stack from mem
 ERROR VM_Store(VM *vm, Data data) {
   if (vm->sp >= STACK_SIZE)
     return ERROR_STACK_OVERFLOW;
@@ -58,8 +60,9 @@ ERROR VM_Store(VM *vm, Data data) {
   return ERROR_OK;
 }
 
+//load from stack to the mem
 ERROR VM_Load(VM *vm, Data data) {
-  if (vm->sp <= 0)
+  if (vm->sp < 1)
     return ERROR_STACK_UNDERFLOW;
   if (vm->mp >= MEM_SIZE)
     return ERROR_MEMORY_FULL;
@@ -71,10 +74,39 @@ ERROR VM_Load(VM *vm, Data data) {
   return ERROR_OK;
 }
 
+//duplicate memory values
+ERROR VM_Dup(VM* vm) {
+  if (vm->mp >= MEM_SIZE)
+    return ERROR_MEMORY_FULL;
+  if (vm->mp < 1)
+    return ERROR_MEMORY_EMPTY;
+
+  vm->mem[vm->mp] = vm->mem[vm->mp - 1];
+  vm->mp++;
+  vm->ip++;
+
+  return ERROR_OK;
+}
+
+//swap memory values
+ERROR VM_Swap(VM* vm){
+  if (vm->mp >= MEM_SIZE)
+    return ERROR_MEMORY_FULL;
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
+  
+  Data tmp = vm->mem[vm->mp - 2];
+  vm->mem[vm->mp - 2] = vm->mem[vm->mp - 1];
+  vm->mem[vm->mp - 1] = tmp;
+  vm->ip++;
+
+  return ERROR_OK;
+}
+
 // added the two val from mem stack and push it back to the mem stack
 ERROR VM_Add(VM *vm) {
-  if (vm->mp <= 1)
-    return ERROR_MEMORY_EMPTY;
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
   if (vm->mem[vm->mp - 1].kind != DATA_INTEGER ||
       vm->mem[vm->mp - 2].kind != DATA_INTEGER)
     return ERROR_UNIMPLEMENTED;
@@ -89,8 +121,8 @@ ERROR VM_Add(VM *vm) {
 
 // subtract the two val from mem stack and push it back to the mem stack
 ERROR VM_Sub(VM *vm) {
-  if (vm->mp <= 1)
-    return ERROR_MEMORY_EMPTY;
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
   if (vm->mem[vm->mp - 1].kind != DATA_INTEGER ||
       vm->mem[vm->mp - 2].kind != DATA_INTEGER)
     return ERROR_UNIMPLEMENTED;
@@ -105,8 +137,8 @@ ERROR VM_Sub(VM *vm) {
 
 // multiply the two val from mem stack and push it back to the mem stack
 ERROR VM_Mul(VM *vm) {
-  if (vm->mp <= 1)
-    return ERROR_MEMORY_EMPTY;
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
   if (vm->mem[vm->mp - 1].kind != DATA_INTEGER ||
       vm->mem[vm->mp - 2].kind != DATA_INTEGER)
     return ERROR_UNIMPLEMENTED;
@@ -121,8 +153,8 @@ ERROR VM_Mul(VM *vm) {
 
 // divide the two val from mem stack and push it back to the mem stack
 ERROR VM_Div(VM *vm) {
-  if (vm->mp <= 1)
-    return ERROR_MEMORY_EMPTY;
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
   if (vm->mem[vm->mp - 1].kind != DATA_INTEGER ||
       vm->mem[vm->mp - 2].kind != DATA_INTEGER)
     return ERROR_UNIMPLEMENTED;
@@ -140,8 +172,8 @@ ERROR VM_Div(VM *vm) {
 
 // mod the two val from mem stack and push it back to the mem stack
 ERROR VM_Mod(VM *vm) {
-  if (vm->mp <= 1)
-    return ERROR_MEMORY_EMPTY;
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
   if (vm->mem[vm->mp - 1].kind != DATA_INTEGER ||
       vm->mem[vm->mp - 2].kind != DATA_INTEGER)
     return ERROR_UNIMPLEMENTED;
@@ -180,8 +212,8 @@ ERROR VM_Dec(VM *vm) {
 }
 
 ERROR VM_Pow(VM *vm) {
-  if (vm->mp <= 1)
-    return ERROR_MEMORY_EMPTY;
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
   if (vm->mem[vm->mp - 1].kind != DATA_INTEGER || vm->mem[vm->mp - 2].kind != DATA_INTEGER)
     return ERROR_UNIMPLEMENTED;
 

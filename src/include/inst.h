@@ -12,6 +12,9 @@ typedef enum {
   INST_RET,
   INST_HALT,
   //
+  INST_DUP,
+  INST_SWAP,
+  //
   INST_ADD,
   INST_SUB,
   INST_MUL,
@@ -54,11 +57,7 @@ typedef enum {
   INST_FREAD,
   INST_FWRITE,
   INST_FAPPEND,
-  INST_FSEEK,
-  INST_FTELL,
-  INST_FFLUSH,
-  INST_FEOF,
-  INST_FERROR,
+  INST_FSIZE,
   //
   INST_DUMP_STACK,
   INST_DUMP_MEM,

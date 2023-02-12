@@ -15,6 +15,9 @@ const char *keywords[] = {
     [INST_RET]      =   "ret",
     [INST_HALT]     =   "halt",
     //
+    [INST_DUP]      =   "dup",
+    [INST_SWAP]     =   "swap",
+    //
     [INST_ADD]      =   "add",
     [INST_SUB]      =   "sub",
     [INST_MUL]      =   "mul",
@@ -23,6 +26,7 @@ const char *keywords[] = {
     //
     [INST_CMP]      =   "cmp",
     [INST_JMP]      =   "jmp",
+    [INST_JMPIF]    =   "jmpif",
     [INST_JZ]       =   "jz",
     [INST_JE]       =   "je",
     [INST_JG]       =   "jg",
@@ -31,6 +35,7 @@ const char *keywords[] = {
     [INST_JLE]      =   "jle",
     //
     [INST_NCMP]     =   "ncmp",
+    [INST_JMPIFN]   =   "jmpifn",
     [INST_JNZ]      =   "jnz",
     [INST_JNE]      =   "jne",
     [INST_JNG]      =   "jng",
@@ -55,11 +60,8 @@ const char *keywords[] = {
     [INST_FREAD]    =   "fread",
     [INST_FWRITE]   =   "fwrite",
     [INST_FAPPEND]  =   "fappend",
-    [INST_FSEEK]    =   "fseek",
-    [INST_FTELL]    =   "ftell",
-    [INST_FFLUSH]   =   "fflush",
-    [INST_FEOF]     =   "feof",
-    //
+    [INST_FSIZE]    =   "fsize",
+    // cpu state
     [INST_DUMP_STACK]   =   "dump_stack",
     [INST_DUMP_MEM]     =   "dump_mem",
 };

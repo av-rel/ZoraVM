@@ -29,6 +29,12 @@
 #define Load(val)                                                              \
   { .inst = INST_LOAD, .entry = EntryInt(val) }
 
+#define Dup(val)    \
+  {.inst = INST_DUP, .entry = EntryInt(val)}
+
+#define Swap(val)    \
+  {.inst = INST_SWAP, .entry = EntryInt(val)}
+
 #define AddInt()                                                               \
   { .inst = INST_ADD, EntryInt(0) }
 #define AddFloat()                                                             \

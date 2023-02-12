@@ -21,16 +21,10 @@ int ZVM(char *source) {
 
   ERROR vm_err = ERROR_OK;
   Program program[] = {
-      PushStr("\t  *   *  *\n"),
-      PushStr("\t*   *    \n"),
-      PushStr("\t  *   *  *\n"),
-      PushStr("\t*   *    \n"),
-      PushStr("\t  *   *  \n"),
-      PrintStr(),
-      PrintStr(),
-      PrintStr(),
-      PrintStr(),
-      PrintStr(),
+      PushInt(10),
+      PushStr("100"),
+      Swap(0),
+      DumpMem(),
       Halt(0)
   };
 
@@ -71,6 +65,10 @@ ERROR VM_Execute(VM *vm, Program prog) {
     return VM_Store(vm, prog.entry);
   case INST_LOAD:
     return VM_Load(vm, prog.entry);
+  case INST_DUP:
+    return VM_Dup(vm);
+  case INST_SWAP:
+    return VM_Swap(vm);
   case INST_ADD:
     return VM_Add(vm);
   case INST_SUB:
