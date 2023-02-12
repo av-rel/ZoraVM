@@ -4,11 +4,10 @@
 #include <math.h>
 #include <stdio.h>
 
+#include "./include/macro.h"
 #include "./include/vm.h"
-#include "./def.c"
-#include "./error.c"
 #include "./inst.c"
-#include "include/error.h"
+#include "./trap.c"
 
 // push to the memory stack
 ERROR VM_Push(VM *vm, Data data) {
@@ -45,8 +44,7 @@ ERROR VM_Pop(VM *vm) {
   return ERROR_OK;
 }
 
-
-//store to the stack from mem
+// store to the stack from mem
 ERROR VM_Store(VM *vm, Data data) {
   if (vm->sp >= STACK_SIZE)
     return ERROR_STACK_OVERFLOW;
@@ -60,7 +58,7 @@ ERROR VM_Store(VM *vm, Data data) {
   return ERROR_OK;
 }
 
-//load from stack to the mem
+// load from stack to the mem
 ERROR VM_Load(VM *vm, Data data) {
   if (vm->sp < 1)
     return ERROR_STACK_UNDERFLOW;
@@ -74,8 +72,8 @@ ERROR VM_Load(VM *vm, Data data) {
   return ERROR_OK;
 }
 
-//duplicate memory values
-ERROR VM_Dup(VM* vm) {
+// duplicate memory values
+ERROR VM_Dup(VM *vm) {
   if (vm->mp >= MEM_SIZE)
     return ERROR_MEMORY_FULL;
   if (vm->mp < 1)
@@ -88,13 +86,13 @@ ERROR VM_Dup(VM* vm) {
   return ERROR_OK;
 }
 
-//swap memory values
-ERROR VM_Swap(VM* vm){
+// swap memory values
+ERROR VM_Swap(VM *vm) {
   if (vm->mp >= MEM_SIZE)
     return ERROR_MEMORY_FULL;
   if (vm->mp < 2)
     return ERROR_NOT_ENOUGH_OPERANDS;
-  
+
   Data tmp = vm->mem[vm->mp - 2];
   vm->mem[vm->mp - 2] = vm->mem[vm->mp - 1];
   vm->mem[vm->mp - 1] = tmp;
@@ -214,7 +212,8 @@ ERROR VM_Dec(VM *vm) {
 ERROR VM_Pow(VM *vm) {
   if (vm->mp < 2)
     return ERROR_NOT_ENOUGH_OPERANDS;
-  if (vm->mem[vm->mp - 1].kind != DATA_INTEGER || vm->mem[vm->mp - 2].kind != DATA_INTEGER)
+  if (vm->mem[vm->mp - 1].kind != DATA_INTEGER ||
+      vm->mem[vm->mp - 2].kind != DATA_INTEGER)
     return ERROR_UNIMPLEMENTED;
 
   vm->mem[vm->mp - 2].val.integer =
@@ -269,14 +268,9 @@ ERROR VM_Scan(VM *vm, Program prog) {
   return ERROR_OK;
 }
 
-ERROR VM_Jmp(VM* vm, Program prog){
-  return ERROR_UNIMPLEMENTED;
-}
+ERROR VM_Jmp(VM *vm, Program prog) { return ERROR_UNIMPLEMENTED; }
 
-
-ERROR VM_JmpN(VM* vm, Program prog){
-  return ERROR_UNIMPLEMENTED;
-}
+ERROR VM_JmpN(VM *vm, Program prog) { return ERROR_UNIMPLEMENTED; }
 
 ERROR VM_Jmpz(VM *vm, Program prog) {
   return ERROR_UNIMPLEMENTED;
@@ -316,7 +310,7 @@ ERROR VM_Halt(VM *vm, Program prog) {
   return ERROR_OK;
 }
 
-//dump current cpu stack state
+// dump current cpu stack state
 ERROR VM_Dump_Stack(VM *vm) {
   vm->ip++;
   printf("\n[CPU]\n");
@@ -332,15 +326,15 @@ ERROR VM_Dump_Stack(VM *vm) {
     switch (entry.kind) {
     case DATA_INTEGER:
       printf("\t %d: \t %lld \t [%s]\n", i, entry.val.integer,
-             DATAKIND_as_str(entry.kind));
+             KindAsStr(entry.kind));
       break;
     case DATA_FLOATING:
       printf("\t %d: \t %lf \t [%s]\n", i, entry.val.floating,
-             DATAKIND_as_str(entry.kind));
+             KindAsStr(entry.kind));
       break;
     case DATA_STRING:
       printf("\t %d: \t %s \t [%s]\n", i, entry.val.string,
-             DATAKIND_as_str(entry.kind));
+             KindAsStr(entry.kind));
       break;
     default:
       return ERROR_UNKNOWN_TYPE;
@@ -349,7 +343,7 @@ ERROR VM_Dump_Stack(VM *vm) {
   return ERROR_OK;
 }
 
-//dump current cpu mem state
+// dump current cpu mem state
 ERROR VM_Dump_Mem(VM *vm) {
   vm->ip++;
   printf("\n[CPU]\n");
@@ -365,15 +359,15 @@ ERROR VM_Dump_Mem(VM *vm) {
     switch (entry.kind) {
     case DATA_INTEGER:
       printf("\t %d: \t %lld \t [%s]\n", i, entry.val.integer,
-             DATAKIND_as_str(entry.kind));
+             KindAsStr(entry.kind));
       break;
     case DATA_FLOATING:
       printf("\t %d: \t %lf \t [%s]\n", i, entry.val.floating,
-             DATAKIND_as_str(entry.kind));
+             KindAsStr(entry.kind));
       break;
     case DATA_STRING:
       printf("\t %d: \t %s \t [%s]\n", i, entry.val.string,
-             DATAKIND_as_str(entry.kind));
+             KindAsStr(entry.kind));
       break;
     default:
       return ERROR_UNKNOWN_TYPE;

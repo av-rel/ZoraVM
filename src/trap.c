@@ -1,10 +1,10 @@
-#ifndef ERROR_C
-#define ERROR_C
+#ifndef TRAP_C
+#define TRAP_C
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "./include/error.h"
+#include "./include/trap.h"
 
 char *Errors[] = {
     [ERROR_OK] = "OK",
@@ -15,7 +15,6 @@ char *Errors[] = {
     [ERROR_STACK_UNDERFLOW] = "Stack Underflow",
     [ERROR_MEMORY_FULL] = "Memory full",
     [ERROR_MEMORY_EMPTY] = "Memory empty",
-    [ERROR_MISMATCH_TYPE] = "Mismatched types",
     [ERROR_UNEXPECTED_TYPE] = "Unexpected type",
     [ERROR_ILLEGAL_INST] = "Illegal instruction",
     [ERROR_UNKNOWN_TYPE] = "Unknown type",

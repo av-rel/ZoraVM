@@ -3,12 +3,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "./def.c"
-#include "./error.c"
 #include "./exec.c"
+#include "./include/macro.h"
 #include "./include/vm.h"
 #include "./inst.c"
 #include "./prog.c"
+#include "./trap.c"
 
 const char *NAME_SPACE = "";
 
@@ -17,10 +17,7 @@ int ZVM(char *source) {
   VM_INIT(vm);
 
   ERROR vm_err = ERROR_OK;
-  Program program[] = {
-      DumpMem(),
-      Halt(0)
-  };
+  Program program[] = {DumpMem(), Halt(0)};
 
   // main loop for executing instructions
   while (vm.state && vm_err == ERROR_OK && vm.ip < ArraySize(program))
@@ -33,7 +30,8 @@ int ZVM(char *source) {
   }
 
   if (vm.mem[vm.mp - 1].kind != DATA_INTEGER) {
-    printf("%s%s%s\n", NAME_SPACE, "[ERROR]: ", "Expected integer as return value\n");
+    printf("%s%s%s\n", NAME_SPACE,
+           "[ERROR]: ", "Expected integer as return value\n");
     return ERROR_UNEXPECTED_TYPE;
   }
 

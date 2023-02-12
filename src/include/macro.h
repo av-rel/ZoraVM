@@ -1,12 +1,10 @@
-#ifndef DEF_C
-#define DEF_C
+#ifndef MACRO_H
+#define MACRO_H
 
 #include <stdlib.h>
 #include <string.h>
 
-#include "./include/vm.h"
-
-#define ArraySize(arr) sizeof(arr)/sizeof(arr[0])
+#define ArraySize(arr) sizeof(arr) / sizeof(arr[0])
 
 #define EntryInt(v)                                                            \
   { .kind = DATA_INTEGER, .val.integer = v }
@@ -31,8 +29,10 @@
 #define Load(val)                                                              \
   { .inst = INST_LOAD, .entry = EntryInt(val) }
 
-#define Dup() {.inst = INST_DUP, }
-#define Swap() {.inst = INST_SWAP, }
+#define Dup()                                                                  \
+  { .inst = INST_DUP, }
+#define Swap()                                                                 \
+  { .inst = INST_SWAP, }
 
 #define AddInt()                                                               \
   { .inst = INST_ADD, EntryInt(0) }
@@ -112,34 +112,18 @@
 #define Halt(a)                                                                \
   { .inst = INST_HALT, .entry = EntryInt(a) }
 
+// Macro for the parser
+#define is_num(ch) (ch >= '0' && ch <= '9')
 
-char *DATAKIND_as_str(DATA_KIND kind) {
-  switch (kind) {
-  case DATA_INTEGER:
-    return "INTEGER";
-  case DATA_STRING:
-    return "STRING";
-  case DATA_FLOATING:
-    return "FLOATING";
-  default:
-    return "UNKNOWN";
-  }
-}
-
-
-static int is_num(char ch) { return ch >= '0' && ch <= '9'; }
-
-int is_str_int(char *str) {
-  for (int c = 0; c < strlen(str); c++)
-    if (!is_num(str[c]))
-      return 0;
+#define is_str_int(str)                                                        \
+  for (int c = 0; c < strlen(str); c++)                                        \
+    if (!is_num(str[c]))                                                       \
+      return 0;                                                                \
   return 1;
-}
 
-int parseInt(char *str) {
-  if (is_str_int(str))
-    return atoi(str);
+#define parseInt(str)                                                          \
+  if (is_str_int(str))                                                         \
+    return atoi(str);                                                          \
   return 0;
-}
 
 #endif
