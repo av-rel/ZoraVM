@@ -12,17 +12,19 @@
 typedef enum { DATA_INTEGER, DATA_FLOATING, DATA_STRING } DATA_KIND;
 
 typedef struct {
-  // TODO: add more data types (string, float, int, function, array, struct)
+  // TODO: add more data types (string, float, int, .. , function, array, struct)
   DATA_KIND kind;
   union {
     char *string;
     long long int integer;
     double floating;
   } val;
+  void* ptr;
 } Data;
 
 typedef struct {
   int state;          //state of vm | HALT or not
+  int *pc;            //program counter holding address of current execution data
   int ip;             // instruction pointer
   int sp;             // stack pointer
   int mp;             // mem pointer

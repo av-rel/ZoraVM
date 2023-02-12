@@ -1,7 +1,5 @@
-#include "include/inst.h"
 #define RUN_ZORAVM
 
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -12,7 +10,6 @@
 #include "./inst.c"
 #include "./prog.c"
 
-// TODO: 2 ** 62 > NaN :: Throw Error => No. out of range
 const char *NAME_SPACE = "";
 
 int ZVM(char *source) {
@@ -21,15 +18,12 @@ int ZVM(char *source) {
 
   ERROR vm_err = ERROR_OK;
   Program program[] = {
-      PushInt(10),
-      PushStr("100"),
-      Swap(0),
       DumpMem(),
       Halt(0)
   };
 
   // main loop for executing instructions
-  while (vm.state && vm_err == ERROR_OK)
+  while (vm.state && vm_err == ERROR_OK && vm.ip < ArraySize(program))
     vm_err = VM_Execute(&vm, program[vm.ip]);
   //
 

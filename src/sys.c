@@ -60,8 +60,8 @@ char *filereader(char *path) {
 
 long long filewriter(char *path, char *content) {
   FILE *file = fopen(path, "w");
-  if (!file)
-    return -1;
+
+  if (!file) return -1;
 
   fprintf(file, "%s", content);
   long long size = filesize_from_fp(file);
@@ -72,11 +72,8 @@ long long filewriter(char *path, char *content) {
 
 char *get_file_extract(char *file) {
   char *extract = (char *)strrchr((char *)strdup(file), '\\');
-
-  if (!extract)
-    extract = (char *)strrchr(extract, '/');
-  if (extract)
-    *extract = '\0';
+  if (!extract) extract = (char *)strrchr(extract, '/');
+  if (extract) *extract = '\0';
 
   return (char *)++extract;
 }

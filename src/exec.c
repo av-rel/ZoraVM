@@ -269,17 +269,31 @@ ERROR VM_Scan(VM *vm, Program prog) {
   return ERROR_OK;
 }
 
+ERROR VM_Jmp(VM* vm, Program prog){
+  return ERROR_UNIMPLEMENTED;
+}
+
+
+ERROR VM_JmpN(VM* vm, Program prog){
+  return ERROR_UNIMPLEMENTED;
+}
+
 ERROR VM_Jmpz(VM *vm, Program prog) {
   return ERROR_UNIMPLEMENTED;
   //   return ERROR_OK;
 }
 
-ERROR VM_Jmpnz(VM *vm, Program prog) {
+ERROR VM_JmpNz(VM *vm, Program prog) {
   return ERROR_UNIMPLEMENTED;
   //   return ERROR_OK;
 }
 
-ERROR VM_Jmp(VM *vm, Program prog) {
+ERROR VM_JmpIf(VM *vm, Program prog) {
+  return ERROR_UNIMPLEMENTED;
+  //   return ERROR_OK;
+}
+
+ERROR VM_JmpIfNot(VM *vm, Program prog) {
   return ERROR_UNIMPLEMENTED;
   //   return ERROR_OK;
 }
@@ -302,6 +316,7 @@ ERROR VM_Halt(VM *vm, Program prog) {
   return ERROR_OK;
 }
 
+//dump current cpu stack state
 ERROR VM_Dump_Stack(VM *vm) {
   vm->ip++;
   printf("\n[CPU]\n");
@@ -334,6 +349,7 @@ ERROR VM_Dump_Stack(VM *vm) {
   return ERROR_OK;
 }
 
+//dump current cpu mem state
 ERROR VM_Dump_Mem(VM *vm) {
   vm->ip++;
   printf("\n[CPU]\n");

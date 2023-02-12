@@ -6,6 +6,8 @@
 
 #include "./include/vm.h"
 
+#define ArraySize(arr) sizeof(arr)/sizeof(arr[0])
+
 #define EntryInt(v)                                                            \
   { .kind = DATA_INTEGER, .val.integer = v }
 #define EntryFloat(v)                                                          \
@@ -29,11 +31,8 @@
 #define Load(val)                                                              \
   { .inst = INST_LOAD, .entry = EntryInt(val) }
 
-#define Dup(val)    \
-  {.inst = INST_DUP, .entry = EntryInt(val)}
-
-#define Swap(val)    \
-  {.inst = INST_SWAP, .entry = EntryInt(val)}
+#define Dup() {.inst = INST_DUP, }
+#define Swap() {.inst = INST_SWAP, }
 
 #define AddInt()                                                               \
   { .inst = INST_ADD, EntryInt(0) }
@@ -109,6 +108,7 @@
   { .inst = INST_DUMP_STACK, }
 #define DumpMem()                                                              \
   { .inst = INST_DUMP_MEM, }
+
 #define Halt(a)                                                                \
   { .inst = INST_HALT, .entry = EntryInt(a) }
 
