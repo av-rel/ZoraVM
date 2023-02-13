@@ -18,11 +18,20 @@ int ZVM(char *source) {
 
   ERROR vm_err = ERROR_OK;
   Program program[] = {
-      PushStr("Hello"),
-      PushInt(123),
-      CmpNot(),
-      DumpMem(),
-      Halt(0),
+    PushInt(30),
+    Store(0),
+    Load(0),
+    Dec(),
+    Store(0),
+    Load(0),
+    Print(),
+    PushStr("\n"),
+    Print(),
+    Load(0),
+    JmpIf(2),
+    PushStr("Loop complete\n"),
+    Print(),
+    Halt(0),
   };
 
   // main loop for executing instructions
@@ -101,6 +110,8 @@ ERROR VM_Execute(VM *vm, Program prog) {
     return VM_CmpNot(vm);
   case INST_JMP:
     return VM_Jmp(vm, prog);
+  case INST_JMPIF:
+    return VM_JmpIf(vm, prog);
   case INST_PRINT:
     return VM_Print(vm);
   case INST_SCAN:

@@ -67,7 +67,6 @@ ERROR VM_Load(VM *vm, Data data) {
     return ERROR_MEMORY_FULL;
 
   vm->mem[vm->mp++] = vm->stack[data.val.integer];
-  vm->sp--;
   vm->ip++;
 
   return ERROR_OK;
@@ -238,7 +237,7 @@ ERROR VM_Inc(VM *vm) {
 
   if (vm->mem[vm->mp - 1].kind == DATA_INTEGER)
     ++vm->mem[vm->mp - 1].val.integer;
-  if (vm->mem[vm->mp - 1].kind == DATA_FLOATING)
+  else if (vm->mem[vm->mp - 1].kind == DATA_FLOATING)
     ++vm->mem[vm->mp - 1].val.floating;
   else if (vm->mem[vm->mp - 1].kind == DATA_STRING)
     return ERROR_ILLEGAL_INST;
@@ -256,7 +255,7 @@ ERROR VM_Dec(VM *vm) {
 
   if (vm->mem[vm->mp - 1].kind == DATA_INTEGER)
     --vm->mem[vm->mp - 1].val.integer;
-  if (vm->mem[vm->mp - 1].kind == DATA_FLOATING)
+  else if (vm->mem[vm->mp - 1].kind == DATA_FLOATING)
     --vm->mem[vm->mp - 1].val.floating;
   else if (vm->mem[vm->mp - 1].kind == DATA_STRING)
     return ERROR_ILLEGAL_INST;
@@ -422,12 +421,31 @@ ERROR VM_CmpNot(VM *vm) {
 }
 
 ERROR VM_Jmp(VM *vm, Program prog) {
+  //   vm->ip = prog.entry.val.integer;
+  return ERROR_UNIMPLEMENTED;
+  return ERROR_OK;
+}
+
+ERROR VM_JmpIf(VM *vm, Program prog) {
+  if (vm->mp < 1) return ERROR_MEMORY_EMPTY;
+
+  if (vm->mem[vm->mp - 1].kind != DATA_INTEGER) return ERROR_ILLEGAL_INST;
+
+  if (vm->mem[vm->mp - 1].val.integer == 0) vm->ip++;
+  else vm->ip = prog.entry.val.integer;
+
+  return ERROR_OK;
+}
+
+ERROR VM_JmpIfNot(VM *vm, Program prog) {
   if (vm->mp < 1)
     return ERROR_MEMORY_EMPTY;
+
   if (vm->mem[vm->mp - 1].kind != DATA_INTEGER)
     return ERROR_ILLEGAL_INST;
 
-  vm->ip = vm->mem[--vm->mp].val.integer;
+  if (vm->mem[vm->mp - 1].val.integer != 0) vm->ip++;
+  else vm->ip = prog.entry.val.integer;
 
   return ERROR_OK;
 }

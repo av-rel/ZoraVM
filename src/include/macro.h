@@ -72,6 +72,10 @@
 
 #define Jmp(val)                                                               \
   { .inst = INST_JMP, .entry = EntryInt(val) }
+#define JmpIf(val)                                                             \
+  { .inst = INST_JMPIF, .entry = EntryInt(val) }
+#define JmpIfNot(val)                                                          \
+  { .inst = INST_JMPIFN, .entry = EntryInt(val) }
 
 #define Print()                                                                \
   { .inst = INST_PRINT, }
