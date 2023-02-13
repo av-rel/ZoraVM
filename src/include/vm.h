@@ -7,7 +7,7 @@
 #define MEM_SIZE 69
 #define STACK_SIZE 1024
 
-#define VM_INIT(vm) (vm.state = 1, vm.ip = 0, vm.sp = 0, vm.mp = 0, vm.pc = 0)
+#define VM_INIT(vm) (vm.state = 1, vm.ip = 0, vm.sp = 0, vm.mp = 0)
 
 typedef enum {
   DATA_STRING,
@@ -15,9 +15,7 @@ typedef enum {
   DATA_FLOATING,
 } DATA_KIND;
 
-#define KindAsStr(kind)                                                        \
-  (kind == DATA_STRING ? "string"                                              \
-                       : (kind == DATA_INTEGER ? "integer" : "floating"))
+#define KindAsStr(kind) (kind == DATA_STRING ? "string" : (kind == DATA_INTEGER ? "integer" : (kind == DATA_FLOATING ? "float" : "unknown" )))
 
 typedef struct {
   // TODO: add more data types (string, float, int, .. , function, array,
@@ -33,7 +31,6 @@ typedef struct {
 
 typedef struct {
   int state; // state of vm | HALT or not
-  int *pc;   // program counter holding address of current execution data
   int ip;    // instruction pointer
   int sp;    // stack pointer
   int mp;    // mem pointer

@@ -47,10 +47,8 @@ ERROR VM_Pop(VM *vm) {
 
 // store to the stack from mem
 ERROR VM_Store(VM *vm, Data data) {
-  if (vm->sp >= STACK_SIZE)
-    return ERROR_STACK_OVERFLOW;
-  if (vm->mp < 1)
-    return ERROR_MEMORY_EMPTY;
+  if (vm->sp >= STACK_SIZE) return ERROR_STACK_OVERFLOW;
+  if (vm->mp < 1) return ERROR_MEMORY_EMPTY;
 
   vm->stack[data.val.integer] = vm->mem[--vm->mp];
   vm->sp++;
@@ -61,10 +59,8 @@ ERROR VM_Store(VM *vm, Data data) {
 
 // load from stack to the mem
 ERROR VM_Load(VM *vm, Data data) {
-  if (vm->sp < 1)
-    return ERROR_STACK_UNDERFLOW;
-  if (vm->mp >= MEM_SIZE)
-    return ERROR_MEMORY_FULL;
+  if (vm->sp < 1) return ERROR_STACK_UNDERFLOW;
+  if (vm->mp >= MEM_SIZE) return ERROR_MEMORY_FULL;
 
   vm->mem[vm->mp++] = vm->stack[data.val.integer];
   vm->sp--;
@@ -114,8 +110,7 @@ ERROR VM_Add(VM *vm) {
     vm->mem[vm->mp - 2].val.integer += two.val.integer;
     vm->mem[vm->mp - 2].kind = DATA_INTEGER;
   }else if (one.kind == DATA_STRING && two.kind == DATA_STRING){
-    char* tmp;
-    (char*)strcat(strcpy(tmp, one.val.string), two.val.string);
+    char* tmp = strcat(strcpy(tmp, one.val.string), two.val.string);
     vm->mem[vm->mp - 2].val.string = tmp; 
     vm->mem[vm->mp - 2].kind = DATA_STRING;
   } else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING){
@@ -351,12 +346,11 @@ ERROR VM_Shr(VM *vm) {
   return ERROR_OK;
 }
 
-ERROR VM_Print(VM *vm, Program prog) {
+ERROR VM_Print(VM *vm) {
   if (vm->mp < 1)
     return ERROR_MEMORY_EMPTY;
 
-  Data entry = prog.entry;
-  switch (entry.kind) {
+  switch (vm->mem[vm->mp - 1].kind) {
   case DATA_INTEGER:
     printf("%lld", vm->mem[--vm->mp].val.integer);
     break;
@@ -369,6 +363,7 @@ ERROR VM_Print(VM *vm, Program prog) {
   default:
     return ERROR_UNKNOWN_TYPE;
   }
+
   vm->ip++;
   return ERROR_OK;
 }
