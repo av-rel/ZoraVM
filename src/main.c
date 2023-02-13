@@ -18,7 +18,7 @@ int ZVM(char *source) {
 
   ERROR vm_err = ERROR_OK;
   Program program[] = {
-      PushInt(0), PushInt(0), OrInt(), DumpMem(), Halt(0),
+      PushStr("Hello"), PushStr(" World"), Add(), DumpMem(), Halt(0),
   };
 
   // main loop for executing instructions

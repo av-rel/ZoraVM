@@ -12,6 +12,7 @@ typedef enum {
   ERROR_NOT_ENOUGH_OPERANDS, // not enough operands on the memory for execution
   ERROR_UNEXPECTED_TYPE,     // unexpected type
   ERROR_ILLEGAL_INST,        // illegal instruction
+  ERROR_ILLEGAL_INST_TYPE,        // illegal instruction
   ERROR_UNKNOWN_TYPE,        // unknown type
   ERROR_UNKNOWN_INST,        // unknown instruction
   ERROR_UNIMPLEMENTED,       // unimplemented instruction
