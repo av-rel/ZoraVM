@@ -32,40 +32,48 @@
 #define Swap()                                                                 \
   { .inst = INST_SWAP, }
 
-#define Add()                                                               \
+#define Add()                                                                  \
   { .inst = INST_ADD, }
-#define Sub()                                                               \
+#define Sub()                                                                  \
   { .inst = INST_SUB, }
-#define Mul()                                                               \
+#define Mul()                                                                  \
   { .inst = INST_MUL, }
-#define Div()                                                               \
+#define Div()                                                                  \
   { .inst = INST_DIV, }
-#define Mod()                                                               \
+#define Mod()                                                                  \
   { .inst = INST_MOD, }
 
-#define Inc()                                                               \
+#define Inc()                                                                  \
   { .inst = INST_INC, }
-#define Dec()                                                               \
+#define Dec()                                                                  \
   { .inst = INST_DEC, }
-#define Pow()                                                               \
+#define Pow()                                                                  \
   { .inst = INST_POW, }
 
-#define Neg()                                                               \
+#define Neg()                                                                  \
   { .inst = INST_NEG, }
-#define Not()                                                               \
+#define Not()                                                                  \
   { .inst = INST_NOT, }
-#define And()                                                               \
+#define And()                                                                  \
   { .inst = INST_AND, }
-#define Or()                                                                \
+#define Or()                                                                   \
   { .inst = INST_OR, }
-#define Xor()                                                               \
+#define Xor()                                                                  \
   { .inst = INST_XOR, }
-#define Shl()                                                               \
+#define Shl()                                                                  \
   { .inst = INST_SHL, }
-#define Shr()                                                               \
+#define Shr()                                                                  \
   { .inst = INST_SHR, }
 
-#define Print()                                                             \
+#define Cmp()                                                                  \
+  { .inst = INST_CMP, }
+#define CmpNot()                                                               \
+  { .inst = INST_CMPN, }
+
+#define Jmp(val)                                                               \
+  { .inst = INST_JMP, .entry = EntryInt(val) }
+
+#define Print()                                                                \
   { .inst = INST_PRINT, }
 
 #define ScanInt()                                                              \

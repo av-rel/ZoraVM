@@ -31,7 +31,7 @@ typedef enum {
   INST_JGE,
   INST_JLE,
   //
-  INST_NCMP,
+  INST_CMPN,
   INST_JMPIFN,
   INST_JNZ,
   INST_JNE,

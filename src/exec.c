@@ -47,8 +47,10 @@ ERROR VM_Pop(VM *vm) {
 
 // store to the stack from mem
 ERROR VM_Store(VM *vm, Data data) {
-  if (vm->sp >= STACK_SIZE) return ERROR_STACK_OVERFLOW;
-  if (vm->mp < 1) return ERROR_MEMORY_EMPTY;
+  if (vm->sp >= STACK_SIZE)
+    return ERROR_STACK_OVERFLOW;
+  if (vm->mp < 1)
+    return ERROR_MEMORY_EMPTY;
 
   vm->stack[data.val.integer] = vm->mem[--vm->mp];
   vm->sp++;
@@ -59,8 +61,10 @@ ERROR VM_Store(VM *vm, Data data) {
 
 // load from stack to the mem
 ERROR VM_Load(VM *vm, Data data) {
-  if (vm->sp < 1) return ERROR_STACK_UNDERFLOW;
-  if (vm->mp >= MEM_SIZE) return ERROR_MEMORY_FULL;
+  if (vm->sp < 1)
+    return ERROR_STACK_UNDERFLOW;
+  if (vm->mp >= MEM_SIZE)
+    return ERROR_MEMORY_FULL;
 
   vm->mem[vm->mp++] = vm->stack[data.val.integer];
   vm->sp--;
@@ -100,23 +104,26 @@ ERROR VM_Swap(VM *vm) {
 
 // add the two val from mem stack and push it back to the mem stack
 ERROR VM_Add(VM *vm) {
-  if (vm->mp < 2) return ERROR_NOT_ENOUGH_OPERANDS;
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
 
   Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
-  if (one.kind != two.kind) return ERROR_ILLEGAL_INST_TYPE;
+  if (one.kind != two.kind)
+    return ERROR_ILLEGAL_INST_TYPE;
 
   if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER) {
     vm->mem[vm->mp - 2].val.integer += two.val.integer;
     vm->mem[vm->mp - 2].kind = DATA_INTEGER;
-  }else if (one.kind == DATA_STRING && two.kind == DATA_STRING){
-    char* tmp = strcat(strcpy(tmp, one.val.string), two.val.string);
-    vm->mem[vm->mp - 2].val.string = tmp; 
+  } else if (one.kind == DATA_STRING && two.kind == DATA_STRING) {
+    char *tmp = strcat(strcpy(tmp, one.val.string), two.val.string);
+    vm->mem[vm->mp - 2].val.string = tmp;
     vm->mem[vm->mp - 2].kind = DATA_STRING;
-  } else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING){
+  } else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING) {
     vm->mem[vm->mp - 2].val.floating += two.val.floating;
     vm->mem[vm->mp - 2].kind = DATA_FLOATING;
-  } else return ERROR_UNKNOWN_TYPE;
+  } else
+    return ERROR_UNKNOWN_TYPE;
 
   vm->mem[--vm->mp] = (Data){0};
   vm->ip++;
@@ -131,16 +138,19 @@ ERROR VM_Sub(VM *vm) {
 
   Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
-  if (one.kind != two.kind) return ERROR_ILLEGAL_INST_TYPE;
+  if (one.kind != two.kind)
+    return ERROR_ILLEGAL_INST_TYPE;
 
   if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER) {
     vm->mem[vm->mp - 2].val.integer -= two.val.integer;
     vm->mem[vm->mp - 2].kind = DATA_INTEGER;
-  } else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING){
+  } else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING) {
     vm->mem[vm->mp - 2].val.floating -= two.val.floating;
     vm->mem[vm->mp - 2].kind = DATA_FLOATING;
-  } else if (one.kind == DATA_STRING && two.kind == DATA_STRING) return ERROR_ILLEGAL_INST;
-  else return ERROR_UNKNOWN_TYPE;
+  } else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+    return ERROR_ILLEGAL_INST;
+  else
+    return ERROR_UNKNOWN_TYPE;
 
   vm->mem[--vm->mp] = (Data){0};
   vm->ip++;
@@ -155,18 +165,19 @@ ERROR VM_Mul(VM *vm) {
 
   Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
-  if (one.kind != two.kind) return ERROR_ILLEGAL_INST_TYPE;
+  if (one.kind != two.kind)
+    return ERROR_ILLEGAL_INST_TYPE;
 
   if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER) {
     vm->mem[vm->mp - 2].val.integer *= two.val.integer;
     vm->mem[vm->mp - 2].kind = DATA_INTEGER;
-  }
-  else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING){
+  } else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING) {
     vm->mem[vm->mp - 2].val.floating *= two.val.floating;
     vm->mem[vm->mp - 2].kind = DATA_FLOATING;
-  } 
-  else if (one.kind == DATA_STRING && two.kind == DATA_STRING) return ERROR_ILLEGAL_INST;
-  else return ERROR_UNKNOWN_TYPE;
+  } else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+    return ERROR_ILLEGAL_INST;
+  else
+    return ERROR_UNKNOWN_TYPE;
 
   vm->mem[--vm->mp] = (Data){0};
   vm->ip++;
@@ -181,16 +192,19 @@ ERROR VM_Div(VM *vm) {
 
   Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
-  if (one.kind != two.kind) return ERROR_ILLEGAL_INST_TYPE;
+  if (one.kind != two.kind)
+    return ERROR_ILLEGAL_INST_TYPE;
 
   if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER) {
     vm->mem[vm->mp - 2].val.integer /= two.val.integer;
     vm->mem[vm->mp - 2].kind = DATA_INTEGER;
-  } else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING){
+  } else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING) {
     vm->mem[vm->mp - 2].val.floating /= two.val.floating;
     vm->mem[vm->mp - 2].kind = DATA_FLOATING;
-  } else if (one.kind == DATA_STRING && two.kind == DATA_STRING) return ERROR_ILLEGAL_INST;
-  else return ERROR_UNKNOWN_TYPE;
+  } else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+    return ERROR_ILLEGAL_INST;
+  else
+    return ERROR_UNKNOWN_TYPE;
 
   return ERROR_OK;
 }
@@ -202,15 +216,18 @@ ERROR VM_Mod(VM *vm) {
 
   Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
-  if (one.kind != two.kind) return ERROR_ILLEGAL_INST_TYPE;
+  if (one.kind != two.kind)
+    return ERROR_ILLEGAL_INST_TYPE;
 
   if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER) {
     vm->mem[vm->mp - 2].val.integer %= two.val.integer;
     vm->mem[vm->mp - 2].kind = DATA_INTEGER;
-  }
-  else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING) return ERROR_ILLEGAL_INST;
-  else if (one.kind == DATA_STRING && two.kind == DATA_STRING) return ERROR_ILLEGAL_INST;
-  else return ERROR_UNKNOWN_TYPE;
+  } else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
+    return ERROR_ILLEGAL_INST;
+  else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+    return ERROR_ILLEGAL_INST;
+  else
+    return ERROR_UNKNOWN_TYPE;
 
   return ERROR_OK;
 }
@@ -219,10 +236,14 @@ ERROR VM_Inc(VM *vm) {
   if (vm->mp < 1)
     return ERROR_MEMORY_EMPTY;
 
-  if (vm->mem[vm->mp - 1].kind == DATA_INTEGER) ++vm->mem[vm->mp - 1].val.integer;
-  if (vm->mem[vm->mp - 1].kind == DATA_FLOATING) ++vm->mem[vm->mp - 1].val.floating;
-  else if (vm->mem[vm->mp - 1].kind == DATA_STRING) return ERROR_ILLEGAL_INST;
-  else return ERROR_UNKNOWN_TYPE;
+  if (vm->mem[vm->mp - 1].kind == DATA_INTEGER)
+    ++vm->mem[vm->mp - 1].val.integer;
+  if (vm->mem[vm->mp - 1].kind == DATA_FLOATING)
+    ++vm->mem[vm->mp - 1].val.floating;
+  else if (vm->mem[vm->mp - 1].kind == DATA_STRING)
+    return ERROR_ILLEGAL_INST;
+  else
+    return ERROR_UNKNOWN_TYPE;
 
   vm->ip++;
 
@@ -230,33 +251,41 @@ ERROR VM_Inc(VM *vm) {
 }
 
 ERROR VM_Dec(VM *vm) {
-  if (vm->mp < 1) return ERROR_MEMORY_EMPTY;
+  if (vm->mp < 1)
+    return ERROR_MEMORY_EMPTY;
 
-  if (vm->mem[vm->mp - 1].kind == DATA_INTEGER) --vm->mem[vm->mp - 1].val.integer;
-  if (vm->mem[vm->mp - 1].kind == DATA_FLOATING) --vm->mem[vm->mp - 1].val.floating;
-  else if (vm->mem[vm->mp - 1].kind == DATA_STRING) return ERROR_ILLEGAL_INST;
-  else return ERROR_UNKNOWN_TYPE;  vm->ip++;
+  if (vm->mem[vm->mp - 1].kind == DATA_INTEGER)
+    --vm->mem[vm->mp - 1].val.integer;
+  if (vm->mem[vm->mp - 1].kind == DATA_FLOATING)
+    --vm->mem[vm->mp - 1].val.floating;
+  else if (vm->mem[vm->mp - 1].kind == DATA_STRING)
+    return ERROR_ILLEGAL_INST;
+  else
+    return ERROR_UNKNOWN_TYPE;
+  vm->ip++;
 
   return ERROR_OK;
 }
 
 ERROR VM_Pow(VM *vm) {
-  if (vm->mp < 2) return ERROR_NOT_ENOUGH_OPERANDS;
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
 
   Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
-  if (two.kind != DATA_INTEGER) return ERROR_ILLEGAL_INST;
+  if (two.kind != DATA_INTEGER)
+    return ERROR_ILLEGAL_INST;
 
   if (one.kind == DATA_INTEGER) {
     vm->mem[vm->mp - 2].val.integer = pow(one.val.integer, two.val.integer);
     vm->mem[vm->mp - 2].kind = DATA_INTEGER;
-  }
-  else if (one.kind == DATA_FLOATING) {
+  } else if (one.kind == DATA_FLOATING) {
     vm->mem[vm->mp - 2].val.floating = pow(one.val.floating, two.val.floating);
     vm->mem[vm->mp - 2].kind = DATA_FLOATING;
-  }
-  else if (one.kind == DATA_STRING) return ERROR_UNIMPLEMENTED; 
-  else return ERROR_UNKNOWN_TYPE;
+  } else if (one.kind == DATA_STRING)
+    return ERROR_UNIMPLEMENTED;
+  else
+    return ERROR_UNKNOWN_TYPE;
 
   vm->mem[--vm->mp] = (Data){0};
   vm->ip++;
@@ -346,6 +375,71 @@ ERROR VM_Shr(VM *vm) {
   return ERROR_OK;
 }
 
+ERROR VM_Cmp(VM *vm) {
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
+
+  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+
+  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER)
+    vm->mem[vm->mp - 2].val.integer = one.val.integer == two.val.integer;
+  else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
+    vm->mem[vm->mp - 2].val.integer = one.val.floating == two.val.floating;
+  else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+    vm->mem[vm->mp - 2].val.integer =
+        strcmp(one.val.string, two.val.string) == 0;
+  else
+    vm->mem[vm->mp - 2].val.integer = 0;
+
+  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
+  vm->mem[--vm->mp] = (Data){0};
+  vm->ip++;
+
+  return ERROR_OK;
+}
+
+ERROR VM_CmpNot(VM *vm) {
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
+
+  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+
+  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER)
+    vm->mem[vm->mp - 2].val.integer = !(one.val.integer == two.val.integer);
+  else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
+    vm->mem[vm->mp - 2].val.integer = !(one.val.floating == two.val.floating);
+  else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+    vm->mem[vm->mp - 2].val.integer =
+        !(strcmp(one.val.string, two.val.string) == 0);
+  else
+    vm->mem[vm->mp - 2].val.integer = 1;
+
+  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
+  vm->mem[--vm->mp] = (Data){0};
+  vm->ip++;
+
+  return ERROR_OK;
+}
+
+ERROR VM_Jmp(VM *vm, Program prog) {
+  if (vm->mp < 1)
+    return ERROR_MEMORY_EMPTY;
+  if (vm->mem[vm->mp - 1].kind != DATA_INTEGER)
+    return ERROR_ILLEGAL_INST;
+
+  vm->ip = vm->mem[--vm->mp].val.integer;
+
+  return ERROR_OK;
+}
+
+ERROR VM_Ret(VM *vm, Program prog) {
+  vm->mem[vm->mp].kind = DATA_INTEGER;
+  vm->mem[vm->mp].val.integer = prog.entry.val.integer;
+  vm->mp++;
+  vm->ip++;
+  return ERROR_OK;
+}
+
 ERROR VM_Print(VM *vm) {
   if (vm->mp < 1)
     return ERROR_MEMORY_EMPTY;
@@ -386,38 +480,6 @@ ERROR VM_Scan(VM *vm, Program prog) {
   default:
     return ERROR_UNKNOWN_TYPE;
   }
-  vm->ip++;
-  return ERROR_OK;
-}
-
-ERROR VM_Jmp(VM *vm, Program prog) { return ERROR_UNIMPLEMENTED; }
-
-ERROR VM_JmpN(VM *vm, Program prog) { return ERROR_UNIMPLEMENTED; }
-
-ERROR VM_Jmpz(VM *vm, Program prog) {
-  return ERROR_UNIMPLEMENTED;
-  //   return ERROR_OK;
-}
-
-ERROR VM_JmpNz(VM *vm, Program prog) {
-  return ERROR_UNIMPLEMENTED;
-  //   return ERROR_OK;
-}
-
-ERROR VM_JmpIf(VM *vm, Program prog) {
-  return ERROR_UNIMPLEMENTED;
-  //   return ERROR_OK;
-}
-
-ERROR VM_JmpIfNot(VM *vm, Program prog) {
-  return ERROR_UNIMPLEMENTED;
-  //   return ERROR_OK;
-}
-
-ERROR VM_Ret(VM *vm, Program prog) {
-  vm->mem[vm->mp].kind = DATA_INTEGER;
-  vm->mem[vm->mp].val.integer = prog.entry.val.integer;
-  vm->mp++;
   vm->ip++;
   return ERROR_OK;
 }

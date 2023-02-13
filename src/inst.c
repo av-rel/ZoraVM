@@ -6,26 +6,27 @@
 #include "./include/inst.h"
 
 const char *keywords[] = {
-    [INST_PUSH]     =   "push",
-    [INST_POP]      =   "pop", 
-    [INST_STORE]    =   "store",
-    [INST_LOAD]     =   "load",
-    [INST_PRINT]    =   "print",
-    [INST_SCAN]     =   "scan",
-    [INST_RET]      =   "ret",
-    [INST_HALT]     =   "halt",
-    //
+    // V
+    [INST_PUSH]     =   "push", // V
+    [INST_POP]      =   "pop",  // V
+    [INST_STORE]    =   "store", // V
+    [INST_LOAD]     =   "load", // V
+    [INST_PRINT]    =   "print", // V
+    [INST_SCAN]     =   "scan", // V
+    [INST_RET]      =   "ret", // v
+    [INST_HALT]     =   "halt", //V
+    //v
     [INST_DUP]      =   "dup",
     [INST_SWAP]     =   "swap",
-    //
+    //v
     [INST_ADD]      =   "add",
     [INST_SUB]      =   "sub",
     [INST_MUL]      =   "mul",
     [INST_DIV]      =   "div",
     [INST_MOD]      =   "mod",
     //
-    [INST_CMP]      =   "cmp",
-    [INST_JMP]      =   "jmp",
+    [INST_CMP]      =   "cmp", // V
+    [INST_JMP]      =   "jmp", // V
     [INST_JMPIF]    =   "jmpif",
     [INST_JZ]       =   "jz",
     [INST_JE]       =   "je",
@@ -34,7 +35,7 @@ const char *keywords[] = {
     [INST_JL]       =   "jl",
     [INST_JLE]      =   "jle",
     //
-    [INST_NCMP]     =   "ncmp",
+    [INST_CMPN]     =   "cmpn", // V
     [INST_JMPIFN]   =   "jmpifn",
     [INST_JNZ]      =   "jnz",
     [INST_JNE]      =   "jne",
