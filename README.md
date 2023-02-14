@@ -5,10 +5,10 @@
 ## ZVM is a virtual machine written for Zora Programming Language using its own assembly code for cross-platform compatibility.
 
 # Features
-- [x] Assembly
-- [x] Cross-platform
-- [x] C Wrapper
-- [x] Compiler
+- [] Assembly
+- [] Cross-platform
+- [] C Wrapper
+- [] Compiler
 
 # How will it work?
 ## ZVM will be able to run Zora Assembly Code.
