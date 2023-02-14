@@ -1,10 +1,10 @@
-CC = gcc
+CC = tcc
 DIR = src
 FILE = main
 DISTDIR = bin
 L = c
 CFLAGS = -Wall -std=c99 -pedantic -g
-DIST = out
+DIST = exe
 ARGS = 
 
 .SILENT:

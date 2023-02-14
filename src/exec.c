@@ -374,7 +374,7 @@ ERROR VM_Shr(VM *vm) {
   return ERROR_OK;
 }
 
-ERROR VM_Cmp(VM *vm) {
+ERROR VM_CmpEq(VM *vm) {
   if (vm->mp < 2)
     return ERROR_NOT_ENOUGH_OPERANDS;
 
@@ -397,7 +397,7 @@ ERROR VM_Cmp(VM *vm) {
   return ERROR_OK;
 }
 
-ERROR VM_CmpNot(VM *vm) {
+ERROR VM_CmpNotEq(VM *vm) {
   if (vm->mp < 2)
     return ERROR_NOT_ENOUGH_OPERANDS;
 

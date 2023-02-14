@@ -2,7 +2,6 @@
 #define MACRO_H
 
 #include <stdlib.h>
-#include <string.h>
 
 #define ArraySize(arr) sizeof(arr) / sizeof(arr[0])
 

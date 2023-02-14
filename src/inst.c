@@ -25,24 +25,21 @@ const char *keywords[] = {
     [INST_DIV]      =   "div",
     [INST_MOD]      =   "mod",
     //
-    [INST_CMP]      =   "cmp", // V
+    [INST_CMP_EQ]   =   "cmp_eq", // V
+    [INST_CMP_GT]   =   "cmp_gt",
+    [INST_CMP_LT]   =   "cmp_lt",
+    [INST_CMP_GTE]  =   "cmp_gte",
+    [INST_CMP_LTE]  =   "cmp_lte",
+    //
+    [INST_CMP_NEQ]  =   "cmp_neq", // V
+    [INST_CMP_NGT]  =   "cmp_ngt",
+    [INST_CMP_NLT]  =   "cmp_nlt",
+    [INST_CMP_NGTE] =   "cmp_ngte",
+    [INST_CMP_NLTE] =   "cmp_nlte",
+    //
     [INST_JMP]      =   "jmp", // V
     [INST_JMPIF]    =   "jmpif",
-    [INST_JZ]       =   "jz",
-    [INST_JE]       =   "je",
-    [INST_JG]       =   "jg",
-    [INST_JGE]      =   "jge",
-    [INST_JL]       =   "jl",
-    [INST_JLE]      =   "jle",
-    //
-    [INST_CMPN]     =   "cmpn", // V
     [INST_JMPIFN]   =   "jmpifn",
-    [INST_JNZ]      =   "jnz",
-    [INST_JNE]      =   "jne",
-    [INST_JNG]      =   "jng",
-    [INST_JNGE]     =   "jnge",
-    [INST_JNL]      =   "jnl",
-    [INST_JNLE]     =   "jnle",
     //
     [INST_AND]      =   "and",
     [INST_OR]       =   "or",
@@ -60,11 +57,10 @@ const char *keywords[] = {
     [INST_FCLOSE]   =   "fclose",
     [INST_FREAD]    =   "fread",
     [INST_FWRITE]   =   "fwrite",
-    [INST_FAPPEND]  =   "fappend",
     [INST_FSIZE]    =   "fsize",
     // cpu state
-    [INST_DUMP_STACK]   =   "dumpstack",
-    [INST_DUMP_MEM]     =   "dumpmem",
+    [INST_DUMP_STACK]   =   "dump_stack",
+    [INST_DUMP_MEM]     =   "dump_mem",
 };
 
 int Is_Inst(char *c) {

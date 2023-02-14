@@ -5,7 +5,7 @@
 #include "./trap.h"
 
 #define MEM_SIZE 69
-#define STACK_SIZE 1024
+#define STACK_SIZE 6969
 
 #define VM_INIT(vm) (vm.state = 1, vm.ip = 0, vm.sp = 0, vm.mp = 0)
 
