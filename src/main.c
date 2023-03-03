@@ -1,4 +1,5 @@
 #define RUN_ZORAVM
+#define SHOUT 1
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,7 +19,7 @@ int ZVM(char *source) {
 
   ERROR vm_err = ERROR_OK;
   Program program[] = {
-    PushInt(6968),
+    PushInt(69),
     Store(0),
     Load(0),
     Dec(),
@@ -28,8 +29,9 @@ int ZVM(char *source) {
     PushStr("\n"),
     Print(),
     Load(0),
-    JmpIf(3),
-    PushStr("Loop complete\n"),
+    PushInt(67),
+    CmpGt(),
+    JmpIf(2),
     Print(),
     Halt(0),
   };
@@ -40,13 +42,16 @@ int ZVM(char *source) {
   //
 
   if (vm_err != ERROR_OK) {
+    #if SHOUT
     printf("%s%s%s\n", NAME_SPACE, "[ERROR]: ", Errors[vm_err]);
+    #endif
     return vm_err;
   }
 
   if (vm.mem[vm.mp - 1].kind != DATA_INTEGER) {
-    printf("%s%s%s\n", NAME_SPACE,
-           "[ERROR]: ", "Expected integer as return value\n");
+    #if SHOUT
+    printf("%s%s%s\n", NAME_SPACE, "[ERROR]: ", "Expected integer as return value\n");
+    #endif
     return ERROR_UNEXPECTED_TYPE;
   }
 
@@ -108,6 +113,22 @@ ERROR VM_Execute(VM *vm, Program prog) {
     return VM_CmpEq(vm);
   case INST_CMP_NEQ:
     return VM_CmpNotEq(vm);
+  case INST_CMP_GT:
+    return VM_CmpGt(vm);
+  case INST_CMP_NGT:
+    return VM_CmpNotGt(vm);
+  case INST_CMP_LT:
+    return VM_CmpLt(vm);
+  case INST_CMP_NLT:
+    return VM_CmpNotLt(vm);
+  case INST_CMP_GTE:
+    return VM_CmpGte(vm);
+  case INST_CMP_NGTE:
+    return VM_CmpNotGte(vm);
+  case INST_CMP_LTE:
+    return VM_CmpLte(vm);
+  case INST_CMP_NLTE:
+    return VM_CmpNotLte(vm);
   case INST_JMP:
     return VM_Jmp(vm, prog);
   case INST_JMPIF:
