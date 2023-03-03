@@ -53,7 +53,6 @@ typedef enum {
   INST_FCLOSE,
   INST_FREAD,
   INST_FWRITE,
-  INST_FSIZE,
   //
   INST_DUMP_STACK,
   INST_DUMP_MEM,
