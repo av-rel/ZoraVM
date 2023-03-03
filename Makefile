@@ -3,7 +3,7 @@ DIR = src
 FILE = main
 DISTDIR = bin
 L = c
-CFLAGS = -Wall -std=c99 -pedantic -g
+CFLAGS = -Wall -Wextra -Wpedantic -Werror
 DIST = exe
 ARGS = 
 
