@@ -7,7 +7,7 @@
 #define MEM_SIZE 69
 #define STACK_SIZE 6969
 
-#define VM_INIT(vm) (vm.state = 1, vm.ip = 0, vm.sp = 0, vm.mp = 0)
+#define VM_INIT(vm, np) (vm.state = 1, vm.ip = 0, vm.sp = 0, vm.mp = 0, vm.np = np)
 
 typedef enum {
   DATA_STRING,
@@ -30,7 +30,8 @@ typedef struct {
 } Data;
 
 typedef struct {
-  int state; // state of vm | HALT or not
+  int state;  // state of vm | HALT or not
+  int np;     //no. of programs
   int ip;    // instruction pointer
   int sp;    // stack pointer
   int mp;    // mem pointer
