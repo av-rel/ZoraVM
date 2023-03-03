@@ -57,7 +57,6 @@ const char *keywords[] = {
     [INST_FCLOSE]   =   "fclose",
     [INST_FREAD]    =   "fread",
     [INST_FWRITE]   =   "fwrite",
-    [INST_FSIZE]    =   "fsize",
     // cpu state
     [INST_DUMP_STACK]   =   "dump_stack",
     [INST_DUMP_MEM]     =   "dump_mem",
