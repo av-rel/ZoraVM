@@ -49,6 +49,8 @@ typedef enum {
   INST_DEC,
   INST_POW,
   //
+  INST_SIZEOF,
+  //
   INST_FOPEN,
   INST_FCLOSE,
   INST_FREAD,

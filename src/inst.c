@@ -25,17 +25,17 @@ const char *keywords[] = {
     [INST_DIV]      =   "div",
     [INST_MOD]      =   "mod",
     //
-    [INST_CMP_EQ]   =   "cmp_eq", // V
-    [INST_CMP_GT]   =   "cmp_gt",
-    [INST_CMP_LT]   =   "cmp_lt",
-    [INST_CMP_GTE]  =   "cmp_gte",
-    [INST_CMP_LTE]  =   "cmp_lte",
+    [INST_CMP_EQ]   =   "eq", // V
+    [INST_CMP_GT]   =   "gt",
+    [INST_CMP_LT]   =   "lt",
+    [INST_CMP_GTE]  =   "gte",
+    [INST_CMP_LTE]  =   "lte",
     //
-    [INST_CMP_NEQ]  =   "cmp_neq", // V
-    [INST_CMP_NGT]  =   "cmp_ngt",
-    [INST_CMP_NLT]  =   "cmp_nlt",
-    [INST_CMP_NGTE] =   "cmp_ngte",
-    [INST_CMP_NLTE] =   "cmp_nlte",
+    [INST_CMP_NEQ]  =   "neq", // V
+    [INST_CMP_NGT]  =   "ngt",
+    [INST_CMP_NLT]  =   "nlt",
+    [INST_CMP_NGTE] =   "ngte",
+    [INST_CMP_NLTE] =   "nlte",
     //
     [INST_JMP]      =   "jmp", // V
     [INST_JMPIF]    =   "jmpif",
@@ -57,6 +57,8 @@ const char *keywords[] = {
     [INST_FCLOSE]   =   "fclose",
     [INST_FREAD]    =   "fread",
     [INST_FWRITE]   =   "fwrite",
+
+    [INST_SIZEOF]   =   "sizeof",
     // cpu state
     [INST_DUMP_STACK]   =   "dump_stack",
     [INST_DUMP_MEM]     =   "dump_mem",
