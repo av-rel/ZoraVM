@@ -1,6 +1,6 @@
 CC = tcc
 DIR = src
-FILE = main
+FILE = zoravm
 DISTDIR = bin
 L = c
 CFLAGS = -Wall -Wextra -Wpedantic -Werror
