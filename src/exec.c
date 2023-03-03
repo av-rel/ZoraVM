@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <assert.h>
 #include <string.h>
 
 #include "./include/vm.h"
@@ -381,7 +382,7 @@ ERROR VM_CmpEq(VM *vm) {
   Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
   if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER)
-    vm->mem[vm->mp - 2].val.integer = one.val.integer == two.val.integer;
+    vm->mem[vm->mp - 2].val.integer = (int)one.val.integer == (int)two.val.integer;
   else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
     vm->mem[vm->mp - 2].val.integer = one.val.floating == two.val.floating;
   else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
@@ -404,12 +405,189 @@ ERROR VM_CmpNotEq(VM *vm) {
   Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
   if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER)
-    vm->mem[vm->mp - 2].val.integer = !(one.val.integer == two.val.integer);
+    vm->mem[vm->mp - 2].val.integer = (int)!((int)one.val.integer == (int)two.val.integer);
   else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
     vm->mem[vm->mp - 2].val.integer = !(one.val.floating == two.val.floating);
   else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
     vm->mem[vm->mp - 2].val.integer =
         !(strcmp(one.val.string, two.val.string) == 0);
+  else
+    vm->mem[vm->mp - 2].val.integer = 1;
+
+  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
+  vm->mem[--vm->mp] = (Data){0};
+  vm->ip++;
+
+  return ERROR_OK;
+}
+
+ERROR VM_CmpGt(VM *vm) {
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
+
+  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+
+  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER)
+    vm->mem[vm->mp - 2].val.integer = (int)one.val.integer > (int)two.val.integer;
+  else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
+    vm->mem[vm->mp - 2].val.integer = one.val.floating > two.val.floating;
+  else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+    vm->mem[vm->mp - 2].val.integer = (strcmp(one.val.string, two.val.string) == 1);
+  else
+    vm->mem[vm->mp - 2].val.integer = 0;
+
+  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
+  vm->mem[--vm->mp] = (Data){0};
+  vm->ip++;
+
+  return ERROR_OK;
+}
+
+ERROR VM_CmpNotGt(VM *vm) {
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
+
+  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+
+  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER)
+    vm->mem[vm->mp - 2].val.integer = (int)!((int)one.val.integer > (int)two.val.integer);
+  else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
+    vm->mem[vm->mp - 2].val.integer = !(one.val.floating > two.val.floating);
+  else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+    vm->mem[vm->mp - 2].val.integer = !(strcmp(one.val.string, two.val.string) == 1);
+  else
+    vm->mem[vm->mp - 2].val.integer = 1;
+
+  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
+  vm->mem[--vm->mp] = (Data){0};
+  vm->ip++;
+
+
+  return ERROR_OK;
+}
+
+ERROR VM_CmpLt(VM *vm) {
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
+
+  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+
+  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER)
+    vm->mem[vm->mp - 2].val.integer = (int)one.val.integer < (int)two.val.integer;
+  else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
+    vm->mem[vm->mp - 2].val.integer = one.val.floating < two.val.floating;
+  else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+    vm->mem[vm->mp - 2].val.integer = (strcmp(one.val.string, two.val.string) == -1);
+  else
+    vm->mem[vm->mp - 2].val.integer = 0;
+
+  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
+  vm->mem[--vm->mp] = (Data){0};
+  vm->ip++;
+
+  return ERROR_OK;
+}
+
+ERROR VM_CmpNotLt(VM *vm) {
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
+
+  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+
+  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER)
+    vm->mem[vm->mp - 2].val.integer = (int)!((int)one.val.integer < (int)two.val.integer);
+  else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
+    vm->mem[vm->mp - 2].val.integer = !(one.val.floating < two.val.floating);
+  else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+    vm->mem[vm->mp - 2].val.integer = !(strcmp(one.val.string, two.val.string) == -1);
+  else
+    vm->mem[vm->mp - 2].val.integer = 1;
+
+  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
+  vm->mem[--vm->mp] = (Data){0};
+  vm->ip++;
+
+  return ERROR_OK;
+}
+
+ERROR VM_CmpGte(VM *vm) {
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
+
+  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+
+  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER)
+    vm->mem[vm->mp - 2].val.integer = (int)((int)one.val.integer > (int)two.val.integer || (int)one.val.integer == (int)two.val.integer);
+  else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
+    vm->mem[vm->mp - 2].val.integer = (one.val.floating > two.val.floating || one.val.floating == two.val.floating);
+  else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+    vm->mem[vm->mp - 2].val.integer = (strcmp(one.val.string, two.val.string) == 1 || strcmp(one.val.string, two.val.string) == 0);
+  else
+    vm->mem[vm->mp - 2].val.integer = 0;
+
+  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
+  vm->mem[--vm->mp] = (Data){0};
+  vm->ip++;
+
+  return ERROR_OK;
+}
+
+ERROR VM_CmpNotGte(VM *vm) {
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
+
+  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+
+  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER)
+    vm->mem[vm->mp - 2].val.integer = (int)!((int)one.val.integer > (int)two.val.integer || (int)one.val.integer == (int)two.val.integer);
+  else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
+    vm->mem[vm->mp - 2].val.integer = !(one.val.floating > two.val.floating || one.val.floating == two.val.floating);
+  else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+    vm->mem[vm->mp - 2].val.integer = !(strcmp(one.val.string, two.val.string) == 1 || strcmp(one.val.string, two.val.string) == 0);
+  else
+    vm->mem[vm->mp - 2].val.integer = 1;
+
+  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
+  vm->mem[--vm->mp] = (Data){0};
+  vm->ip++;
+
+  return ERROR_OK;
+}
+
+ERROR VM_CmpLte(VM *vm) {
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
+
+  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+
+  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER)
+    vm->mem[vm->mp - 2].val.integer = (int)one.val.integer < (int)two.val.integer || (int)one.val.integer == (int)two.val.integer;
+  else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
+    vm->mem[vm->mp - 2].val.integer = (one.val.floating < two.val.floating || one.val.floating == two.val.floating);
+  else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+    vm->mem[vm->mp - 2].val.integer = (strcmp(one.val.string, two.val.string) == -1 || strcmp(one.val.string, two.val.string) == 0);
+  else
+    vm->mem[vm->mp - 2].val.integer = 0;
+
+  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
+  vm->mem[--vm->mp] = (Data){0};
+  vm->ip++;
+
+  return ERROR_OK;
+}
+
+ERROR VM_CmpNotLte(VM *vm) {
+  if (vm->mp < 2)
+    return ERROR_NOT_ENOUGH_OPERANDS;
+
+  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+
+  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER)
+    vm->mem[vm->mp - 2].val.integer = (int)!((int)one.val.integer < (int)two.val.integer || (int)one.val.integer == (int)two.val.integer);
+  else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
+    vm->mem[vm->mp - 2].val.integer = !(one.val.floating < two.val.floating || one.val.floating == two.val.floating);
+  else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+    vm->mem[vm->mp - 2].val.integer = !(strcmp(one.val.string, two.val.string) == -1 || strcmp(one.val.string, two.val.string) == 0);
   else
     vm->mem[vm->mp - 2].val.integer = 1;
 
@@ -515,6 +693,7 @@ ERROR VM_Halt(VM *vm, Program prog) {
 // dump current cpu stack state
 ERROR VM_Dump_Stack(VM *vm) {
   vm->ip++;
+  #if SHOUT
   printf("\n[CPU]\n");
   printf("\tIP: %d", vm->ip);
   printf("\tSP: %d", vm->sp);
@@ -542,12 +721,14 @@ ERROR VM_Dump_Stack(VM *vm) {
       return ERROR_UNKNOWN_TYPE;
     }
   }
+  #endif
   return ERROR_OK;
 }
 
 // dump current cpu mem state
 ERROR VM_Dump_Mem(VM *vm) {
   vm->ip++;
+  #if SHOUT
   printf("\n[CPU]\n");
   printf("\tIP: %d", vm->ip);
   printf("\tMP: %d", vm->mp);
@@ -575,6 +756,7 @@ ERROR VM_Dump_Mem(VM *vm) {
       return ERROR_UNKNOWN_TYPE;
     }
   }
+  #endif
   return ERROR_OK;
 }
 

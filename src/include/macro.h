@@ -64,10 +64,26 @@
 #define Shr()                                                                  \
   { .inst = INST_SHR, }
 
-#define Cmp()                                                                  \
-  { .inst = INST_CMP, }
-#define CmpNot()                                                               \
-  { .inst = INST_CMPN, }
+#define CmpEq()                                                                \
+  { .inst = INST_CMP_EQ, }
+#define CmpNeq()                                                               \
+  { .inst = INST_CMP_NEQ, }
+#define CmpGt()                                                                \
+  { .inst = INST_CMP_GT, }
+#define CmpNotGt()                                                             \
+  { .inst = INST_CMP_NGT, }
+#define CmpLt()                                                                \
+  { .inst = INST_CMP_LT, }
+#define CmpNotLt()                                                             \
+  { .inst = INST_CMP_NLT, }
+#define CmpGte()                                                                \
+  { .inst = INST_CMP_GTE, }
+#define CmpNotGte()                                                             \
+  { .inst = INST_CMP_NGTE, }
+#define CmpLte()                                                                \
+  { .inst = INST_CMP_LTE, }
+#define CmpNotLte()                                                             \
+  { .inst = INST_CMP_NLTE, }
 
 #define Jmp(val)                                                               \
   { .inst = INST_JMP, .entry = EntryInt(val) }
