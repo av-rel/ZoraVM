@@ -11,21 +11,13 @@
 #include "./prog.c"
 #include "./trap.c"
 
-int ZVM(char *source) {
+int ZoraVM(Program *program, int np) {
   VM vm = {0};
   VM_INIT(vm);
 
   ERROR vm_err = ERROR_OK;
-  Program program[] = {
-    PushStr("Hello, world\n"),
-    SizeOf(),
-    Print(),
-    PushStr("\n"),
-    Print(),
-    Halt(0),
-  };
 
-  while (vm.state && vm_err == ERROR_OK && vm.ip < ArraySize(program)) {
+  while (vm.state && vm_err == ERROR_OK && vm.ip < np) {
     vm_err = VM_Execute(&vm, program[vm.ip]);
   }
 
@@ -51,7 +43,16 @@ int main(int argc, char *argv[]) {
   //  TODO: Add a way to load programs from files;
   //   char *source = "PUSH 123\nPUSH 456\nDUMP\nADD\nDUMP\n";
 
-  return ZVM("");
+  Program program[] = {
+    PushStr("Hello, world\n"),
+    SizeOf(),
+    Print(),
+    PushStr("\n"),
+    Print(),
+    Halt(0),
+  };
+
+  return ZoraVM(program, ArraySize(program));
 }
 #endif
 
