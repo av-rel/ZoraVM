@@ -1,4 +1,4 @@
-#define RUN_ZORAVM
+/* #define RUN_ZORAVM */
 #define SHOUT 1
 
 #include <stdio.h>
@@ -45,9 +45,6 @@ int main(int argc, char *argv[]) {
 
   Program program[] = {
     PushStr("Hello, world\n"),
-    SizeOf(),
-    Print(),
-    PushStr("\n"),
     Print(),
     Halt(0),
   };
