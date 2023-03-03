@@ -102,6 +102,9 @@
 #define ScanStr()                                                              \
   { .inst = INST_SCAN, .entry = EntryStr(0) }
 
+#define SizeOf()                                                               \
+  {.inst = INST_SIZEOF, }
+
 #define DumpStack()                                                            \
   { .inst = INST_DUMP_STACK, }
 #define DumpMem()                                                              \

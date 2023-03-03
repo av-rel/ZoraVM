@@ -11,46 +11,34 @@
 #include "./prog.c"
 #include "./trap.c"
 
-const char *NAME_SPACE = "ZoraVM ";
-
 int ZVM(char *source) {
   VM vm = {0};
   VM_INIT(vm);
 
   ERROR vm_err = ERROR_OK;
   Program program[] = {
-    PushInt(69),
-    Store(0),
-    Load(0),
-    Dec(),
-    Store(0),
-    Load(0),
+    PushStr("Hello, world\n"),
+    SizeOf(),
     Print(),
     PushStr("\n"),
-    Print(),
-    Load(0),
-    PushInt(67),
-    CmpGt(),
-    JmpIf(2),
     Print(),
     Halt(0),
   };
 
-  // main loop for executing instructions
-  while (vm.state && vm_err == ERROR_OK && vm.ip < ArraySize(program))
+  while (vm.state && vm_err == ERROR_OK && vm.ip < ArraySize(program)) {
     vm_err = VM_Execute(&vm, program[vm.ip]);
-  //
+  }
 
   if (vm_err != ERROR_OK) {
     #if SHOUT
-    printf("%s%s%s\n", NAME_SPACE, "[ERROR]: ", Errors[vm_err]);
+    printf("%s%s%s\n", "" , "ERROR: ", Errors[vm_err]);
     #endif
     return vm_err;
   }
 
   if (vm.mem[vm.mp - 1].kind != DATA_INTEGER) {
     #if SHOUT
-    printf("%s%s%s\n", NAME_SPACE, "[ERROR]: ", "Expected integer as return value\n");
+    printf("%s%s%s\n", "" ,"ERROR: ", "Expected integer as return value\n");
     #endif
     return ERROR_UNEXPECTED_TYPE;
   }
@@ -133,10 +121,14 @@ ERROR VM_Execute(VM *vm, Program prog) {
     return VM_Jmp(vm, prog);
   case INST_JMPIF:
     return VM_JmpIf(vm, prog);
+  case INST_JMPIFN:
+    return VM_JmpIfNot(vm, prog);
   case INST_PRINT:
     return VM_Print(vm);
   case INST_SCAN:
     return VM_Scan(vm, prog);
+  case INST_SIZEOF:
+    return VM_SizeOf(vm);
   case INST_RET:
     return VM_Ret(vm, prog);
   case INST_HALT:

@@ -599,7 +599,7 @@ ERROR VM_CmpNotLte(VM *vm) {
 }
 
 ERROR VM_Jmp(VM *vm, Program prog) {
-  //   vm->ip = prog.entry.val.integer;
+  /* vm->ip = prog.entry.val.integer; */
   return ERROR_UNIMPLEMENTED;
   return ERROR_OK;
 }
@@ -676,6 +676,29 @@ ERROR VM_Scan(VM *vm, Program prog) {
   default:
     return ERROR_UNKNOWN_TYPE;
   }
+  vm->ip++;
+  return ERROR_OK;
+}
+
+ERROR VM_SizeOf(VM *vm) {
+  if (vm->mp < 1) return ERROR_MEMORY_EMPTY;
+
+  Data data = vm->mem[vm->mp - 1];
+  long long int size;
+
+  if (data.kind == DATA_INTEGER)
+    size = sizeof(data.val.integer);
+  else if (data.kind == DATA_FLOATING)
+    size = sizeof(data.val.floating);
+  else if (data.kind == DATA_STRING)
+    size = sizeof(data.val.string);
+  else return ERROR_UNKNOWN_TYPE;
+
+  vm->mem[vm->mp - 1] = (Data){
+    .kind = DATA_INTEGER,
+    .val.integer = size,
+  };
+
   vm->ip++;
   return ERROR_OK;
 }
