@@ -60,8 +60,8 @@ const char *keywords[] = {
 
     [INST_SIZEOF]   =   "sizeof",
     // cpu state
-    [INST_DUMP_STACK]   =   "dump_stack",
-    [INST_DUMP_MEM]     =   "dump_mem",
+    [INST_DUMP_STACK]   =   "_stack",
+    [INST_DUMP_MEM]     =   "_mem",
 };
 
 int Is_Inst(char *c) {
