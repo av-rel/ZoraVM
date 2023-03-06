@@ -1,72 +1,70 @@
-#ifndef _INST_C
-#define _INST_C
+#ifndef _ZORAVM_INST_C
+#define _ZORAVM_INST_C
 
 #include <string.h>
+#include "./inst.h"
 
-#include "./include/inst.h"
-
-const char *keywords[] = {
-    // V
-    [INST_PUSH]     =   "push", // V
-    [INST_POP]      =   "pop",  // V
-    [INST_STORE]    =   "store", // V
-    [INST_LOAD]     =   "load", // V
-    [INST_PRINT]    =   "print", // V
-    [INST_SCAN]     =   "scan", // V
-    [INST_RET]      =   "ret", // v
-    [INST_HALT]     =   "halt", //V
+const char *ZoraVM_keywords[] = {
+    [ZORAVM_INST_PUSH]     =   "push", // V
+    [ZORAVM_INST_POP]      =   "pop",  // V
+    [ZORAVM_INST_STORE]    =   "store", // V
+    [ZORAVM_INST_LOAD]     =   "load", // V
+    [ZORAVM_INST_PRINT]    =   "print", // V
+    [ZORAVM_INST_SCAN]     =   "scan", // V
+    [ZORAVM_INST_RET]      =   "ret", // v
+    [ZORAVM_INST_HALT]     =   "halt", //V
     //v
-    [INST_DUP]      =   "dup",
-    [INST_SWAP]     =   "swap",
+    [ZORAVM_INST_DUP]      =   "dup",
+    [ZORAVM_INST_SWAP]     =   "swap",
     //v
-    [INST_ADD]      =   "add",
-    [INST_SUB]      =   "sub",
-    [INST_MUL]      =   "mul",
-    [INST_DIV]      =   "div",
-    [INST_MOD]      =   "mod",
+    [ZORAVM_INST_ADD]      =   "add",
+    [ZORAVM_INST_SUB]      =   "sub",
+    [ZORAVM_INST_MUL]      =   "mul",
+    [ZORAVM_INST_DIV]      =   "div",
+    [ZORAVM_INST_MOD]      =   "mod",
     //
-    [INST_CMP_EQ]   =   "eq", // V
-    [INST_CMP_GT]   =   "gt",
-    [INST_CMP_LT]   =   "lt",
-    [INST_CMP_GTE]  =   "gte",
-    [INST_CMP_LTE]  =   "lte",
+    [ZORAVM_INST_CMP_EQ]   =   "eq", // V
+    [ZORAVM_INST_CMP_GT]   =   "gt",
+    [ZORAVM_INST_CMP_LT]   =   "lt",
+    [ZORAVM_INST_CMP_GTE]  =   "gte",
+    [ZORAVM_INST_CMP_LTE]  =   "lte",
     //
-    [INST_CMP_NEQ]  =   "neq", // V
-    [INST_CMP_NGT]  =   "ngt",
-    [INST_CMP_NLT]  =   "nlt",
-    [INST_CMP_NGTE] =   "ngte",
-    [INST_CMP_NLTE] =   "nlte",
+    [ZORAVM_INST_CMP_NEQ]  =   "neq", // V
+    [ZORAVM_INST_CMP_NGT]  =   "ngt",
+    [ZORAVM_INST_CMP_NLT]  =   "nlt",
+    [ZORAVM_INST_CMP_NGTE] =   "ngte",
+    [ZORAVM_INST_CMP_NLTE] =   "nlte",
     //
-    [INST_JMP]      =   "jmp", // V
-    [INST_JMPIF]    =   "jmpif",
-    [INST_JMPIFN]   =   "jmpifn",
+    [ZORAVM_INST_JMP]      =   "jmp", // V
+    [ZORAVM_INST_JMPIF]    =   "jmpif",
+    [ZORAVM_INST_JMPIFN]   =   "jmpifn",
     //
-    [INST_AND]      =   "and",
-    [INST_OR]       =   "or",
-    [INST_XOR]      =   "xor",
-    [INST_NOT]      =   "not",
-    [INST_NEG]      =   "neg",
-    [INST_SHL]      =   "shl",
-    [INST_SHR]      =   "shr",
+    [ZORAVM_INST_AND]      =   "and",
+    [ZORAVM_INST_OR]       =   "or",
+    [ZORAVM_INST_XOR]      =   "xor",
+    [ZORAVM_INST_NOT]      =   "not",
+    [ZORAVM_INST_NEG]      =   "neg",
+    [ZORAVM_INST_SHL]      =   "shl",
+    [ZORAVM_INST_SHR]      =   "shr",
     //
-    [INST_INC]      =   "inc",
-    [INST_DEC]      =   "dec",
-    [INST_POW]      =   "pow",
+    [ZORAVM_INST_INC]      =   "inc",
+    [ZORAVM_INST_DEC]      =   "dec",
+    [ZORAVM_INST_POW]      =   "pow",
     //
-    [INST_FOPEN]    =   "fopen",
-    [INST_FCLOSE]   =   "fclose",
-    [INST_FREAD]    =   "fread",
-    [INST_FWRITE]   =   "fwrite",
+    [ZORAVM_INST_FOPEN]    =   "fopen",
+    [ZORAVM_INST_FCLOSE]   =   "fclose",
+    [ZORAVM_INST_FREAD]    =   "fread",
+    [ZORAVM_INST_FWRITE]   =   "fwrite",
 
-    [INST_SIZEOF]   =   "sizeof",
+    [ZORAVM_INST_SIZEOF]   =   "sizeof",
     // cpu state
-    [INST_DUMP_STACK]   =   "_stack",
-    [INST_DUMP_MEM]     =   "_mem",
+    [ZORAVM_INST_DUMP_STACK]   =   "_stack",
+    [ZORAVM_INST_DUMP_MEM]     =   "_mem",
 };
 
-int Is_Inst(char *c) {
-  for (int i = 0; i < sizeof(keywords)/sizeof(keywords[0]); i++)
-    if (strcmp(c, keywords[i]) == 0)
+int ZoraVM_Is_Inst(char *c) {
+  for (int i = 0; i < sizeof(ZoraVM_keywords)/sizeof(ZoraVM_keywords[0]); i++)
+    if (strcmp(c, ZoraVM_keywords[i]) == 0)
       return 1;
   return 0;
 }

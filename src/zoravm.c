@@ -1,155 +1,139 @@
-/* #define RUN_ZORAVM */
-#define SHOUT 1
+#ifndef _ZORAVM_C
+#define _ZORAVM_C
 
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "./zoravm.h"
 #include "./exec.c"
-#include "./include/macro.h"
-#include "./include/vm.h"
 #include "./inst.c"
-#include "./prog.c"
 #include "./trap.c"
 
-int ZoraVM(Program *program, int np) {
-  VM vm = {0};
-  VM_INIT(vm, np);
+int ZoraVME(ZoraVM_Program *program, int np) {
+  ZoraVM vm = ZoraVM_Init(np);
 
-  ERROR vm_err = ERROR_OK;
-
-  while (vm.state && vm_err == ERROR_OK && vm.ip < vm.np) {
-    vm_err = VM_Execute(&vm, program[vm.ip]);
+  ZORAVM_ERROR vm_err = ZORAVM_ERROR_OK;
+ 
+  while (vm.state && vm_err == ZORAVM_ERROR_OK && vm.ip < vm.np) {
+    vm_err = ZoraVME_Execute(&vm, program[vm.ip]);
   }
 
-  if (vm_err != ERROR_OK) {
-    #if SHOUT
-    printf("%s%s%s\n", "" , "ERROR: ", Errors[vm_err]);
+  if (vm_err != ZORAVM_ERROR_OK) {
+    #if ZORAVM_LOG
+    printf("%s%s%s\n", "" , "ZORAVM_ERROR: ", ZoraVM_Errors[vm_err]);
     #endif
     return vm_err;
   }
 
-  if (vm.mem[vm.mp - 1].kind != DATA_INTEGER) {
-    #if SHOUT
-    printf("%s%s%s\n", "" ,"ERROR: ", "Expected integer as return value\n");
+  if (vm.mem[vm.mp - 1].kind != ZORAVM_DATA_INTEGER) {
+    #if ZORAVM_LOG
+    printf("%s%s%s\n", "" ,"ZORAVM_ERROR: ", "Expected integer as return value\n");
     #endif
-    return ERROR_UNEXPECTED_TYPE;
+    return ZORAVM_ERROR_UNEXPECTED_TYPE;
   }
 
   return vm.mem[--vm.mp].val.integer;
 }
 
-#ifdef RUN_ZORAVM
-int main(int argc, char *argv[]) {
-  //  TODO: Add a way to load programs from files;
-  //   char *source = "PUSH 123\nPUSH 456\nDUMP\nADD\nDUMP\n";
 
-  Program program[] = {
-    PushInt(33),
-	Store(0),
-	Load(0),
-	Dec(),
-	Store(0),
-	Load(0),
-    Print(),
-    PushStr("\n"),
-    Print(),
-	Load(0),
-	PushInt(10),
-	CmpGt(),
-	JmpIf(2),
-    PushStr("Loop end!\n"),
-    Print(),
-    Halt(0),					
-  };
-
-  return ZoraVM(program, ArraySize(program));
-}
-#endif
-
-ERROR VM_Execute(VM *vm, Program prog) {
+ZORAVM_ERROR ZoraVME_Execute(ZoraVM *vm, ZoraVM_Program prog) {
   switch (prog.inst) {
-  case INST_PUSH:
-    return VM_Push(vm, prog.entry);
-  case INST_POP:
-    return VM_Pop(vm);
-  case INST_STORE:
-    return VM_Store(vm, prog.entry);
-  case INST_LOAD:
-    return VM_Load(vm, prog.entry);
-  case INST_DUP:
-    return VM_Dup(vm);
-  case INST_SWAP:
-    return VM_Swap(vm);
-  case INST_ADD:
-    return VM_Add(vm);
-  case INST_SUB:
-    return VM_Sub(vm);
-  case INST_MUL:
-    return VM_Mul(vm);
-  case INST_DIV:
-    return VM_Div(vm);
-  case INST_MOD:
-    return VM_Mod(vm);
-  case INST_INC:
-    return VM_Inc(vm);
-  case INST_DEC:
-    return VM_Dec(vm);
-  case INST_POW:
-    return VM_Pow(vm);
-  case INST_AND:
-    return VM_And(vm);
-  case INST_OR:
-    return VM_Or(vm);
-  case INST_XOR:
-    return VM_Xor(vm);
-  case INST_NOT:
-    return VM_Not(vm);
-  case INST_SHL:
-    return VM_Shl(vm);
-  case INST_SHR:
-    return VM_Shr(vm);
-  case INST_CMP_EQ:
-    return VM_CmpEq(vm);
-  case INST_CMP_NEQ:
-    return VM_CmpNotEq(vm);
-  case INST_CMP_GT:
-    return VM_CmpGt(vm);
-  case INST_CMP_NGT:
-    return VM_CmpNotGt(vm);
-  case INST_CMP_LT:
-    return VM_CmpLt(vm);
-  case INST_CMP_NLT:
-    return VM_CmpNotLt(vm);
-  case INST_CMP_GTE:
-    return VM_CmpGte(vm);
-  case INST_CMP_NGTE:
-    return VM_CmpNotGte(vm);
-  case INST_CMP_LTE:
-    return VM_CmpLte(vm);
-  case INST_CMP_NLTE:
-    return VM_CmpNotLte(vm);
-  case INST_JMP:
-    return VM_Jmp(vm, prog);
-  case INST_JMPIF:
-    return VM_JmpIf(vm, prog);
-  case INST_JMPIFN:
-    return VM_JmpIfNot(vm, prog);
-  case INST_PRINT:
-    return VM_Print(vm);
-  case INST_SCAN:
-    return VM_Scan(vm, prog);
-  case INST_SIZEOF:
-    return VM_SizeOf(vm);
-  case INST_RET:
-    return VM_Ret(vm, prog);
-  case INST_HALT:
-    return VM_Halt(vm, prog);
-  case INST_DUMP_STACK:
-    return VM_Dump_Stack(vm);
-  case INST_DUMP_MEM:
-    return VM_Dump_Mem(vm);
+  case ZORAVM_INST_PUSH:
+    return ZoraVME_Push(vm, prog.entry);
+  case ZORAVM_INST_POP:
+    return ZoraVME_Pop(vm);
+  case ZORAVM_INST_STORE:
+    return ZoraVME_Store(vm, prog.entry);
+  case ZORAVM_INST_LOAD:
+    return ZoraVME_Load(vm, prog.entry);
+  case ZORAVM_INST_DUP:
+    return ZoraVME_Dup(vm);
+  case ZORAVM_INST_SWAP:
+    return ZoraVME_Swap(vm);
+  case ZORAVM_INST_ADD:
+    return ZoraVME_Add(vm);
+  case ZORAVM_INST_SUB:
+    return ZoraVME_Sub(vm);
+  case ZORAVM_INST_MUL:
+    return ZoraVME_Mul(vm);
+  case ZORAVM_INST_DIV:
+    return ZoraVME_Div(vm);
+  case ZORAVM_INST_MOD:
+    return ZoraVME_Mod(vm);
+  case ZORAVM_INST_INC:
+    return ZoraVME_Inc(vm);
+  case ZORAVM_INST_DEC:
+    return ZoraVME_Dec(vm);
+  case ZORAVM_INST_POW:
+    return ZoraVME_Pow(vm);
+  case ZORAVM_INST_AND:
+    return ZoraVME_And(vm);
+  case ZORAVM_INST_OR:
+    return ZoraVME_Or(vm);
+  case ZORAVM_INST_XOR:
+    return ZoraVME_Xor(vm);
+  case ZORAVM_INST_NOT:
+    return ZoraVME_Not(vm);
+  case ZORAVM_INST_SHL:
+    return ZoraVME_Shl(vm);
+  case ZORAVM_INST_SHR:
+    return ZoraVME_Shr(vm);
+  case ZORAVM_INST_CMP_EQ:
+    return ZoraVME_CmpEq(vm);
+  case ZORAVM_INST_CMP_NEQ:
+    return ZoraVME_CmpNotEq(vm);
+  case ZORAVM_INST_CMP_GT:
+    return ZoraVME_CmpGt(vm);
+  case ZORAVM_INST_CMP_NGT:
+    return ZoraVME_CmpNotGt(vm);
+  case ZORAVM_INST_CMP_LT:
+    return ZoraVME_CmpLt(vm);
+  case ZORAVM_INST_CMP_NLT:
+    return ZoraVME_CmpNotLt(vm);
+  case ZORAVM_INST_CMP_GTE:
+    return ZoraVME_CmpGte(vm);
+  case ZORAVM_INST_CMP_NGTE:
+    return ZoraVME_CmpNotGte(vm);
+  case ZORAVM_INST_CMP_LTE:
+    return ZoraVME_CmpLte(vm);
+  case ZORAVM_INST_CMP_NLTE:
+    return ZoraVME_CmpNotLte(vm);
+  case ZORAVM_INST_JMP:
+    return ZoraVME_Jmp(vm, prog);
+  case ZORAVM_INST_JMPIF:
+    return ZoraVME_JmpIf(vm, prog);
+  case ZORAVM_INST_JMPIFN:
+    return ZoraVME_JmpIfNot(vm, prog);
+  case ZORAVM_INST_PRINT:
+    return ZoraVME_Print(vm);
+  case ZORAVM_INST_SCAN:
+    return ZoraVME_Scan(vm, prog);
+  case ZORAVM_INST_SIZEOF:
+    return ZoraVME_SizeOf(vm);
+  case ZORAVM_INST_RET:
+    return ZoraVME_Ret(vm, prog);
+  case ZORAVM_INST_HALT:
+    return ZoraVME_Halt(vm, prog);
+  case ZORAVM_INST_DUMP_STACK:
+    return ZoraVME_Dump_Stack(vm);
+  case ZORAVM_INST_DUMP_MEM:
+    return ZoraVME_Dump_Mem(vm);
   default:
-    return ERROR_UNKNOWN_INST;
+    return ZORAVM_ERROR_UNKNOWN_INST;
   }
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
+
+ZoraVM ZoraVM_Init(int np) {
+  ZoraVM vm = {0};
+
+  vm.ip = 0;
+  vm.mp = 0;
+  vm.sp = 0;
+  vm.np = np;
+  vm.state = 1;
+
+  return vm;
+}
+
+#endif

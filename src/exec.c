@@ -1,786 +1,784 @@
-#ifndef _EXEC_C
-#define _EXEC_C
+#ifndef _ZORAVM_EXEC_C
+#define _ZORAVM_EXEC_C
 
 #include <math.h>
 #include <stdio.h>
-#include <assert.h>
 #include <string.h>
 
-#include "./include/vm.h"
+#include "./zoravm.h"
 #include "./inst.c"
 #include "./trap.c"
-#include "include/trap.h"
 
 // push to the memory stack
-ERROR VM_Push(VM *vm, Data data) {
-  if (vm->mp >= MEM_SIZE)
-    return ERROR_MEMORY_FULL;
+ZORAVM_ERROR ZoraVME_Push(ZoraVM *vm, ZoraVM_Data data) {
+  if (vm->mp >= ZORAVM_MEM_SIZE)
+    return ZORAVM_ERROR_MEMORY_FULL;
   switch (data.kind) {
-  case DATA_INTEGER:
-    vm->mem[vm->mp] = (Data){DATA_INTEGER, .val.integer = data.val.integer};
+  case ZORAVM_DATA_INTEGER:
+    vm->mem[vm->mp] = (ZoraVM_Data){ZORAVM_DATA_INTEGER, .val.integer = data.val.integer};
     break;
-  case DATA_FLOATING:
-    vm->mem[vm->mp] = (Data){DATA_FLOATING, .val.floating = data.val.floating};
+  case ZORAVM_DATA_FLOATING:
+    vm->mem[vm->mp] = (ZoraVM_Data){ZORAVM_DATA_FLOATING, .val.floating = data.val.floating};
     break;
-  case DATA_STRING:
-    vm->mem[vm->mp] = (Data){DATA_STRING, .val.string = data.val.string};
+  case ZORAVM_DATA_STRING:
+    vm->mem[vm->mp] = (ZoraVM_Data){ZORAVM_DATA_STRING, .val.string = data.val.string};
     break;
   default:
-    return ERROR_UNKNOWN_TYPE;
+    return ZORAVM_ERROR_UNKNOWN_TYPE;
   }
 
   vm->mp++;
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
 // pop from the memory stack
-ERROR VM_Pop(VM *vm) {
+ZORAVM_ERROR ZoraVME_Pop(ZoraVM *vm) {
   if (vm->mp < 1)
-    return ERROR_MEMORY_EMPTY;
+    return ZORAVM_ERROR_MEMORY_EMPTY;
 
-  vm->mem[--vm->mp] = (Data){0};
+  vm->mem[--vm->mp] = (ZoraVM_Data){0};
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
 // store to the stack from mem
-ERROR VM_Store(VM *vm, Data data) {
-  if (vm->sp >= STACK_SIZE)
-    return ERROR_STACK_OVERFLOW;
+ZORAVM_ERROR ZoraVME_Store(ZoraVM *vm, ZoraVM_Data data) {
+  if (vm->sp >= ZORAVM_STACK_SIZE)
+    return ZORAVM_ERROR_STACK_OVERFLOW;
   if (vm->mp < 1)
-    return ERROR_MEMORY_EMPTY;
+    return ZORAVM_ERROR_MEMORY_EMPTY;
 
   vm->stack[data.val.integer] = vm->mem[--vm->mp];
   vm->sp++;
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
 // load from stack to the mem
-ERROR VM_Load(VM *vm, Data data) {
+ZORAVM_ERROR ZoraVME_Load(ZoraVM *vm, ZoraVM_Data data) {
   if (vm->sp < 1)
-    return ERROR_STACK_UNDERFLOW;
-  if (vm->mp >= MEM_SIZE)
-    return ERROR_MEMORY_FULL;
+    return ZORAVM_ERROR_STACK_UNDERFLOW;
+  if (vm->mp >= ZORAVM_MEM_SIZE)
+    return ZORAVM_ERROR_MEMORY_FULL;
 
   vm->mem[vm->mp++] = vm->stack[data.val.integer];
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
 // duplicate memory values
-ERROR VM_Dup(VM *vm) {
-  if (vm->mp >= MEM_SIZE)
-    return ERROR_MEMORY_FULL;
+ZORAVM_ERROR ZoraVME_Dup(ZoraVM *vm) {
+  if (vm->mp >= ZORAVM_MEM_SIZE)
+    return ZORAVM_ERROR_MEMORY_FULL;
   if (vm->mp < 1)
-    return ERROR_MEMORY_EMPTY;
+    return ZORAVM_ERROR_MEMORY_EMPTY;
 
   vm->mem[vm->mp] = vm->mem[vm->mp - 1];
   vm->mp++;
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
 // swap memory values
-ERROR VM_Swap(VM *vm) {
-  if (vm->mp >= MEM_SIZE)
-    return ERROR_MEMORY_FULL;
+ZORAVM_ERROR ZoraVME_Swap(ZoraVM *vm) {
+  if (vm->mp >= ZORAVM_MEM_SIZE)
+    return ZORAVM_ERROR_MEMORY_FULL;
   if (vm->mp < 2)
-    return ERROR_NOT_ENOUGH_OPERANDS;
+    return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
 
-  Data tmp = vm->mem[vm->mp - 2];
+  ZoraVM_Data tmp = vm->mem[vm->mp - 2];
   vm->mem[vm->mp - 2] = vm->mem[vm->mp - 1];
   vm->mem[vm->mp - 1] = tmp;
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
 // add the two val from mem stack and push it back to the mem stack
-ERROR VM_Add(VM *vm) {
+ZORAVM_ERROR ZoraVME_Add(ZoraVM *vm) {
   if (vm->mp < 2)
-    return ERROR_NOT_ENOUGH_OPERANDS;
+    return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
 
-  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+  ZoraVM_Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
   if (one.kind != two.kind)
-    return ERROR_ILLEGAL_INST_TYPE;
+    return ZORAVM_ERROR_ILLEGAL_INST_TYPE;
 
-  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER) {
+  if (one.kind == ZORAVM_DATA_INTEGER && two.kind == ZORAVM_DATA_INTEGER) {
     vm->mem[vm->mp - 2].val.integer += two.val.integer;
-    vm->mem[vm->mp - 2].kind = DATA_INTEGER;
-  } else if (one.kind == DATA_STRING && two.kind == DATA_STRING) {
+    vm->mem[vm->mp - 2].kind = ZORAVM_DATA_INTEGER;
+  } else if (one.kind == ZORAVM_DATA_STRING && two.kind == ZORAVM_DATA_STRING) {
     char *tmp = strcat(strcpy(tmp, one.val.string), two.val.string);
     vm->mem[vm->mp - 2].val.string = tmp;
-    vm->mem[vm->mp - 2].kind = DATA_STRING;
-  } else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING) {
+    vm->mem[vm->mp - 2].kind = ZORAVM_DATA_STRING;
+  } else if (one.kind == ZORAVM_DATA_FLOATING && two.kind == ZORAVM_DATA_FLOATING) {
     vm->mem[vm->mp - 2].val.floating += two.val.floating;
-    vm->mem[vm->mp - 2].kind = DATA_FLOATING;
+    vm->mem[vm->mp - 2].kind = ZORAVM_DATA_FLOATING;
   } else
-    return ERROR_UNKNOWN_TYPE;
+    return ZORAVM_ERROR_UNKNOWN_TYPE;
 
-  vm->mem[--vm->mp] = (Data){0};
+  vm->mem[--vm->mp] = (ZoraVM_Data){0};
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
 // subtract the two val from mem stack and push it back to the mem stack
-ERROR VM_Sub(VM *vm) {
+ZORAVM_ERROR ZoraVME_Sub(ZoraVM *vm) {
   if (vm->mp < 2)
-    return ERROR_NOT_ENOUGH_OPERANDS;
+    return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
 
-  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+  ZoraVM_Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
   if (one.kind != two.kind)
-    return ERROR_ILLEGAL_INST_TYPE;
+    return ZORAVM_ERROR_ILLEGAL_INST_TYPE;
 
-  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER) {
+  if (one.kind == ZORAVM_DATA_INTEGER && two.kind == ZORAVM_DATA_INTEGER) {
     vm->mem[vm->mp - 2].val.integer -= two.val.integer;
-    vm->mem[vm->mp - 2].kind = DATA_INTEGER;
-  } else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING) {
+    vm->mem[vm->mp - 2].kind = ZORAVM_DATA_INTEGER;
+  } else if (one.kind == ZORAVM_DATA_FLOATING && two.kind == ZORAVM_DATA_FLOATING) {
     vm->mem[vm->mp - 2].val.floating -= two.val.floating;
-    vm->mem[vm->mp - 2].kind = DATA_FLOATING;
-  } else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
-    return ERROR_ILLEGAL_INST;
+    vm->mem[vm->mp - 2].kind = ZORAVM_DATA_FLOATING;
+  } else if (one.kind == ZORAVM_DATA_STRING && two.kind == ZORAVM_DATA_STRING)
+    return ZORAVM_ERROR_ILLEGAL_INST;
   else
-    return ERROR_UNKNOWN_TYPE;
+    return ZORAVM_ERROR_UNKNOWN_TYPE;
 
-  vm->mem[--vm->mp] = (Data){0};
+  vm->mem[--vm->mp] = (ZoraVM_Data){0};
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
 // multiply the two val from mem stack and push it back to the mem stack
-ERROR VM_Mul(VM *vm) {
+ZORAVM_ERROR ZoraVME_Mul(ZoraVM *vm) {
   if (vm->mp < 2)
-    return ERROR_NOT_ENOUGH_OPERANDS;
+    return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
 
-  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+  ZoraVM_Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
   if (one.kind != two.kind)
-    return ERROR_ILLEGAL_INST_TYPE;
+    return ZORAVM_ERROR_ILLEGAL_INST_TYPE;
 
-  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER) {
+  if (one.kind == ZORAVM_DATA_INTEGER && two.kind == ZORAVM_DATA_INTEGER) {
     vm->mem[vm->mp - 2].val.integer *= two.val.integer;
-    vm->mem[vm->mp - 2].kind = DATA_INTEGER;
-  } else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING) {
+    vm->mem[vm->mp - 2].kind = ZORAVM_DATA_INTEGER;
+  } else if (one.kind == ZORAVM_DATA_FLOATING && two.kind == ZORAVM_DATA_FLOATING) {
     vm->mem[vm->mp - 2].val.floating *= two.val.floating;
-    vm->mem[vm->mp - 2].kind = DATA_FLOATING;
-  } else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
-    return ERROR_ILLEGAL_INST;
+    vm->mem[vm->mp - 2].kind = ZORAVM_DATA_FLOATING;
+  } else if (one.kind == ZORAVM_DATA_STRING && two.kind == ZORAVM_DATA_STRING)
+    return ZORAVM_ERROR_ILLEGAL_INST;
   else
-    return ERROR_UNKNOWN_TYPE;
+    return ZORAVM_ERROR_UNKNOWN_TYPE;
 
-  vm->mem[--vm->mp] = (Data){0};
+  vm->mem[--vm->mp] = (ZoraVM_Data){0};
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
 // divide the two val from mem stack and push it back to the mem stack
-ERROR VM_Div(VM *vm) {
+ZORAVM_ERROR ZoraVME_Div(ZoraVM *vm) {
   if (vm->mp < 2)
-    return ERROR_NOT_ENOUGH_OPERANDS;
+    return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
 
-  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+  ZoraVM_Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
   if (one.kind != two.kind)
-    return ERROR_ILLEGAL_INST_TYPE;
+    return ZORAVM_ERROR_ILLEGAL_INST_TYPE;
 
-  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER) {
+  if (one.kind == ZORAVM_DATA_INTEGER && two.kind == ZORAVM_DATA_INTEGER) {
     vm->mem[vm->mp - 2].val.integer /= two.val.integer;
-    vm->mem[vm->mp - 2].kind = DATA_INTEGER;
-  } else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING) {
+    vm->mem[vm->mp - 2].kind = ZORAVM_DATA_INTEGER;
+  } else if (one.kind == ZORAVM_DATA_FLOATING && two.kind == ZORAVM_DATA_FLOATING) {
     vm->mem[vm->mp - 2].val.floating /= two.val.floating;
-    vm->mem[vm->mp - 2].kind = DATA_FLOATING;
-  } else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
-    return ERROR_ILLEGAL_INST;
+    vm->mem[vm->mp - 2].kind = ZORAVM_DATA_FLOATING;
+  } else if (one.kind == ZORAVM_DATA_STRING && two.kind == ZORAVM_DATA_STRING)
+    return ZORAVM_ERROR_ILLEGAL_INST;
   else
-    return ERROR_UNKNOWN_TYPE;
+    return ZORAVM_ERROR_UNKNOWN_TYPE;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
 // mod the two val from mem stack and push it back to the mem stack
-ERROR VM_Mod(VM *vm) {
+ZORAVM_ERROR ZoraVME_Mod(ZoraVM *vm) {
   if (vm->mp < 2)
-    return ERROR_NOT_ENOUGH_OPERANDS;
+    return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
 
-  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+  ZoraVM_Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
   if (one.kind != two.kind)
-    return ERROR_ILLEGAL_INST_TYPE;
+    return ZORAVM_ERROR_ILLEGAL_INST_TYPE;
 
-  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER) {
+  if (one.kind == ZORAVM_DATA_INTEGER && two.kind == ZORAVM_DATA_INTEGER) {
     vm->mem[vm->mp - 2].val.integer %= two.val.integer;
-    vm->mem[vm->mp - 2].kind = DATA_INTEGER;
-  } else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
-    return ERROR_ILLEGAL_INST;
-  else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
-    return ERROR_ILLEGAL_INST;
+    vm->mem[vm->mp - 2].kind = ZORAVM_DATA_INTEGER;
+  } else if (one.kind == ZORAVM_DATA_FLOATING && two.kind == ZORAVM_DATA_FLOATING)
+    return ZORAVM_ERROR_ILLEGAL_INST;
+  else if (one.kind == ZORAVM_DATA_STRING && two.kind == ZORAVM_DATA_STRING)
+    return ZORAVM_ERROR_ILLEGAL_INST;
   else
-    return ERROR_UNKNOWN_TYPE;
+    return ZORAVM_ERROR_UNKNOWN_TYPE;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_Inc(VM *vm) {
+ZORAVM_ERROR ZoraVME_Inc(ZoraVM *vm) {
   if (vm->mp < 1)
-    return ERROR_MEMORY_EMPTY;
+    return ZORAVM_ERROR_MEMORY_EMPTY;
 
-  if (vm->mem[vm->mp - 1].kind == DATA_INTEGER)
+  if (vm->mem[vm->mp - 1].kind == ZORAVM_DATA_INTEGER)
     ++vm->mem[vm->mp - 1].val.integer;
-  else if (vm->mem[vm->mp - 1].kind == DATA_FLOATING)
+  else if (vm->mem[vm->mp - 1].kind == ZORAVM_DATA_FLOATING)
     ++vm->mem[vm->mp - 1].val.floating;
-  else if (vm->mem[vm->mp - 1].kind == DATA_STRING)
-    return ERROR_ILLEGAL_INST;
+  else if (vm->mem[vm->mp - 1].kind == ZORAVM_DATA_STRING)
+    return ZORAVM_ERROR_ILLEGAL_INST;
   else
-    return ERROR_UNKNOWN_TYPE;
+    return ZORAVM_ERROR_UNKNOWN_TYPE;
 
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_Dec(VM *vm) {
+ZORAVM_ERROR ZoraVME_Dec(ZoraVM *vm) {
   if (vm->mp < 1)
-    return ERROR_MEMORY_EMPTY;
+    return ZORAVM_ERROR_MEMORY_EMPTY;
 
-  if (vm->mem[vm->mp - 1].kind == DATA_INTEGER)
+  if (vm->mem[vm->mp - 1].kind == ZORAVM_DATA_INTEGER)
     --vm->mem[vm->mp - 1].val.integer;
-  else if (vm->mem[vm->mp - 1].kind == DATA_FLOATING)
+  else if (vm->mem[vm->mp - 1].kind == ZORAVM_DATA_FLOATING)
     --vm->mem[vm->mp - 1].val.floating;
-  else if (vm->mem[vm->mp - 1].kind == DATA_STRING)
-    return ERROR_ILLEGAL_INST;
+  else if (vm->mem[vm->mp - 1].kind == ZORAVM_DATA_STRING)
+    return ZORAVM_ERROR_ILLEGAL_INST;
   else
-    return ERROR_UNKNOWN_TYPE;
+    return ZORAVM_ERROR_UNKNOWN_TYPE;
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_Pow(VM *vm) {
+ZORAVM_ERROR ZoraVME_Pow(ZoraVM *vm) {
   if (vm->mp < 2)
-    return ERROR_NOT_ENOUGH_OPERANDS;
+    return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
 
-  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+  ZoraVM_Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
-  if (two.kind != DATA_INTEGER)
-    return ERROR_ILLEGAL_INST;
+  if (two.kind != ZORAVM_DATA_INTEGER)
+    return ZORAVM_ERROR_ILLEGAL_INST;
 
-  if (one.kind == DATA_INTEGER) {
+  if (one.kind == ZORAVM_DATA_INTEGER) {
     vm->mem[vm->mp - 2].val.integer = pow(one.val.integer, two.val.integer);
-    vm->mem[vm->mp - 2].kind = DATA_INTEGER;
-  } else if (one.kind == DATA_FLOATING) {
+    vm->mem[vm->mp - 2].kind = ZORAVM_DATA_INTEGER;
+  } else if (one.kind == ZORAVM_DATA_FLOATING) {
     vm->mem[vm->mp - 2].val.floating = pow(one.val.floating, two.val.floating);
-    vm->mem[vm->mp - 2].kind = DATA_FLOATING;
-  } else if (one.kind == DATA_STRING)
-    return ERROR_UNIMPLEMENTED;
+    vm->mem[vm->mp - 2].kind = ZORAVM_DATA_FLOATING;
+  } else if (one.kind == ZORAVM_DATA_STRING)
+    return ZORAVM_ERROR_UNIMPLEMENTED;
   else
-    return ERROR_UNKNOWN_TYPE;
+    return ZORAVM_ERROR_UNKNOWN_TYPE;
 
-  vm->mem[--vm->mp] = (Data){0};
+  vm->mem[--vm->mp] = (ZoraVM_Data){0};
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_And(VM *vm) {
+ZORAVM_ERROR ZoraVME_And(ZoraVM *vm) {
   if (vm->mp < 2)
-    return ERROR_NOT_ENOUGH_OPERANDS;
-  if (vm->mem[vm->mp - 1].kind != DATA_INTEGER ||
-      vm->mem[vm->mp - 2].kind != DATA_INTEGER)
-    return ERROR_UNIMPLEMENTED;
+    return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
+  if (vm->mem[vm->mp - 1].kind != ZORAVM_DATA_INTEGER ||
+      vm->mem[vm->mp - 2].kind != ZORAVM_DATA_INTEGER)
+    return ZORAVM_ERROR_UNIMPLEMENTED;
 
   vm->mem[vm->mp - 2].val.integer &= vm->mem[vm->mp - 1].val.integer;
-  vm->mem[--vm->mp] = (Data){0};
+  vm->mem[--vm->mp] = (ZoraVM_Data){0};
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_Or(VM *vm) {
+ZORAVM_ERROR ZoraVME_Or(ZoraVM *vm) {
   if (vm->mp < 2)
-    return ERROR_NOT_ENOUGH_OPERANDS;
-  if (vm->mem[vm->mp - 1].kind != DATA_INTEGER ||
-      vm->mem[vm->mp - 2].kind != DATA_INTEGER)
-    return ERROR_UNIMPLEMENTED;
+    return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
+  if (vm->mem[vm->mp - 1].kind != ZORAVM_DATA_INTEGER ||
+      vm->mem[vm->mp - 2].kind != ZORAVM_DATA_INTEGER)
+    return ZORAVM_ERROR_UNIMPLEMENTED;
 
   vm->mem[vm->mp - 2].val.integer |= vm->mem[vm->mp - 1].val.integer;
-  vm->mem[--vm->mp] = (Data){0};
+  vm->mem[--vm->mp] = (ZoraVM_Data){0};
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_Xor(VM *vm) {
+ZORAVM_ERROR ZoraVME_Xor(ZoraVM *vm) {
   if (vm->mp < 2)
-    return ERROR_NOT_ENOUGH_OPERANDS;
-  if (vm->mem[vm->mp - 1].kind != DATA_INTEGER ||
-      vm->mem[vm->mp - 2].kind != DATA_INTEGER)
-    return ERROR_UNIMPLEMENTED;
+    return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
+  if (vm->mem[vm->mp - 1].kind != ZORAVM_DATA_INTEGER ||
+      vm->mem[vm->mp - 2].kind != ZORAVM_DATA_INTEGER)
+    return ZORAVM_ERROR_UNIMPLEMENTED;
 
   vm->mem[vm->mp - 2].val.integer ^= vm->mem[vm->mp - 1].val.integer;
-  vm->mem[--vm->mp] = (Data){0};
+  vm->mem[--vm->mp] = (ZoraVM_Data){0};
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_Not(VM *vm) {
+ZORAVM_ERROR ZoraVME_Not(ZoraVM *vm) {
   if (vm->mp < 1)
-    return ERROR_MEMORY_EMPTY;
-  if (vm->mem[vm->mp - 1].kind != DATA_INTEGER)
-    return ERROR_UNIMPLEMENTED;
+    return ZORAVM_ERROR_MEMORY_EMPTY;
+  if (vm->mem[vm->mp - 1].kind != ZORAVM_DATA_INTEGER)
+    return ZORAVM_ERROR_UNIMPLEMENTED;
 
   vm->mem[vm->mp - 1].val.integer = ~vm->mem[vm->mp - 1].val.integer;
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_Shl(VM *vm) {
+ZORAVM_ERROR ZoraVME_Shl(ZoraVM *vm) {
   if (vm->mp < 2)
-    return ERROR_NOT_ENOUGH_OPERANDS;
-  if (vm->mem[vm->mp - 1].kind != DATA_INTEGER ||
-      vm->mem[vm->mp - 2].kind != DATA_INTEGER)
-    return ERROR_UNIMPLEMENTED;
+    return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
+  if (vm->mem[vm->mp - 1].kind != ZORAVM_DATA_INTEGER ||
+      vm->mem[vm->mp - 2].kind != ZORAVM_DATA_INTEGER)
+    return ZORAVM_ERROR_UNIMPLEMENTED;
 
   vm->mem[vm->mp - 2].val.integer <<= vm->mem[vm->mp - 1].val.integer;
-  vm->mem[--vm->mp] = (Data){0};
+  vm->mem[--vm->mp] = (ZoraVM_Data){0};
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_Shr(VM *vm) {
+ZORAVM_ERROR ZoraVME_Shr(ZoraVM *vm) {
   if (vm->mp < 2)
-    return ERROR_NOT_ENOUGH_OPERANDS;
-  if (vm->mem[vm->mp - 1].kind != DATA_INTEGER ||
-      vm->mem[vm->mp - 2].kind != DATA_INTEGER)
-    return ERROR_UNIMPLEMENTED;
+    return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
+  if (vm->mem[vm->mp - 1].kind != ZORAVM_DATA_INTEGER ||
+      vm->mem[vm->mp - 2].kind != ZORAVM_DATA_INTEGER)
+    return ZORAVM_ERROR_UNIMPLEMENTED;
 
   vm->mem[vm->mp - 2].val.integer >>= vm->mem[vm->mp - 1].val.integer;
-  vm->mem[--vm->mp] = (Data){0};
+  vm->mem[--vm->mp] = (ZoraVM_Data){0};
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_CmpEq(VM *vm) {
+ZORAVM_ERROR ZoraVME_CmpEq(ZoraVM *vm) {
   if (vm->mp < 2)
-    return ERROR_NOT_ENOUGH_OPERANDS;
+    return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
 
-  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+  ZoraVM_Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
-  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER)
+  if (one.kind == ZORAVM_DATA_INTEGER && two.kind == ZORAVM_DATA_INTEGER)
     vm->mem[vm->mp - 2].val.integer = (int)one.val.integer == (int)two.val.integer;
-  else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
+  else if (one.kind == ZORAVM_DATA_FLOATING && two.kind == ZORAVM_DATA_FLOATING)
     vm->mem[vm->mp - 2].val.integer = one.val.floating == two.val.floating;
-  else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+  else if (one.kind == ZORAVM_DATA_STRING && two.kind == ZORAVM_DATA_STRING)
     vm->mem[vm->mp - 2].val.integer =
         strcmp(one.val.string, two.val.string) == 0;
   else
     vm->mem[vm->mp - 2].val.integer = 0;
 
-  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
-  vm->mem[--vm->mp] = (Data){0};
+  vm->mem[vm->mp - 2].kind = ZORAVM_DATA_INTEGER;
+  vm->mem[--vm->mp] = (ZoraVM_Data){0};
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_CmpNotEq(VM *vm) {
+ZORAVM_ERROR ZoraVME_CmpNotEq(ZoraVM *vm) {
   if (vm->mp < 2)
-    return ERROR_NOT_ENOUGH_OPERANDS;
+    return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
 
-  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+  ZoraVM_Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
-  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER)
+  if (one.kind == ZORAVM_DATA_INTEGER && two.kind == ZORAVM_DATA_INTEGER)
     vm->mem[vm->mp - 2].val.integer = (int)!((int)one.val.integer == (int)two.val.integer);
-  else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
+  else if (one.kind == ZORAVM_DATA_FLOATING && two.kind == ZORAVM_DATA_FLOATING)
     vm->mem[vm->mp - 2].val.integer = !(one.val.floating == two.val.floating);
-  else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+  else if (one.kind == ZORAVM_DATA_STRING && two.kind == ZORAVM_DATA_STRING)
     vm->mem[vm->mp - 2].val.integer =
         !(strcmp(one.val.string, two.val.string) == 0);
   else
     vm->mem[vm->mp - 2].val.integer = 1;
 
-  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
-  vm->mem[--vm->mp] = (Data){0};
+  vm->mem[vm->mp - 2].kind = ZORAVM_DATA_INTEGER;
+  vm->mem[--vm->mp] = (ZoraVM_Data){0};
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_CmpGt(VM *vm) {
+ZORAVM_ERROR ZoraVME_CmpGt(ZoraVM *vm) {
   if (vm->mp < 2)
-    return ERROR_NOT_ENOUGH_OPERANDS;
+    return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
 
-  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+  ZoraVM_Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
-  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER)
+  if (one.kind == ZORAVM_DATA_INTEGER && two.kind == ZORAVM_DATA_INTEGER)
     vm->mem[vm->mp - 2].val.integer = (int)one.val.integer > (int)two.val.integer;
-  else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
+  else if (one.kind == ZORAVM_DATA_FLOATING && two.kind == ZORAVM_DATA_FLOATING)
     vm->mem[vm->mp - 2].val.integer = one.val.floating > two.val.floating;
-  else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+  else if (one.kind == ZORAVM_DATA_STRING && two.kind == ZORAVM_DATA_STRING)
     vm->mem[vm->mp - 2].val.integer = (strcmp(one.val.string, two.val.string) == 1);
   else
     vm->mem[vm->mp - 2].val.integer = 0;
 
-  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
-  vm->mem[--vm->mp] = (Data){0};
+  vm->mem[vm->mp - 2].kind = ZORAVM_DATA_INTEGER;
+  vm->mem[--vm->mp] = (ZoraVM_Data){0};
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_CmpNotGt(VM *vm) {
+ZORAVM_ERROR ZoraVME_CmpNotGt(ZoraVM *vm) {
   if (vm->mp < 2)
-    return ERROR_NOT_ENOUGH_OPERANDS;
+    return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
 
-  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+  ZoraVM_Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
-  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER)
+  if (one.kind == ZORAVM_DATA_INTEGER && two.kind == ZORAVM_DATA_INTEGER)
     vm->mem[vm->mp - 2].val.integer = (int)!((int)one.val.integer > (int)two.val.integer);
-  else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
+  else if (one.kind == ZORAVM_DATA_FLOATING && two.kind == ZORAVM_DATA_FLOATING)
     vm->mem[vm->mp - 2].val.integer = !(one.val.floating > two.val.floating);
-  else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+  else if (one.kind == ZORAVM_DATA_STRING && two.kind == ZORAVM_DATA_STRING)
     vm->mem[vm->mp - 2].val.integer = !(strcmp(one.val.string, two.val.string) == 1);
   else
     vm->mem[vm->mp - 2].val.integer = 1;
 
-  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
-  vm->mem[--vm->mp] = (Data){0};
+  vm->mem[vm->mp - 2].kind = ZORAVM_DATA_INTEGER;
+  vm->mem[--vm->mp] = (ZoraVM_Data){0};
   vm->ip++;
 
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_CmpLt(VM *vm) {
+ZORAVM_ERROR ZoraVME_CmpLt(ZoraVM *vm) {
   if (vm->mp < 2)
-    return ERROR_NOT_ENOUGH_OPERANDS;
+    return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
 
-  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+  ZoraVM_Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
-  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER)
+  if (one.kind == ZORAVM_DATA_INTEGER && two.kind == ZORAVM_DATA_INTEGER)
     vm->mem[vm->mp - 2].val.integer = (int)one.val.integer < (int)two.val.integer;
-  else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
+  else if (one.kind == ZORAVM_DATA_FLOATING && two.kind == ZORAVM_DATA_FLOATING)
     vm->mem[vm->mp - 2].val.integer = one.val.floating < two.val.floating;
-  else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+  else if (one.kind == ZORAVM_DATA_STRING && two.kind == ZORAVM_DATA_STRING)
     vm->mem[vm->mp - 2].val.integer = (strcmp(one.val.string, two.val.string) == -1);
   else
     vm->mem[vm->mp - 2].val.integer = 0;
 
-  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
-  vm->mem[--vm->mp] = (Data){0};
+  vm->mem[vm->mp - 2].kind = ZORAVM_DATA_INTEGER;
+  vm->mem[--vm->mp] = (ZoraVM_Data){0};
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_CmpNotLt(VM *vm) {
+ZORAVM_ERROR ZoraVME_CmpNotLt(ZoraVM *vm) {
   if (vm->mp < 2)
-    return ERROR_NOT_ENOUGH_OPERANDS;
+    return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
 
-  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+  ZoraVM_Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
-  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER)
+  if (one.kind == ZORAVM_DATA_INTEGER && two.kind == ZORAVM_DATA_INTEGER)
     vm->mem[vm->mp - 2].val.integer = (int)!((int)one.val.integer < (int)two.val.integer);
-  else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
+  else if (one.kind == ZORAVM_DATA_FLOATING && two.kind == ZORAVM_DATA_FLOATING)
     vm->mem[vm->mp - 2].val.integer = !(one.val.floating < two.val.floating);
-  else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+  else if (one.kind == ZORAVM_DATA_STRING && two.kind == ZORAVM_DATA_STRING)
     vm->mem[vm->mp - 2].val.integer = !(strcmp(one.val.string, two.val.string) == -1);
   else
     vm->mem[vm->mp - 2].val.integer = 1;
 
-  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
-  vm->mem[--vm->mp] = (Data){0};
+  vm->mem[vm->mp - 2].kind = ZORAVM_DATA_INTEGER;
+  vm->mem[--vm->mp] = (ZoraVM_Data){0};
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_CmpGte(VM *vm) {
+ZORAVM_ERROR ZoraVME_CmpGte(ZoraVM *vm) {
   if (vm->mp < 2)
-    return ERROR_NOT_ENOUGH_OPERANDS;
+    return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
 
-  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+  ZoraVM_Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
-  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER)
+  if (one.kind == ZORAVM_DATA_INTEGER && two.kind == ZORAVM_DATA_INTEGER)
     vm->mem[vm->mp - 2].val.integer = (int)((int)one.val.integer > (int)two.val.integer || (int)one.val.integer == (int)two.val.integer);
-  else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
+  else if (one.kind == ZORAVM_DATA_FLOATING && two.kind == ZORAVM_DATA_FLOATING)
     vm->mem[vm->mp - 2].val.integer = (one.val.floating > two.val.floating || one.val.floating == two.val.floating);
-  else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+  else if (one.kind == ZORAVM_DATA_STRING && two.kind == ZORAVM_DATA_STRING)
     vm->mem[vm->mp - 2].val.integer = (strcmp(one.val.string, two.val.string) == 1 || strcmp(one.val.string, two.val.string) == 0);
   else
     vm->mem[vm->mp - 2].val.integer = 0;
 
-  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
-  vm->mem[--vm->mp] = (Data){0};
+  vm->mem[vm->mp - 2].kind = ZORAVM_DATA_INTEGER;
+  vm->mem[--vm->mp] = (ZoraVM_Data){0};
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_CmpNotGte(VM *vm) {
+ZORAVM_ERROR ZoraVME_CmpNotGte(ZoraVM *vm) {
   if (vm->mp < 2)
-    return ERROR_NOT_ENOUGH_OPERANDS;
+    return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
 
-  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+  ZoraVM_Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
-  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER)
+  if (one.kind == ZORAVM_DATA_INTEGER && two.kind == ZORAVM_DATA_INTEGER)
     vm->mem[vm->mp - 2].val.integer = (int)!((int)one.val.integer > (int)two.val.integer || (int)one.val.integer == (int)two.val.integer);
-  else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
+  else if (one.kind == ZORAVM_DATA_FLOATING && two.kind == ZORAVM_DATA_FLOATING)
     vm->mem[vm->mp - 2].val.integer = !(one.val.floating > two.val.floating || one.val.floating == two.val.floating);
-  else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+  else if (one.kind == ZORAVM_DATA_STRING && two.kind == ZORAVM_DATA_STRING)
     vm->mem[vm->mp - 2].val.integer = !(strcmp(one.val.string, two.val.string) == 1 || strcmp(one.val.string, two.val.string) == 0);
   else
     vm->mem[vm->mp - 2].val.integer = 1;
 
-  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
-  vm->mem[--vm->mp] = (Data){0};
+  vm->mem[vm->mp - 2].kind = ZORAVM_DATA_INTEGER;
+  vm->mem[--vm->mp] = (ZoraVM_Data){0};
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_CmpLte(VM *vm) {
+ZORAVM_ERROR ZoraVME_CmpLte(ZoraVM *vm) {
   if (vm->mp < 2)
-    return ERROR_NOT_ENOUGH_OPERANDS;
+    return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
 
-  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+  ZoraVM_Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
-  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER)
+  if (one.kind == ZORAVM_DATA_INTEGER && two.kind == ZORAVM_DATA_INTEGER)
     vm->mem[vm->mp - 2].val.integer = (int)one.val.integer < (int)two.val.integer || (int)one.val.integer == (int)two.val.integer;
-  else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
+  else if (one.kind == ZORAVM_DATA_FLOATING && two.kind == ZORAVM_DATA_FLOATING)
     vm->mem[vm->mp - 2].val.integer = (one.val.floating < two.val.floating || one.val.floating == two.val.floating);
-  else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+  else if (one.kind == ZORAVM_DATA_STRING && two.kind == ZORAVM_DATA_STRING)
     vm->mem[vm->mp - 2].val.integer = (strcmp(one.val.string, two.val.string) == -1 || strcmp(one.val.string, two.val.string) == 0);
   else
     vm->mem[vm->mp - 2].val.integer = 0;
 
-  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
-  vm->mem[--vm->mp] = (Data){0};
+  vm->mem[vm->mp - 2].kind = ZORAVM_DATA_INTEGER;
+  vm->mem[--vm->mp] = (ZoraVM_Data){0};
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_CmpNotLte(VM *vm) {
+ZORAVM_ERROR ZoraVME_CmpNotLte(ZoraVM *vm) {
   if (vm->mp < 2)
-    return ERROR_NOT_ENOUGH_OPERANDS;
+    return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
 
-  Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
+  ZoraVM_Data one = vm->mem[vm->mp - 2], two = vm->mem[vm->mp - 1];
 
-  if (one.kind == DATA_INTEGER && two.kind == DATA_INTEGER)
+  if (one.kind == ZORAVM_DATA_INTEGER && two.kind == ZORAVM_DATA_INTEGER)
     vm->mem[vm->mp - 2].val.integer = (int)!((int)one.val.integer < (int)two.val.integer || (int)one.val.integer == (int)two.val.integer);
-  else if (one.kind == DATA_FLOATING && two.kind == DATA_FLOATING)
+  else if (one.kind == ZORAVM_DATA_FLOATING && two.kind == ZORAVM_DATA_FLOATING)
     vm->mem[vm->mp - 2].val.integer = !(one.val.floating < two.val.floating || one.val.floating == two.val.floating);
-  else if (one.kind == DATA_STRING && two.kind == DATA_STRING)
+  else if (one.kind == ZORAVM_DATA_STRING && two.kind == ZORAVM_DATA_STRING)
     vm->mem[vm->mp - 2].val.integer = !(strcmp(one.val.string, two.val.string) == -1 || strcmp(one.val.string, two.val.string) == 0);
   else
     vm->mem[vm->mp - 2].val.integer = 1;
 
-  vm->mem[vm->mp - 2].kind = DATA_INTEGER;
-  vm->mem[--vm->mp] = (Data){0};
+  vm->mem[vm->mp - 2].kind = ZORAVM_DATA_INTEGER;
+  vm->mem[--vm->mp] = (ZoraVM_Data){0};
   vm->ip++;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_Jmp(VM *vm, Program prog) {
+ZORAVM_ERROR ZoraVME_Jmp(ZoraVM *vm, ZoraVM_Program prog) {
   /* vm->ip = prog.entry.val.integer; */
-  return ERROR_UNIMPLEMENTED;
-  return ERROR_OK;
+  return ZORAVM_ERROR_UNIMPLEMENTED;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_JmpIf(VM *vm, Program prog) {
-  if (vm->mp < 1) return ERROR_MEMORY_EMPTY;
+ZORAVM_ERROR ZoraVME_JmpIf(ZoraVM *vm, ZoraVM_Program prog) {
+  if (vm->mp < 1) return ZORAVM_ERROR_MEMORY_EMPTY;
 
-  if (vm->mem[vm->mp - 1].kind != DATA_INTEGER) return ERROR_ILLEGAL_INST;
+  if (vm->mem[vm->mp - 1].kind != ZORAVM_DATA_INTEGER) return ZORAVM_ERROR_ILLEGAL_INST;
 
   if (vm->mem[vm->mp - 1].val.integer == 0) vm->ip++;
   else vm->ip = prog.entry.val.integer;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_JmpIfNot(VM *vm, Program prog) {
+ZORAVM_ERROR ZoraVME_JmpIfNot(ZoraVM *vm, ZoraVM_Program prog) {
   if (vm->mp < 1)
-    return ERROR_MEMORY_EMPTY;
+    return ZORAVM_ERROR_MEMORY_EMPTY;
 
-  if (vm->mem[vm->mp - 1].kind != DATA_INTEGER)
-    return ERROR_ILLEGAL_INST;
+  if (vm->mem[vm->mp - 1].kind != ZORAVM_DATA_INTEGER)
+    return ZORAVM_ERROR_ILLEGAL_INST;
 
   if (vm->mem[vm->mp - 1].val.integer != 0) vm->ip++;
   else vm->ip = prog.entry.val.integer;
 
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_Ret(VM *vm, Program prog) {
-  vm->mem[vm->mp].kind = DATA_INTEGER;
+ZORAVM_ERROR ZoraVME_Ret(ZoraVM *vm, ZoraVM_Program prog) {
+  vm->mem[vm->mp].kind = ZORAVM_DATA_INTEGER;
   vm->mem[vm->mp].val.integer = prog.entry.val.integer;
   vm->mp++;
   vm->ip++;
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_Print(VM *vm) {
+ZORAVM_ERROR ZoraVME_Print(ZoraVM *vm) {
   if (vm->mp < 1)
-    return ERROR_MEMORY_EMPTY;
+    return ZORAVM_ERROR_MEMORY_EMPTY;
 
   switch (vm->mem[vm->mp - 1].kind) {
-  case DATA_INTEGER:
+  case ZORAVM_DATA_INTEGER:
     printf("%lld", vm->mem[--vm->mp].val.integer);
     break;
-  case DATA_FLOATING:
+  case ZORAVM_DATA_FLOATING:
     printf("%lf", vm->mem[--vm->mp].val.floating);
     break;
-  case DATA_STRING:
+  case ZORAVM_DATA_STRING:
     printf("%s", vm->mem[--vm->mp].val.string);
     break;
   default:
-    return ERROR_UNKNOWN_TYPE;
+    return ZORAVM_ERROR_UNKNOWN_TYPE;
   }
 
   vm->ip++;
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_Scan(VM *vm, Program prog) {
-  if (vm->mp >= MEM_SIZE)
-    return ERROR_MEMORY_FULL;
+ZORAVM_ERROR ZoraVME_Scan(ZoraVM *vm, ZoraVM_Program prog) {
+  if (vm->mp >= ZORAVM_MEM_SIZE)
+    return ZORAVM_ERROR_MEMORY_FULL;
 
-  Data entry = prog.entry;
+  ZoraVM_Data entry = prog.entry;
   switch (entry.kind) {
-  case DATA_INTEGER:
+  case ZORAVM_DATA_INTEGER:
     scanf("%lld", &vm->mem[vm->mp++].val.integer);
     break;
-  case DATA_FLOATING:
+  case ZORAVM_DATA_FLOATING:
     scanf("%lf", &vm->mem[vm->mp++].val.floating);
     break;
-  case DATA_STRING:
+  case ZORAVM_DATA_STRING:
     scanf("%s", vm->mem[vm->mp++].val.string);
     break;
   default:
-    return ERROR_UNKNOWN_TYPE;
+    return ZORAVM_ERROR_UNKNOWN_TYPE;
   }
   vm->ip++;
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
-ERROR VM_SizeOf(VM *vm) {
-  if (vm->mp < 1) return ERROR_MEMORY_EMPTY;
+ZORAVM_ERROR ZoraVME_SizeOf(ZoraVM *vm) {
+  if (vm->mp < 1) return ZORAVM_ERROR_MEMORY_EMPTY;
 
-  Data data = vm->mem[vm->mp - 1];
+  ZoraVM_Data data = vm->mem[vm->mp - 1];
   long long int size;
 
-  if (data.kind == DATA_INTEGER)
+  if (data.kind == ZORAVM_DATA_INTEGER)
     size = sizeof(data.val.integer);
-  else if (data.kind == DATA_FLOATING)
+  else if (data.kind == ZORAVM_DATA_FLOATING)
     size = sizeof(data.val.floating);
-  else if (data.kind == DATA_STRING)
+  else if (data.kind == ZORAVM_DATA_STRING)
     size = sizeof(data.val.string);
-  else return ERROR_UNKNOWN_TYPE;
+  else return ZORAVM_ERROR_UNKNOWN_TYPE;
 
-  vm->mem[vm->mp - 1] = (Data){
-    .kind = DATA_INTEGER,
+  vm->mem[vm->mp - 1] = (ZoraVM_Data){
+    .kind = ZORAVM_DATA_INTEGER,
     .val.integer = size,
   };
 
   vm->ip++;
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
 // halt the vm
-ERROR VM_Halt(VM *vm, Program prog) {
+ZORAVM_ERROR ZoraVME_Halt(ZoraVM *vm, ZoraVM_Program prog) {
   vm->state = 0;
-  vm->mem[vm->mp].kind = DATA_INTEGER;
+  vm->mem[vm->mp].kind = ZORAVM_DATA_INTEGER;
   vm->mem[vm->mp].val.integer = prog.entry.val.integer;
   vm->mp++;
   vm->ip++;
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
 // dump current cpu stack state
-ERROR VM_Dump_Stack(VM *vm) {
+ZORAVM_ERROR ZoraVME_Dump_Stack(ZoraVM *vm) {
   vm->ip++;
-  #if SHOUT
+  #if ZORAVM_LOG
   printf("\n[CPU]\n");
   printf("\tIP: %d", vm->ip);
   printf("\tSP: %d", vm->sp);
   printf("\n[Stack]\n");
   if (vm->sp < 1) {
     printf("\t<empty>\n");
-    return ERROR_OK;
+    return ZORAVM_ERROR_OK;
   }
   for (int i = 0; i < vm->sp; i++) {
-    Data entry = vm->stack[i];
+    ZoraVM_Data entry = vm->stack[i];
     switch (entry.kind) {
-    case DATA_INTEGER:
+    case ZORAVM_DATA_INTEGER:
       printf("\t %d: \t %lld \t [%s]\n", i, entry.val.integer,
-             KindAsStr(entry.kind));
+             ZoraVM_KindAsStr(entry.kind));
       break;
-    case DATA_FLOATING:
+    case ZORAVM_DATA_FLOATING:
       printf("\t %d: \t %lf \t [%s]\n", i, entry.val.floating,
-             KindAsStr(entry.kind));
+             ZoraVM_KindAsStr(entry.kind));
       break;
-    case DATA_STRING:
+    case ZORAVM_DATA_STRING:
       printf("\t %d: \t %s \t [%s]\n", i, entry.val.string,
-             KindAsStr(entry.kind));
+             ZoraVM_KindAsStr(entry.kind));
       break;
     default:
-      return ERROR_UNKNOWN_TYPE;
+      return ZORAVM_ERROR_UNKNOWN_TYPE;
     }
   }
   #endif
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
 // dump current cpu mem state
-ERROR VM_Dump_Mem(VM *vm) {
+ZORAVM_ERROR ZoraVME_Dump_Mem(ZoraVM *vm) {
   vm->ip++;
-  #if SHOUT
+  #if ZORAVM_LOG
   printf("\n[CPU]\n");
   printf("\tIP: %d", vm->ip);
   printf("\tMP: %d", vm->mp);
   printf("\n[Memory]\n");
   if (vm->mp < 1) {
     printf("\t<empty>\n");
-    return ERROR_OK;
+    return ZORAVM_ERROR_OK;
   }
   for (int i = 0; i < vm->mp; i++) {
-    Data entry = vm->mem[i];
+    ZoraVM_Data entry = vm->mem[i];
     switch (entry.kind) {
-    case DATA_INTEGER:
+    case ZORAVM_DATA_INTEGER:
       printf("\t %d: \t %lld \t [%s]\n", i, entry.val.integer,
-             KindAsStr(entry.kind));
+             ZoraVM_KindAsStr(entry.kind));
       break;
-    case DATA_FLOATING:
+    case ZORAVM_DATA_FLOATING:
       printf("\t %d: \t %lf \t [%s]\n", i, entry.val.floating,
-             KindAsStr(entry.kind));
+             ZoraVM_KindAsStr(entry.kind));
       break;
-    case DATA_STRING:
+    case ZORAVM_DATA_STRING:
       printf("\t %d: \t %s \t [%s]\n", i, entry.val.string,
-             KindAsStr(entry.kind));
+             ZoraVM_KindAsStr(entry.kind));
       break;
     default:
-      return ERROR_UNKNOWN_TYPE;
+      return ZORAVM_ERROR_UNKNOWN_TYPE;
     }
   }
   #endif
-  return ERROR_OK;
+  return ZORAVM_ERROR_OK;
 }
 
 #endif

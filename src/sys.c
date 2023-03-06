@@ -1,5 +1,5 @@
-#ifndef SYS_C
-#define SYS_C
+#ifndef ZORAVM_SYS_C
+#define ZORAVM_SYS_C
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,30 +13,30 @@ typedef struct {
   char *ext;
   char *src;
   unsigned int len;
-} file_t;
+} ZoraVM_file_t;
 
-void sys_exec(char *command) {
+void ZoraVM_sys_exec(char *command) {
   FILE *fp = (FILE *)popen(command, "r");
   pclose(fp);
 }
 
-char *absolute_path(char *path) {
+char *ZoraVM_absolute_path(char *path) {
   const int MAXPATH = 260;
   return (char *)_fullpath(NULL, path, MAXPATH);
 }
 
-char *fs_join_path(char *base, char *trail) {
-  return (char *)strcat((char *)strcat(absolute_path(base), "/"), trail);
+char *ZoraVM_join_path(char *base, char *trail) {
+  return (char *)strcat((char *)strcat(ZoraVM_absolute_path(base), "/"), trail);
 }
 
-long long filesize_from_fp(FILE *fp) {
+long long ZoraVM_filesize_from_fp(FILE *fp) {
   fseek(fp, 0, SEEK_END);
   long long size = ftell(fp);
   rewind(fp);
   return size;
 }
 
-char *filereader(char *path) {
+char *ZoraVM_filereader(char *path) {
   FILE *file;
 
   if ((file = (FILE *)fopen(path, "r")) == NULL) {
@@ -58,19 +58,19 @@ char *filereader(char *path) {
   return content;
 }
 
-long long filewriter(char *path, char *content) {
+long long ZoraVM_filewriter(char *path, char *content) {
   FILE *file = fopen(path, "w");
 
   if (!file) return -1;
 
   fprintf(file, "%s", content);
-  long long size = filesize_from_fp(file);
+  long long size = ZoraVM_filesize_from_fp(file);
   fclose(file);
 
   return size;
 }
 
-char *get_file_extract(char *file) {
+char *ZoraVM_get_file_extract(char *file) {
   char *extract = (char *)strrchr((char *)strdup(file), '\\');
   if (!extract) extract = (char *)strrchr(extract, '/');
   if (extract) *extract = '\0';
@@ -78,36 +78,39 @@ char *get_file_extract(char *file) {
   return (char *)++extract;
 }
 
-char *get_file_name(char *filepath) {
+char *ZoraVM_get_file_name(char *filepath) {
   return (char *)strtok((char *)strdup(filepath), ".");
 }
 
-char *get_file_ext(char *path) {
+char *ZoraVM_get_file_ext(char *path) {
   char *ext = (char *)strrchr((char *)strdup(path), '.');
   if (!ext)
     return "";
   return (char *)++ext;
 }
 
-char *load_file_content(char *path, char* iferr) {
-  char *content = filereader(path);
-  if (content != NULL)
-    return content;
-
-  printf("%s", iferr);
-  exit(0);
-
-  return "";
+char *load_file_content(char *path) {
+  char *content = ZoraVM_filereader(path);
+  return content;
 }
 
-file_t file_obj(char *path, char* iferr) {
-  file_t fl = {0};
+ZoraVM_file_t ZoraVM_file_obj(char *path) {
+  ZoraVM_file_t fl = {0};
 
-  fl.path = absolute_path(path);
-  fl.file = get_file_extract(fl.path);
-  fl.name = get_file_name(fl.file);
-  fl.ext = get_file_ext(fl.file);
-  fl.src = load_file_content(fl.path, iferr);
+  fl.path = ZoraVM_absolute_path(path);
+  fl.file = ZoraVM_get_file_extract(fl.path);
+  fl.name = ZoraVM_get_file_name(fl.file);
+  fl.ext = ZoraVM_get_file_ext(fl.file);
+  fl.src = load_file_content(fl.path);
+
+#if ZORAVM_LOG
+  if (!fl.src) {
+    printf("ZoraVM: Unable to read from file : %s\n%s\n", path, strerror(errno))
+    exit(-1);
+  }
+#endif
+
+  fl.len = strlen(fl.src);
 
   return fl;
 }
