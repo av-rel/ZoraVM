@@ -13,10 +13,20 @@
 
 # How will it work?
 ## ZVM will be able to run Zora Assembly Code.
-## This will be compiled via GCC, Clang, or TCC for Bytecode.
+## This will be compiled via GCC and TCC for Bytecode.
 ## It will just use C as a wrapper to make a inbuilt runtime for Zora like the hardcoded code will just have change in instructions of array which will be executing the code.
 ## It will be able to run on any platform which supports C.
 ## It will be used to make a compiler for its own high level language.
+
+## Zora Assembly Code
+[Zorasm](./Zorasm)
+### Zora Assembly Code is a assembly language for ZoraVM.
+    * It is a stack based language.
+    * It is a low level language.
+    * It is a assembly language.
+    * It can be compiled to bytecode.
+    * It can be compiled to machine code. (soon)
+    * It is a cross-platform language.
 
 # Examples 
 [Hello, world](./examples/hw.zsm)
