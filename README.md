@@ -1,9 +1,8 @@
 # ZoraVM ( Zora Virtual Machine )
 
 # Description
-## ZVM is a virtual machine written for Zora Programming Language using its own assembly code for cross-platform compatibility.
+## ZoraVM is a virtual machine written for Zora Programming Language using its own assembly code for cross-platform compatibility.
 
-#TODO
 # Features
 - [x] Assembly
 - [x] Cross-platform
@@ -17,9 +16,7 @@
 ## It will be able to run on any platform which supports C.
 ## It will be used to make a compiler for its own high level language.
 
-## Zora Assembly Code
-[Zorasm](./Zorasm)
-### Zora Assembly Code is a assembly language for ZoraVM. It is a stack based language, low level language.
+### Zora Assembly Code is a assembly language for ZoraVM. It is a stack based and low level language.
 
 # Examples 
 [Hello, world](./examples/hw.zsm)
