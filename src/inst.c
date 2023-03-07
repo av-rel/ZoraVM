@@ -38,6 +38,9 @@ const char *ZoraVM_keywords[] = {
     [ZORAVM_INST_JMP]      =   "jmp", // V
     [ZORAVM_INST_JMPIF]    =   "jmpif",
     [ZORAVM_INST_JMPIFN]   =   "jmpifn",
+    [ZORAVM_INST_CALL]     =   "call",
+    [ZORAVM_INST_CALLIF]   =   "callif",
+    [ZORAVM_INST_CALLIFN]  =   "callifn",
     //
     [ZORAVM_INST_AND]      =   "and",
     [ZORAVM_INST_OR]       =   "or",

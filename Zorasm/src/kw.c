@@ -9,7 +9,7 @@
 
 #define ZORASM_ARR_SIZE(arr) (sizeof(arr)/sizeof(arr[0]))
 
-enum ZORASM_NATIVES {
+typedef enum {
   ZORASM_N_STORE = 0,
   ZORASM_N_LOAD,
   ZORASM_N_PUSH,
@@ -51,8 +51,8 @@ enum ZORASM_NATIVES {
   ZORASM_N_CALLIF,
   ZORASM_N_CALLIFN,
   ZORASM_N_RET,
-  ZORASM_N_HALT
-};
+  ZORASM_N_HALT,
+} ZORASM_NATIVES;
 
 enum ZORASM_DATAKIND {
   ZORASM_D_INT,
@@ -111,7 +111,16 @@ char *Zorasm_Datakind[] = {
     [ZORASM_D_FLOAT]   =   "float"
 };
 
-Zorasm_TokenKind Zorasm_native_operand(enum ZORASM_NATIVES zn) {
+ZORASM_NATIVES Zorasm_char_to_native(char *s) {
+  for (int i = 0; i < ZORASM_N_HALT; i++) {
+    if (strcmp(s, Zorasm_Native[i]) == 0) {
+      return i;
+    }
+  }
+  return ZORASM_N_HALT;
+}
+
+Zorasm_TokenKind Zorasm_native_operand(ZORASM_NATIVES zn) {
   switch (zn) {
     case ZORASM_N_STORE:
     case ZORASM_N_LOAD:
@@ -150,12 +159,10 @@ enum ZORASM_DATAKIND Zorasm_tk_to_dk(Zorasm_TokenKind kind){
 }
 
 int Zorasm_is_native(char *str) {
-  int native = 0;
   unsigned int i;
-  for (i = 0; i < (ZORASM_ARR_SIZE(Zorasm_Native)); i++) {
-    if (strcmp(str, Zorasm_Native[i]) == 0) ++native;
-  }
-  return native;
+  for (i = 0; i < (ZORASM_ARR_SIZE(Zorasm_Native)); i++) 
+    if (strcmp(str, Zorasm_Native[i]) == 0) return 1;
+  return 0;
 }
 
 int Zorasm_is_register(char *str) {

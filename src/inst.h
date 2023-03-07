@@ -4,15 +4,14 @@
 typedef enum {
   ZORAVM_INST_PUSH = 0,
   ZORAVM_INST_POP,
+  ZORAVM_INST_DUP,
+  ZORAVM_INST_SWAP,
   ZORAVM_INST_STORE,
   ZORAVM_INST_LOAD,
   ZORAVM_INST_PRINT,
   ZORAVM_INST_SCAN,
   ZORAVM_INST_RET,
   ZORAVM_INST_HALT,
-  //
-  ZORAVM_INST_DUP,
-  ZORAVM_INST_SWAP,
   //
   ZORAVM_INST_ADD,
   ZORAVM_INST_SUB,
@@ -35,6 +34,9 @@ typedef enum {
   ZORAVM_INST_JMP,
   ZORAVM_INST_JMPIF,
   ZORAVM_INST_JMPIFN,
+  ZORAVM_INST_CALL,
+  ZORAVM_INST_CALLIF,
+  ZORAVM_INST_CALLIFN,
   //
   ZORAVM_INST_AND,
   ZORAVM_INST_OR,
@@ -148,6 +150,13 @@ typedef enum {
   { .inst = ZORAVM_INST_JMPIF, .entry = ZoraVM_EntryInt(val) }
 #define ZoraVM_JmpIfNot(val)                                                          \
   { .inst = ZORAVM_INST_JMPIFN, .entry = ZoraVM_EntryInt(val) }
+#define ZoraVM_Call(val)                                                               \
+  { .inst = ZORAVM_INST_CALL, .entry = ZoraVM_EntryInt(val) }
+#define ZoraVM_CallIf(val)                                                             \
+  { .inst = ZORAVM_INST_CALLIF, .entry = ZoraVM_EntryInt(val) }
+#define ZoraVM_CallIfNot(val)                                                          \
+  { .inst = ZORAVM_INST_CALLIFN, .entry = ZoraVM_EntryInt(val) }
+
 
 #define ZoraVM_Print()                                                                \
   { .inst = ZORAVM_INST_PRINT, }

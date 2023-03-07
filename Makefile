@@ -5,7 +5,7 @@ DISTDIR = bin
 L = c
 CFLAGS = -Wall -Wextra -Wpedantic -Werror
 DIST = exe
-ARGS = 
+ARGS = examples/hw.zsm
 
 .SILENT:
 build:

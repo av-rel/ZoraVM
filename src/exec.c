@@ -1,8 +1,11 @@
 #ifndef _ZORAVM_EXEC_C
 #define _ZORAVM_EXEC_C
 
+#define ZORAVM_SCAN_BUFFER (sizeof(char*) * 256 * (vm->size + 1))
+
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "./zoravm.h"
@@ -659,11 +662,15 @@ ZORAVM_ERROR ZoraVME_Print(ZoraVM *vm) {
 ZORAVM_ERROR ZoraVME_Scan(ZoraVM *vm) {
   if (vm->mp >= vm->size) return ZORAVM_ERROR_MEMORY_FULL;
 
-  scanf("%s", vm->mem[vm->mp].val.string);
-  /* vm->mem[vm->mp].kind = ZORAVM_DATA_STRING; */
+  ZoraVM_Data data = {.kind = ZORAVM_DATA_STRING, };
+  char *str = malloc(ZORAVM_SCAN_BUFFER);
+  scanf("%s", str);
 
+  data.val.string = strdup(str);
+
+  vm->mem[vm->mp++] = data;
   vm->ip++;
-  vm->mp++;
+  free(str);
   return ZORAVM_ERROR_OK;
 }
 

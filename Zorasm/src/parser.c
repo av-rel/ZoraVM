@@ -58,7 +58,7 @@ int Zorasm_parser_analyze(Zorasm_lexer_t *lexer) {
   unsigned int c = 0;
   Zorasm_token_t token = lexer->tokens[c];
 
-  for (c = 0; token.kind != ZORASM_TK_EOF; ) {
+  for (; token.kind != ZORASM_TK_EOF; ) {
     if (token.kind == ZORASM_TK_NATIVE) {
       if (token.len < 1) {
         #if ZORASM_LOG
