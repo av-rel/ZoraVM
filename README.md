@@ -1,4 +1,3 @@
-# Unfinished Project -- Anything can change at any time
 # ZoraVM ( Zora Virtual Machine )
 
 # Description
@@ -20,13 +19,7 @@
 
 ## Zora Assembly Code
 [Zorasm](./Zorasm)
-### Zora Assembly Code is a assembly language for ZoraVM.
-    * It is a stack based language.
-    * It is a low level language.
-    * It is a assembly language.
-    * It can be compiled to bytecode.
-    * It can be compiled to machine code. (soon)
-    * It is a cross-platform language.
+### Zora Assembly Code is a assembly language for ZoraVM. It is a stack based language, low level language.
 
 # Examples 
 [Hello, world](./examples/hw.zsm)
