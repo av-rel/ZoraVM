@@ -6,8 +6,8 @@
 
 #TODO
 # Features
-- [] Assembly
-- [] Cross-platform
+- [x] Assembly
+- [x] Cross-platform
 - [] C Wrapper
 - [] Compiler
 
@@ -17,3 +17,14 @@
 ## It will just use C as a wrapper to make a inbuilt runtime for Zora like the hardcoded code will just have change in instructions of array which will be executing the code.
 ## It will be able to run on any platform which supports C.
 ## It will be used to make a compiler for its own high level language.
+
+# Examples 
+[Hello, world](./examples/hw.zsm)
+```zorasm
+; This will print `Hello, world`
+
+#main
+	!push "Hello, world\n"			 ; push to the stack
+	!print							 ; Print the top of the mem stack
+	!halt 0							 ; exit with status code 0
+```
