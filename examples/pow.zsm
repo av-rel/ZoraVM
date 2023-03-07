@@ -1,0 +1,7 @@
+
+#main
+    !push 8
+    !push 2
+    !pow
+    !print
+    !halt 0

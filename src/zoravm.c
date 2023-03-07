@@ -81,6 +81,8 @@ ZORAVM_ERROR ZoraVME_Execute(ZoraVM *vm, ZoraVM_Program prog) {
     return ZoraVME_Xor(vm);
   case ZORAVM_INST_NOT:
     return ZoraVME_Not(vm);
+  case ZORAVM_INST_NEG:
+    return ZoraVME_Neg(vm);
   case ZORAVM_INST_SHL:
     return ZoraVME_Shl(vm);
   case ZORAVM_INST_SHR:

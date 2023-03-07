@@ -157,7 +157,6 @@ typedef enum {
 #define ZoraVM_CallIfNot(val)                                                          \
   { .inst = ZORAVM_INST_CALLIFN, .entry = ZoraVM_EntryInt(val) }
 
-
 #define ZoraVM_Print()                                                                \
   { .inst = ZORAVM_INST_PRINT, }
 #define ZoraVM_Scan()                                                              \
@@ -172,7 +171,7 @@ typedef enum {
   { .inst = ZORAVM_INST_DUMP_MEM, }
 
 #define ZoraVM_Ret(a)                                                                  \
-  { .inst = ZORAVM_INST_RET, .entry = ZoraVM_EntryInt(a) }
+  { .inst = ZORAVM_INST_RET, .entry = ZoraVM_EntryInt(a)}
 #define ZoraVM_Halt(a)                                                                \
   { .inst = ZORAVM_INST_HALT, .entry = ZoraVM_EntryInt(a) }
 

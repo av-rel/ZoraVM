@@ -61,8 +61,8 @@ const char *ZoraVM_keywords[] = {
 
     [ZORAVM_INST_SIZEOF]   =   "sizeof",
     // cpu state
-    [ZORAVM_INST_DUMP_STACK]   =   "_stack",
-    [ZORAVM_INST_DUMP_MEM]     =   "_mem",
+    [ZORAVM_INST_DUMP_STACK]   =   "dump_stack",
+    [ZORAVM_INST_DUMP_MEM]     =   "dump_mem",
 };
 
 int ZoraVM_Is_Inst(char *c) {

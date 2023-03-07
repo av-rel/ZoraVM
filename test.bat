@@ -1,9 +1,12 @@
 @echo off
 
 set com=tcc
-set src=src\main.c
-set test=examples\print.zsm
+set fl=src\main.c
+set bin=bin\main.out
+set args=-std=c99 
 
 if not exist bin mkdir bin
-call %com% %src% -o bin\main.exe -std=c99 -O3 
-call bin\main.exe %test%
+echo Compiling %fl%
+call %com% %args% %fl% -o %bin%
+echo Running %bin% examples\print.zsm
+call %bin% examples\print.zsm

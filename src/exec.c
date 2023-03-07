@@ -348,6 +348,21 @@ ZORAVM_ERROR ZoraVME_Not(ZoraVM *vm) {
   return ZORAVM_ERROR_OK;
 }
 
+ZORAVM_ERROR ZoraVME_Neg(ZoraVM *vm) {
+  if (vm->mp < 1)
+    return ZORAVM_ERROR_MEMORY_EMPTY;
+  if (vm->mem[vm->mp - 1].kind == ZORAVM_DATA_STRING)
+    return ZORAVM_ERROR_UNEXPECTED_TYPE;
+
+  if (vm->mem[vm->mp - 1].kind == ZORAVM_DATA_FLOATING)
+    vm->mem[vm->mp - 1].val.floating = -vm->mem[vm->mp - 1].val.floating;
+  else if (vm->mem[vm->mp - 1].kind == ZORAVM_DATA_INTEGER)
+    vm->mem[vm->mp - 1].val.integer = -vm->mem[vm->mp - 1].val.integer;
+  vm->ip++;
+
+  return ZORAVM_ERROR_OK;
+}
+
 ZORAVM_ERROR ZoraVME_Shl(ZoraVM *vm) {
   if (vm->mp < 2)
     return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
@@ -710,7 +725,6 @@ ZORAVM_ERROR ZoraVME_Halt(ZoraVM *vm, ZoraVM_Program prog) {
 // dump current cpu stack state
 ZORAVM_ERROR ZoraVME_Dump_Stack(ZoraVM *vm) {
   vm->ip++;
-  #if ZORAVM_LOG
   printf("\n[CPU]\n");
   printf("\tIP: %d", vm->ip);
   printf("\tSP: %d", vm->sp);
@@ -738,14 +752,12 @@ ZORAVM_ERROR ZoraVME_Dump_Stack(ZoraVM *vm) {
       return ZORAVM_ERROR_UNKNOWN_TYPE;
     }
   }
-  #endif
   return ZORAVM_ERROR_OK;
 }
 
 // dump current cpu mem state
 ZORAVM_ERROR ZoraVME_Dump_Mem(ZoraVM *vm) {
   vm->ip++;
-  #if ZORAVM_LOG
   printf("\n[CPU]\n");
   printf("\tIP: %d", vm->ip);
   printf("\tMP: %d", vm->mp);
@@ -773,7 +785,6 @@ ZORAVM_ERROR ZoraVME_Dump_Mem(ZoraVM *vm) {
       return ZORAVM_ERROR_UNKNOWN_TYPE;
     }
   }
-  #endif
   return ZORAVM_ERROR_OK;
 }
 

@@ -10,7 +10,6 @@
 ZoraVM_Program ZoraVM_Parse_Native(ZORASM_NATIVES native, Zorasm_token_t* tokens, unsigned int* c);
 
 int ZoraVM_Program_from_tokens(Zorasm_token_t* tokens, unsigned int ctok , ZoraVM_Program* program) {
-
     unsigned int c = 0, progc = 0;
     Zorasm_token_t token = tokens[c++];
 
@@ -21,7 +20,6 @@ int ZoraVM_Program_from_tokens(Zorasm_token_t* tokens, unsigned int ctok , ZoraV
         }
         token = tokens[c++];
     }
-
     return progc;
 }
 
@@ -41,7 +39,6 @@ ZoraVM_Program ZoraVM_Parse_Native(ZORASM_NATIVES native, Zorasm_token_t* tokens
         } break;
         case ZORASM_N_LOAD: {
             Zorasm_token_t token = tokens[(*c)++];
-            assert(token.kind == ZORASM_TK_INT);
             prog = (ZoraVM_Program)ZoraVM_Load(atoll(token.value));
         } break;
         case ZORASM_N_CALL: {
@@ -76,10 +73,12 @@ ZoraVM_Program ZoraVM_Parse_Native(ZORASM_NATIVES native, Zorasm_token_t* tokens
             Zorasm_token_t token = tokens[(*c)++];
             prog = (ZoraVM_Program)ZoraVM_Halt(atoll(token.value));
         } break;
+        case ZORASM_N_SIZEOF: prog = (ZoraVM_Program)ZoraVM_SizeOf(); break;
+        case ZORASM_N_PRINT: prog = (ZoraVM_Program)ZoraVM_Print(); break;
+        case ZORASM_N_SCAN: prog = (ZoraVM_Program)ZoraVM_Scan(); break;
         case ZORASM_N_DUP: prog = (ZoraVM_Program)ZoraVM_Dup(); break;
         case ZORASM_N_SWAP: prog = (ZoraVM_Program)ZoraVM_Swap(); break;
         case ZORASM_N_POP: prog = (ZoraVM_Program)ZoraVM_Pop(); break;
-        case ZORASM_N_PRINT: prog = (ZoraVM_Program)ZoraVM_Print(); break;
         case ZORASM_N_INC: prog = (ZoraVM_Program)ZoraVM_Inc(); break;
         case ZORASM_N_DEC: prog = (ZoraVM_Program)ZoraVM_Dec(); break;
         case ZORASM_N_POW: prog = (ZoraVM_Program)ZoraVM_Pow(); break;
@@ -92,6 +91,7 @@ ZoraVM_Program ZoraVM_Parse_Native(ZORASM_NATIVES native, Zorasm_token_t* tokens
         case ZORASM_N_OR: prog = (ZoraVM_Program)ZoraVM_Or(); break;
         case ZORASM_N_XOR: prog = (ZoraVM_Program)ZoraVM_Xor(); break;
         case ZORASM_N_NOT: prog = (ZoraVM_Program)ZoraVM_Not(); break;
+        case ZORASM_N_NEG: prog = (ZoraVM_Program)ZoraVM_Neg(); break;
         case ZORASM_N_SHL: prog = (ZoraVM_Program)ZoraVM_Shl(); break;
         case ZORASM_N_SHR: prog = (ZoraVM_Program)ZoraVM_Shr(); break;
         case ZORASM_N_EQ: prog = (ZoraVM_Program)ZoraVM_CmpEq(); break;
@@ -104,10 +104,9 @@ ZoraVM_Program ZoraVM_Parse_Native(ZORASM_NATIVES native, Zorasm_token_t* tokens
         case ZORASM_N_NGTE: prog = (ZoraVM_Program)ZoraVM_CmpNotGte(); break;
         case ZORASM_N_NLT: prog = (ZoraVM_Program)ZoraVM_CmpNotLt(); break;
         case ZORASM_N_NLTE: prog = (ZoraVM_Program)ZoraVM_CmpNotLte(); break;
-        case ZORASM_N_SIZEOF: prog = (ZoraVM_Program)ZoraVM_SizeOf(); break;
         case ZORASM_N_DUMP_STACK: prog = (ZoraVM_Program)ZoraVM_DumpStack(); break;
         case ZORASM_N_DUMP_MEM: prog = (ZoraVM_Program)ZoraVM_DumpMem(); break;
-        default: {assert(0 && "Unreachable 1/0");}
+        default: {assert(0 && "Unimplemented");}
     }
 
     return prog;
