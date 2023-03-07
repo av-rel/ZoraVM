@@ -11,7 +11,7 @@
 
 // push to the memory stack
 ZORAVM_ERROR ZoraVME_Push(ZoraVM *vm, ZoraVM_Data data) {
-  if (vm->mp >= ZORAVM_MEM_SIZE)
+  if (vm->mp >= vm->size)
     return ZORAVM_ERROR_MEMORY_FULL;
   switch (data.kind) {
   case ZORAVM_DATA_INTEGER:
@@ -46,7 +46,7 @@ ZORAVM_ERROR ZoraVME_Pop(ZoraVM *vm) {
 
 // store to the stack from mem
 ZORAVM_ERROR ZoraVME_Store(ZoraVM *vm, ZoraVM_Data data) {
-  if (vm->sp >= ZORAVM_STACK_SIZE)
+  if (vm->sp >= vm->size)
     return ZORAVM_ERROR_STACK_OVERFLOW;
   if (vm->mp < 1)
     return ZORAVM_ERROR_MEMORY_EMPTY;
@@ -62,7 +62,7 @@ ZORAVM_ERROR ZoraVME_Store(ZoraVM *vm, ZoraVM_Data data) {
 ZORAVM_ERROR ZoraVME_Load(ZoraVM *vm, ZoraVM_Data data) {
   if (vm->sp < 1)
     return ZORAVM_ERROR_STACK_UNDERFLOW;
-  if (vm->mp >= ZORAVM_MEM_SIZE)
+  if (vm->mp >= vm->size)
     return ZORAVM_ERROR_MEMORY_FULL;
 
   vm->mem[vm->mp++] = vm->stack[data.val.integer];
@@ -73,7 +73,7 @@ ZORAVM_ERROR ZoraVME_Load(ZoraVM *vm, ZoraVM_Data data) {
 
 // duplicate memory values
 ZORAVM_ERROR ZoraVME_Dup(ZoraVM *vm) {
-  if (vm->mp >= ZORAVM_MEM_SIZE)
+  if (vm->mp >= vm->size)
     return ZORAVM_ERROR_MEMORY_FULL;
   if (vm->mp < 1)
     return ZORAVM_ERROR_MEMORY_EMPTY;
@@ -87,7 +87,7 @@ ZORAVM_ERROR ZoraVME_Dup(ZoraVM *vm) {
 
 // swap memory values
 ZORAVM_ERROR ZoraVME_Swap(ZoraVM *vm) {
-  if (vm->mp >= ZORAVM_MEM_SIZE)
+  if (vm->mp >= vm->size)
     return ZORAVM_ERROR_MEMORY_FULL;
   if (vm->mp < 2)
     return ZORAVM_ERROR_NOT_ENOUGH_OPERANDS;
@@ -656,25 +656,14 @@ ZORAVM_ERROR ZoraVME_Print(ZoraVM *vm) {
   return ZORAVM_ERROR_OK;
 }
 
-ZORAVM_ERROR ZoraVME_Scan(ZoraVM *vm, ZoraVM_Program prog) {
-  if (vm->mp >= ZORAVM_MEM_SIZE)
-    return ZORAVM_ERROR_MEMORY_FULL;
+ZORAVM_ERROR ZoraVME_Scan(ZoraVM *vm) {
+  if (vm->mp >= vm->size) return ZORAVM_ERROR_MEMORY_FULL;
 
-  ZoraVM_Data entry = prog.entry;
-  switch (entry.kind) {
-  case ZORAVM_DATA_INTEGER:
-    scanf("%lld", &vm->mem[vm->mp++].val.integer);
-    break;
-  case ZORAVM_DATA_FLOATING:
-    scanf("%lf", &vm->mem[vm->mp++].val.floating);
-    break;
-  case ZORAVM_DATA_STRING:
-    scanf("%s", vm->mem[vm->mp++].val.string);
-    break;
-  default:
-    return ZORAVM_ERROR_UNKNOWN_TYPE;
-  }
+  scanf("%s", vm->mem[vm->mp].val.string);
+  /* vm->mem[vm->mp].kind = ZORAVM_DATA_STRING; */
+
   vm->ip++;
+  vm->mp++;
   return ZORAVM_ERROR_OK;
 }
 

@@ -4,9 +4,6 @@
 #include "./inst.h"
 #include "./trap.c"
 
-#define ZORAVM_MEM_SIZE 69
-#define ZORAVM_STACK_SIZE 6969
-
 typedef enum {
   ZORAVM_DATA_STRING,
   ZORAVM_DATA_INTEGER,
@@ -26,21 +23,24 @@ typedef struct {
 } ZoraVM_Data;
 
 typedef struct {
-  int state;  // state of vm | HALT or not
-  int np;     //no. of programs
-  int ip;    // instruction pointer
-  int sp;    // stack pointer
-  int mp;    // mem pointer
-  ZoraVM_Data mem[ZORAVM_MEM_SIZE];     // mem stack
-  ZoraVM_Data stack[ZORAVM_STACK_SIZE]; // stack
-} ZoraVM;
-
-typedef struct {
   ZoraVM_Inst inst;
   ZoraVM_Data entry;
 } ZoraVM_Program;
 
-ZoraVM ZoraVM_Init(int np);
+typedef struct {
+  int state;  // state of vm
+  int size;     //no. of programs
+  int ip;    // instruction pointer
+  int sp;    // stack pointer
+  int mp;    // mem pointer
+  int fp;   // frame pointer
+  ZoraVM_Data *mem;     // mem stack
+  ZoraVM_Data *stack; // stack
+} ZoraVM;
+
+
+ZoraVM ZoraVM_Init(unsigned int cap);
+void ZoraVM_Dispose(ZoraVM *vm);
 ZORAVM_ERROR ZoraVME_Execute(ZoraVM *vm, ZoraVM_Program prog);
 
 #endif

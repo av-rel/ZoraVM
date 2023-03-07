@@ -3,18 +3,21 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #include "./zoravm.h"
 #include "./exec.c"
 #include "./inst.c"
 #include "./trap.c"
 
-int ZoraVME(ZoraVM_Program *program, int np) {
-  ZoraVM vm = ZoraVM_Init(np);
-
+int ZoraVME(ZoraVM_Program *program, unsigned int program_size, unsigned int cap) {
+  ZoraVM vm;
   ZORAVM_ERROR vm_err = ZORAVM_ERROR_OK;
+
+  if (program_size < 1) goto dispose;
+  vm = ZoraVM_Init(cap);
  
-  while (vm.state && vm_err == ZORAVM_ERROR_OK && vm.ip < vm.np) {
+  while (vm.state && vm_err == ZORAVM_ERROR_OK && vm.ip < program_size) {
     vm_err = ZoraVME_Execute(&vm, program[vm.ip]);
   }
 
@@ -22,17 +25,22 @@ int ZoraVME(ZoraVM_Program *program, int np) {
     #if ZORAVM_LOG
     printf("%s%s%s\n", "" , "ZORAVM_ERROR: ", ZoraVM_Errors[vm_err]);
     #endif
-    return vm_err;
+    goto dispose;
   }
 
   if (vm.mem[vm.mp - 1].kind != ZORAVM_DATA_INTEGER) {
     #if ZORAVM_LOG
     printf("%s%s%s\n", "" ,"ZORAVM_ERROR: ", "Expected integer as return value\n");
     #endif
-    return ZORAVM_ERROR_UNEXPECTED_TYPE;
+    vm_err = ZORAVM_ERROR_UNEXPECTED_TYPE;
+    goto dispose;
   }
 
-  return vm.mem[--vm.mp].val.integer;
+  vm_err = vm.mem[--vm.mp].val.integer;
+
+dispose:
+  if (!(program_size < 1)) ZoraVM_Dispose(&vm);
+  return vm_err;
 }
 
 
@@ -107,7 +115,7 @@ ZORAVM_ERROR ZoraVME_Execute(ZoraVM *vm, ZoraVM_Program prog) {
   case ZORAVM_INST_PRINT:
     return ZoraVME_Print(vm);
   case ZORAVM_INST_SCAN:
-    return ZoraVME_Scan(vm, prog);
+    return ZoraVME_Scan(vm);
   case ZORAVM_INST_SIZEOF:
     return ZoraVME_SizeOf(vm);
   case ZORAVM_INST_RET:
@@ -124,16 +132,26 @@ ZORAVM_ERROR ZoraVME_Execute(ZoraVM *vm, ZoraVM_Program prog) {
   return ZORAVM_ERROR_OK;
 }
 
-ZoraVM ZoraVM_Init(int np) {
+ZoraVM ZoraVM_Init(unsigned int cap) {
   ZoraVM vm = {0};
 
   vm.ip = 0;
   vm.mp = 0;
   vm.sp = 0;
-  vm.np = np;
+  vm.fp = 0;
+  vm.size = cap;
+
+  vm.stack = malloc(sizeof(ZoraVM_Data) * (vm.size + 1));
+  vm.mem = malloc(sizeof(ZoraVM_Data) * (vm.size + 1));
+
   vm.state = 1;
 
   return vm;
+}
+
+void ZoraVM_Dispose(ZoraVM *vm) {
+  free(vm->mem);
+  free(vm->stack);
 }
 
 #endif

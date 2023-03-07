@@ -151,13 +151,8 @@ typedef enum {
 
 #define ZoraVM_Print()                                                                \
   { .inst = ZORAVM_INST_PRINT, }
-
-#define ZoraVM_ScanInt()                                                              \
-  { .inst = ZORAVM_INST_SCAN, .entry = ZoraVM_EntryInt(0) }
-#define ZoraVM_ScanFloat()                                                            \
-  { .inst = ZORAVM_INST_SCAN, .entry = ZoraVM_EntryFloat(0) }
-#define ZoraVM_ScanStr()                                                              \
-  { .inst = ZORAVM_INST_SCAN, .entry = ZoraVM_EntryStr(0) }
+#define ZoraVM_Scan()                                                              \
+  { .inst = ZORAVM_INST_SCAN, }
 
 #define ZoraVM_SizeOf()                                                               \
   {.inst = ZORAVM_INST_SIZEOF, }
