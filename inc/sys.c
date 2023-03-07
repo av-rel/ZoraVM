@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
 #include "./sys.h"
 
 void Zora_sys_exec(char *command) {
@@ -98,7 +97,7 @@ Zora_file_t Zora_file_obj(char *path) {
 
   if (!fl.src) {
   #if ZORA_LOG
-    printf("\nERROR: Unable to read from file `%s`\n%s\n", path, strerror(errno));
+    printf("\nERROR: Unable to read from file `%s`\n\n", path);
   #endif
   fl.len = -1;
     return fl;
