@@ -1,7 +1,7 @@
 @echo off
 
 set com=tcc
-set fl=zoravm\main.c
+set fl=source\main.c
 set bin=bin\zvm.exe
 set args=-std=c99 
 

@@ -1,8 +1,8 @@
 @echo off
 
 set com=tcc
-set fl=zoravm\main.c
-set bin=bin\test.exe
+set fl=source\main.c
+set bin=bin\test-zvm.exe
 set exmp=examples\hw.zsm
 set args=-std=c99 
 
