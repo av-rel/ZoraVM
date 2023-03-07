@@ -1,29 +1,22 @@
 #ifndef _ZORAVM_H
 #define _ZORAVM_H
 
+#include "../zorasm/kw.h"
 #include "./inst.h"
 #include "./trap.c"
 
-typedef enum {
-  ZORAVM_DATA_STRING,
-  ZORAVM_DATA_INTEGER,
-  ZORAVM_DATA_FLOATING,
-} ZORAVM_DATA_KIND;
-
-#define ZoraVM_KindAsStr(kind) (kind == ZORAVM_DATA_STRING ? "string" : (kind == ZORAVM_DATA_INTEGER ? "integer" : (kind == ZORAVM_DATA_FLOATING ? "float" : "unknown" )))
-
 typedef struct {
-  ZORAVM_DATA_KIND kind;
+  ZORASM_DATAKIND kind;
   union {
     char *string;
     long long int integer;
     double floating;
   } val;
-  void *ptr;
+  void *ptr; //todo
 } ZoraVM_Data;
 
 typedef struct {
-  ZoraVM_Inst inst;
+  ZORASM_INST inst;
   ZoraVM_Data entry;
 } ZoraVM_Program;
 

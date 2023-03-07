@@ -3,8 +3,9 @@
 
 #include <stdlib.h>
 #include "./lexer.h"
+#include "../inc/utils.h"
 
-Zorasm_lexer_t Zorasm_init_lexer(Zorasm_file_t *file) {
+Zorasm_lexer_t Zorasm_init_lexer(Zora_file_t *file) {
   Zorasm_lexer_t lexer = {0};
 
   lexer.file = file;
@@ -58,7 +59,7 @@ void Zorasm_lexer_n_advance(Zorasm_lexer_t *lexer, unsigned int n) {
 }
 
 void Zorasm_lexer_skip_ws(Zorasm_lexer_t *lexer) {
-  while (Zorasm_is_whitespace(lexer->cur))
+  while (Zora_is_ws(lexer->cur))
     Zorasm_lexer_advance(lexer);
 }
 
@@ -66,19 +67,5 @@ void Zorasm_lexer_skip_line(Zorasm_lexer_t *lexer) {
   while (lexer->cur != '\n' && lexer->cur != '\0')
     Zorasm_lexer_advance(lexer);
 }
-
-int Zorasm_is_valid_identifier(char ch) {
-  return Zorasm_is_alpha(ch) || ch == '_' || Zorasm_is_digit(ch);
-}
-
-int Zorasm_is_whitespace(char ch) {
-  return ch == ' ' || ch == '\n' || ch == '\r' || ch == '\t';
-}
-
-int Zorasm_is_alpha(char ch) {
-  return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
-}
-
-int Zorasm_is_digit(char ch) { return ch >= '0' && ch <= '9'; }
 
 #endif

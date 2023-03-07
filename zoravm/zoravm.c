@@ -5,8 +5,8 @@
 #include <stdlib.h>
 
 #include "./zoravm.h"
+#include "../zorasm/kw.c"
 #include "./exec.c"
-#include "./inst.c"
 #include "./trap.c"
 
 int ZoraVME(ZoraVM_Program *program, unsigned int program_size, unsigned int cap) {
@@ -27,7 +27,7 @@ int ZoraVME(ZoraVM_Program *program, unsigned int program_size, unsigned int cap
     goto dispose;
   }
 
-  if (vm.mem[vm.mp - 1].kind != ZORAVM_DATA_INTEGER) {
+  if (vm.mem[vm.mp - 1].kind != ZORASM_DATA_INT) {
     #if ZORAVM_LOG
     printf("\n%s%s%s\n", "" ,"ZORAVM_ERROR: ", "Expected integer as return value\n");
     #endif
@@ -45,87 +45,87 @@ dispose:
 
 ZORAVM_ERROR ZoraVME_Execute(ZoraVM *vm, ZoraVM_Program prog) {
   switch (prog.inst) {
-  case ZORAVM_INST_PUSH:
+  case ZORASM_INST_PUSH:
     return ZoraVME_Push(vm, prog.entry);
-  case ZORAVM_INST_POP:
+  case ZORASM_INST_POP:
     return ZoraVME_Pop(vm);
-  case ZORAVM_INST_STORE:
+  case ZORASM_INST_STORE:
     return ZoraVME_Store(vm, prog.entry);
-  case ZORAVM_INST_LOAD:
+  case ZORASM_INST_LOAD:
     return ZoraVME_Load(vm, prog.entry);
-  case ZORAVM_INST_DUP:
+  case ZORASM_INST_DUP:
     return ZoraVME_Dup(vm);
-  case ZORAVM_INST_SWAP:
+  case ZORASM_INST_SWAP:
     return ZoraVME_Swap(vm);
-  case ZORAVM_INST_ADD:
+  case ZORASM_INST_ADD:
     return ZoraVME_Add(vm);
-  case ZORAVM_INST_SUB:
+  case ZORASM_INST_SUB:
     return ZoraVME_Sub(vm);
-  case ZORAVM_INST_MUL:
+  case ZORASM_INST_MUL:
     return ZoraVME_Mul(vm);
-  case ZORAVM_INST_DIV:
+  case ZORASM_INST_DIV:
     return ZoraVME_Div(vm);
-  case ZORAVM_INST_MOD:
+  case ZORASM_INST_MOD:
     return ZoraVME_Mod(vm);
-  case ZORAVM_INST_INC:
+  case ZORASM_INST_INC:
     return ZoraVME_Inc(vm);
-  case ZORAVM_INST_DEC:
+  case ZORASM_INST_DEC:
     return ZoraVME_Dec(vm);
-  case ZORAVM_INST_POW:
+  case ZORASM_INST_POW:
     return ZoraVME_Pow(vm);
-  case ZORAVM_INST_AND:
+  case ZORASM_INST_AND:
     return ZoraVME_And(vm);
-  case ZORAVM_INST_OR:
+  case ZORASM_INST_OR:
     return ZoraVME_Or(vm);
-  case ZORAVM_INST_XOR:
+  case ZORASM_INST_XOR:
     return ZoraVME_Xor(vm);
-  case ZORAVM_INST_NOT:
+  case ZORASM_INST_NOT:
     return ZoraVME_Not(vm);
-  case ZORAVM_INST_NEG:
+  case ZORASM_INST_NEG:
     return ZoraVME_Neg(vm);
-  case ZORAVM_INST_SHL:
+  case ZORASM_INST_SHL:
     return ZoraVME_Shl(vm);
-  case ZORAVM_INST_SHR:
+  case ZORASM_INST_SHR:
     return ZoraVME_Shr(vm);
-  case ZORAVM_INST_CMP_EQ:
+  case ZORASM_INST_EQ:
     return ZoraVME_CmpEq(vm);
-  case ZORAVM_INST_CMP_NEQ:
+  case ZORASM_INST_NEQ:
     return ZoraVME_CmpNotEq(vm);
-  case ZORAVM_INST_CMP_GT:
+  case ZORASM_INST_GT:
     return ZoraVME_CmpGt(vm);
-  case ZORAVM_INST_CMP_NGT:
+  case ZORASM_INST_NGT:
     return ZoraVME_CmpNotGt(vm);
-  case ZORAVM_INST_CMP_LT:
+  case ZORASM_INST_LT:
     return ZoraVME_CmpLt(vm);
-  case ZORAVM_INST_CMP_NLT:
+  case ZORASM_INST_NLT:
     return ZoraVME_CmpNotLt(vm);
-  case ZORAVM_INST_CMP_GTE:
+  case ZORASM_INST_GTE:
     return ZoraVME_CmpGte(vm);
-  case ZORAVM_INST_CMP_NGTE:
+  case ZORASM_INST_NGTE:
     return ZoraVME_CmpNotGte(vm);
-  case ZORAVM_INST_CMP_LTE:
+  case ZORASM_INST_LTE:
     return ZoraVME_CmpLte(vm);
-  case ZORAVM_INST_CMP_NLTE:
+  case ZORASM_INST_NLTE:
     return ZoraVME_CmpNotLte(vm);
-  case ZORAVM_INST_JMP:
+  case ZORASM_INST_JMP:
     return ZoraVME_Jmp(vm, prog);
-  case ZORAVM_INST_JMPIF:
+  case ZORASM_INST_JMPIF:
     return ZoraVME_JmpIf(vm, prog);
-  case ZORAVM_INST_JMPIFN:
+  case ZORASM_INST_JMPIFN:
     return ZoraVME_JmpIfNot(vm, prog);
-  case ZORAVM_INST_PRINT:
+  case ZORASM_INST_PRINT:
     return ZoraVME_Print(vm);
-  case ZORAVM_INST_SCAN:
+  case ZORASM_INST_SCAN:
     return ZoraVME_Scan(vm);
-  case ZORAVM_INST_SIZEOF:
+  case ZORASM_INST_SIZEOF:
     return ZoraVME_SizeOf(vm);
-  case ZORAVM_INST_RET:
+  case ZORASM_INST_RET:
     return ZoraVME_Ret(vm, prog);
-  case ZORAVM_INST_HALT:
+  case ZORASM_INST_HALT:
     return ZoraVME_Halt(vm, prog);
-  case ZORAVM_INST_DUMP_STACK:
+  case ZORASM_INST_DUMP_STACK:
     return ZoraVME_Dump_Stack(vm);
-  case ZORAVM_INST_DUMP_MEM:
+  case ZORASM_INST_DUMP_MEM:
     return ZoraVME_Dump_Mem(vm);
   default:
     return ZORAVM_ERROR_UNKNOWN_INST;

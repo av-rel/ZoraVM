@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "lexer.h"
+#include "./lexer.h"
 
 void Zorasm_log_error_line(char *source, int errline) {
 #if ZORASM_LOG

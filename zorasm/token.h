@@ -31,5 +31,7 @@ typedef struct {
 } Zorasm_token_t;
 
 Zorasm_token_t Zorasm_init_token(char *value, Zorasm_TokenKind kind, int len, Zorasm_node_position pos);
+char *Zorasm_token_as_str(Zorasm_TokenKind kind);
+void Zorasm_free_tokens(Zorasm_token_t* tokens);
 
 #endif

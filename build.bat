@@ -2,12 +2,11 @@
 
 set com=tcc
 set fl=zoravm\main.c
-set bin=bin\test.exe
-set exmp=examples\hw.zsm
+set bin=bin\zvm.exe
 set args=-std=c99 
 
 if not exist bin mkdir bin
-echo Compiling %fl%
+@echo on
+echo Building %fl% : %bin%
+@echo off
 call %com% %args% %fl% -o %bin%
-echo Testing %exmp%
-call %bin% %exmp%

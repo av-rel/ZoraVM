@@ -1,7 +1,6 @@
 #ifndef ZORASM_PARSER_C
 #define ZORASM_PARSER_C
 
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,15 +9,11 @@
 #include "./kw.c"
 #include "./token.h"
 
-int Zorasm_parser_expect(Zorasm_lexer_t *lexer, Zorasm_token_t token, Zorasm_TokenKind expect, Zorasm_TokenKind got);
-int Zorasm_parser_expect_many(Zorasm_lexer_t *lexer, Zorasm_token_t token, Zorasm_TokenKind expect[], int expected_len , Zorasm_TokenKind got);
-
-
 int Zorasm_parser_expect(Zorasm_lexer_t *lexer, Zorasm_token_t token, Zorasm_TokenKind expect, Zorasm_TokenKind got) {
     if (expect == got) return 0;
     if (expect == ZORASM_TK_KIND && (got == ZORASM_TK_STRING || got == ZORASM_TK_INT || got == ZORASM_TK_FLOAT)) return 0;
 #if ZORASM_LOG
-    printf("\n%s:%d:%d: Expected `%s` but got `%s`\n\n", lexer->file->argfile, token.pos.start.line, token.pos.start.col, Zorasm_token_as_str(expect), Zorasm_token_as_str(got));
+    printf("\n%s:%d:%d: Expected `%s` but got `%s` as `` \n\n", lexer->file->argfile, token.pos.start.line, token.pos.start.col, Zorasm_token_as_str(expect), Zorasm_token_as_str(got));
     Zorasm_log_error_line(lexer->file->src, token.pos.start.line);
 #endif
 
@@ -67,7 +62,7 @@ int Zorasm_parser_analyze(Zorasm_lexer_t *lexer) {
         #endif
         return -3;
       }
-      else if (!Zorasm_is_native(token.value)) {
+      else if (!Zorasm_is_inst(token.value)) {
         #if ZORASM_LOG
         printf("\n%s:%d:%d: Unknown native call `%s`\n\n", lexer->file->argfile, token.pos.start.line, token.pos.start.col, token.value);
         Zorasm_log_error_line(lexer->file->src, token.pos.start.line);
@@ -76,7 +71,7 @@ int Zorasm_parser_analyze(Zorasm_lexer_t *lexer) {
         #endif
         return -3;
       }
-      Zorasm_TokenKind expected = Zorasm_n_to_op(token.value);
+      Zorasm_TokenKind expected = Zorasm_inst_op(token.value);
       if (expected != ZORASM_TK_NONE) {
         Zorasm_token_t next = Zorasm_parser_next(lexer, &token, &c);
         if (Zorasm_parser_expect(lexer, token, expected, next.kind) != 0) return -3;
@@ -98,8 +93,7 @@ int Zorasm_parser_analyze(Zorasm_lexer_t *lexer) {
         return -3;
       }
     }
-    else if (token.kind == ZORASM_TK_LABEL) {
-      if (token.len < 1) {
+    else if (token.kind == ZORASM_TK_LABEL) { if (token.len < 1) {
         #if ZORASM_LOG
         printf("\n%s:%d:%d: Unnamed label\n\n", lexer->file->argfile, token.pos.start.line, token.pos.start.col);
         Zorasm_log_error_line(lexer->file->src, token.pos.start.line);

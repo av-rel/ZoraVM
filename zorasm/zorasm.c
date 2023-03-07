@@ -4,12 +4,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "./sys.c"
+#include "../inc/sys.h"
 #include "./lexer.c"
 #include "./token.c"
 #include "./parser.c"
 
-Zorasm_token_t* Zorasm(Zorasm_file_t *file, int *ncount , int *err) {
+Zorasm_token_t* Zorasm(Zora_file_t *file, int *ncount , int *err) {
 
   Zorasm_lexer_t lexer;
   if (file->len < 1) goto dispose;

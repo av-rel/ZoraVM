@@ -1,8 +1,12 @@
+#define ZORA_LOG 1
 #define ZORAVM_LOG 1
 #define ZORASM_LOG 1
 
 #include "./zoravm.c"
+#include "../zorasm/zorasm.c"
 #include "./prog.c"
+#include "../inc/sys.c"
+#include "../inc/utils.c"
 
 int Usage(char** argv) {
   printf("Usage: %s <file>\n", argv[0]);
@@ -17,7 +21,7 @@ int main(int argc, char** argv) {
 
   int rtn;
   ZoraVM_Program *prog = {0};
-  Zorasm_file_t file = file_obj(argv[1]);
+  Zora_file_t file = Zora_file_obj(argv[1]);
 
   int ntok = 0, err = 0, progc = 0;
   Zorasm_token_t* tokens = Zorasm(&file, &ntok , &err);
