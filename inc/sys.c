@@ -97,7 +97,7 @@ Zora_file_t Zora_file_obj(char *path) {
 
   if (!fl.src) {
   #if ZORA_LOG
-    printf("\nERROR: Unable to read from file `%s`\n\n", path);
+    printf("ERROR: Unable to read from file `%s`\n", path);
   #endif
   fl.len = -1;
     return fl;

@@ -1,6 +1,8 @@
 #ifndef _ZORAVM_C
 #define _ZORAVM_C
 
+#define ZORAVM_VERSION "0.1.0"
+
 #include <stdio.h>
 #include <stdlib.h>
 
