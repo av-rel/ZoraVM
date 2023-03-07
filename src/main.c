@@ -1,4 +1,3 @@
-#include "inst.h"
 #define ZORAVM_LOG 1
 #define ZORASM_LOG 1
 
