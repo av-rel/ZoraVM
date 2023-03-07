@@ -8,4 +8,4 @@ set args=-std=c99
 
 if not exist bin mkdir bin
 call %com% %args% %fl% -o %bin%
-call %bin% %exmp%
+call %bin% run %exmp%
