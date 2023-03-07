@@ -1,0 +1,8 @@
+#main
+    !push  "
+        ZVM is a virtual machine written for Zora Programming Language using its own assembly code for cross-platform compatibility.
+    "
+    !print
+    !push "\n"
+    !print
+    !halt 0

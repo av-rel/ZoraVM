@@ -50,6 +50,8 @@ typedef enum {
   ZORASM_N_CALL,
   ZORASM_N_CALLIF,
   ZORASM_N_CALLIFN,
+  ZORASM_N_DUMP_STACK,
+  ZORASM_N_DUMP_MEM,
   ZORASM_N_RET,
   ZORASM_N_HALT,
 } ZORASM_NATIVES;
@@ -101,6 +103,8 @@ char *Zorasm_Native[] = {
     [ZORASM_N_JMP]     =   "jmp",
     [ZORASM_N_JMPIF]   =   "jmpif",
     [ZORASM_N_JMPIFN]   =  "jmpifn",
+    [ZORASM_N_DUMP_STACK] = "dump_stack",
+    [ZORASM_N_DUMP_MEM] = "dump_mem",
     [ZORASM_N_RET]     =   "ret",
     [ZORASM_N_HALT]    =   "halt"
 };

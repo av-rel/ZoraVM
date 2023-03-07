@@ -22,14 +22,14 @@ int ZoraVME(ZoraVM_Program *program, unsigned int program_size, unsigned int cap
 
   if (vm_err != ZORAVM_ERROR_OK) {
     #if ZORAVM_LOG
-    printf("%s%s%s\n", "" , "ZORAVM_ERROR: ", ZoraVM_Errors[vm_err]);
+    printf("\n%s%s%s\n", "" , "ZORAVM_ERROR: ", ZoraVM_Errors[vm_err]);
     #endif
     goto dispose;
   }
 
   if (vm.mem[vm.mp - 1].kind != ZORAVM_DATA_INTEGER) {
     #if ZORAVM_LOG
-    printf("%s%s%s\n", "" ,"ZORAVM_ERROR: ", "Expected integer as return value\n");
+    printf("\n%s%s%s\n", "" ,"ZORAVM_ERROR: ", "Expected integer as return value\n");
     #endif
     vm_err = ZORAVM_ERROR_UNEXPECTED_TYPE;
     goto dispose;

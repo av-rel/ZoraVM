@@ -1,0 +1,29 @@
+#main
+    !push 10
+    !push 20
+    !push 30
+    !push 40
+    !push 50
+
+    !add
+    !push "Sum : 50 + 40 => "
+    !print
+    !print
+    !push "\n"
+    !print
+
+    !sub
+    !push "Sub : 30 - $ => "
+    !print
+    !print
+    !push "\n"
+    !print
+
+    !inc
+    !push "Inc : $ + 1 => "
+    !print
+    !print
+    !push "\n"
+    !print
+
+    !halt 0

@@ -1,0 +1,8 @@
+; add two numbers and print
+
+#main
+    !push 1
+    !push 2
+    !add
+    !print
+    !halt 0
