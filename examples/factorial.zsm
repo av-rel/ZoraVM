@@ -1,0 +1,10 @@
+
+#main
+	!push 4
+	!fact
+	!push "Factorial 4 => "
+	!print
+	!print
+	!push "\n"
+	!print
+	!halt 0
