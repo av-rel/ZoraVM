@@ -100,9 +100,11 @@
   { .inst = ZORASM_INST_PRINT, }
 #define ZoraVM_Scan()                                                              \
   { .inst = ZORASM_INST_SCAN, }
-
 #define ZoraVM_SizeOf()                                                               \
   {.inst = ZORASM_INST_SIZEOF, }
+
+#define ZoraVM_Env()                                                                  \
+  { .inst = ZORASM_INST_ENV, }
 
 #define ZoraVM_DumpStack()                                                            \
   { .inst = ZORASM_INST_DUMP_STACK, }

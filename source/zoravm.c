@@ -47,18 +47,19 @@ dispose:
 
 ZORAVM_ERROR ZoraVME_Execute(ZoraVM *vm, ZoraVM_Program prog) {
   switch (prog.inst) {
-  case ZORASM_INST_PUSH:
-    return ZoraVME_Push(vm, prog.entry);
-  case ZORASM_INST_POP:
-    return ZoraVME_Pop(vm);
   case ZORASM_INST_STORE:
     return ZoraVME_Store(vm, prog.entry);
   case ZORASM_INST_LOAD:
     return ZoraVME_Load(vm, prog.entry);
+  case ZORASM_INST_PUSH:
+    return ZoraVME_Push(vm, prog.entry);
+  case ZORASM_INST_POP:
+    return ZoraVME_Pop(vm);
   case ZORASM_INST_DUP:
     return ZoraVME_Dup(vm);
   case ZORASM_INST_SWAP:
     return ZoraVME_Swap(vm);
+
   case ZORASM_INST_ADD:
     return ZoraVME_Add(vm);
   case ZORASM_INST_SUB:
@@ -75,6 +76,7 @@ ZORAVM_ERROR ZoraVME_Execute(ZoraVM *vm, ZoraVM_Program prog) {
     return ZoraVME_Dec(vm);
   case ZORASM_INST_POW:
     return ZoraVME_Pow(vm);
+
   case ZORASM_INST_AND:
     return ZoraVME_And(vm);
   case ZORASM_INST_OR:
@@ -89,6 +91,7 @@ ZORAVM_ERROR ZoraVME_Execute(ZoraVM *vm, ZoraVM_Program prog) {
     return ZoraVME_Shl(vm);
   case ZORASM_INST_SHR:
     return ZoraVME_Shr(vm);
+
   case ZORASM_INST_EQ:
     return ZoraVME_CmpEq(vm);
   case ZORASM_INST_NEQ:
@@ -109,22 +112,35 @@ ZORAVM_ERROR ZoraVME_Execute(ZoraVM *vm, ZoraVM_Program prog) {
     return ZoraVME_CmpLte(vm);
   case ZORASM_INST_NLTE:
     return ZoraVME_CmpNotLte(vm);
+
   case ZORASM_INST_JMP:
     return ZoraVME_Jmp(vm, prog);
   case ZORASM_INST_JMPIF:
     return ZoraVME_JmpIf(vm, prog);
   case ZORASM_INST_JMPIFN:
     return ZoraVME_JmpIfNot(vm, prog);
+  case ZORASM_INST_CALL:
+    return ZoraVME_Call(vm);
+  case ZORASM_INST_CALLIF:
+    return ZoraVME_CallIf(vm);
+  case ZORASM_INST_CALLIFN:
+    return ZoraVME_CallIfNot(vm);
+
   case ZORASM_INST_PRINT:
     return ZoraVME_Print(vm);
   case ZORASM_INST_SCAN:
     return ZoraVME_Scan(vm);
   case ZORASM_INST_SIZEOF:
     return ZoraVME_SizeOf(vm);
+
+  case ZORASM_INST_ENV:
+    return ZoraVME_Env(vm);
+
   case ZORASM_INST_RET:
     return ZoraVME_Ret(vm, prog);
   case ZORASM_INST_HALT:
     return ZoraVME_Halt(vm, prog);
+
   case ZORASM_INST_DUMP_STACK:
     return ZoraVME_Dump_Stack(vm);
   case ZORASM_INST_DUMP_MEM:
@@ -142,8 +158,10 @@ ZoraVM ZoraVM_Init(unsigned int cap) {
   vm.mp = 0;
   vm.sp = 0;
   vm.fp = 0;
-  vm.size = cap;
 
+  vm.size = cap;
+  vm.stacksize = vm.size + 1;
+  vm.memsize = vm.size + 1;
   vm.stack = malloc(sizeof(ZoraVM_Data) * (vm.size + 1));
   vm.mem = malloc(sizeof(ZoraVM_Data) * (vm.size + 1));
 

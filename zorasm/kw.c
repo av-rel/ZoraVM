@@ -49,8 +49,9 @@ char *Zorasm_Inst[] = {
     [ZORASM_INST_JMP]     =   "jmp",
     [ZORASM_INST_JMPIF]   =   "jmpif",
     [ZORASM_INST_JMPIFN]   =  "jmpifn",
-    [ZORASM_INST_DUMP_STACK] = "dump_stack",
-    [ZORASM_INST_DUMP_MEM] = "dump_mem",
+    [ZORASM_INST_ENV]      =  "env",
+    [ZORASM_INST_DUMP_STACK]= "dump_stack",
+    [ZORASM_INST_DUMP_MEM] =  "dump_mem",
     [ZORASM_INST_RET]     =   "ret",
     [ZORASM_INST_HALT]    =   "halt"
 };
@@ -62,11 +63,9 @@ char *Zorasm_Datakind[] = {
 };
 
 ZORASM_INST Zorasm_char_to_inst(char *s) {
-  for (int i = 0; i < ZORASM_INST_HALT; i++) {
-    if (strcmp(s, Zorasm_Inst[i]) == 0) {
+  for (int i = 0; i < ZORASM_INST_HALT; i++)
+    if (strcmp(s, Zorasm_Inst[i]) == 0)
       return i;
-    }
-  }
   return ZORASM_INST_HALT;
 }
 
@@ -75,8 +74,10 @@ Zorasm_TokenKind Zorasm_inst_operand(ZORASM_INST zn) {
     case ZORASM_INST_STORE:
     case ZORASM_INST_LOAD:
       return ZORASM_TK_REGISTER;
+
     case ZORASM_INST_PUSH:
       return ZORASM_TK_KIND;
+
     case ZORASM_INST_JMP:
     case ZORASM_INST_JMPIF:
     case ZORASM_INST_JMPIFN:
@@ -84,9 +85,11 @@ Zorasm_TokenKind Zorasm_inst_operand(ZORASM_INST zn) {
     case ZORASM_INST_CALLIF:
     case ZORASM_INST_CALLIFN:
       return ZORASM_TK_LABEL;
+
     case ZORASM_INST_RET:
     case ZORASM_INST_HALT:
       return ZORASM_TK_INT;
+
     default: return ZORASM_TK_NONE;
   }
   return ZORASM_TK_NONE;

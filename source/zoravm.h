@@ -23,6 +23,8 @@ typedef struct {
 typedef struct {
   int state;  // state of vm
   int size;     //no. of programs
+  int memsize;
+  int stacksize;
   int ip;    // instruction pointer
   int sp;    // stack pointer
   int mp;    // mem pointer

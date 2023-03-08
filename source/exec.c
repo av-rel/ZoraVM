@@ -1,6 +1,7 @@
 #ifndef _ZORAVM_EXEC_C
 #define _ZORAVM_EXEC_C
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,6 +9,35 @@
 
 #include "./zoravm.h"
 #include "./trap.c"
+#include "../zorasm/kw.c"
+
+
+// store to the stack from mem
+ZORAVM_ERROR ZoraVME_Store(ZoraVM *vm, ZoraVM_Data data) {
+  if (vm->sp >= vm->size)
+    return ZORAVM_ERROR_STACK_OVERFLOW;
+  if (vm->mp < 1)
+    return ZORAVM_ERROR_MEMORY_EMPTY;
+
+  vm->stack[data.val.integer] = vm->mem[--vm->mp];
+  vm->sp++;
+  vm->ip++;
+
+  return ZORAVM_ERROR_OK;
+}
+
+// load from stack to the mem
+ZORAVM_ERROR ZoraVME_Load(ZoraVM *vm, ZoraVM_Data data) {
+  if (vm->sp < 1)
+    return ZORAVM_ERROR_STACK_UNDERFLOW;
+  if (vm->mp >= vm->size)
+    return ZORAVM_ERROR_MEMORY_FULL;
+
+  vm->mem[vm->mp++] = vm->stack[data.val.integer];
+  vm->ip++;
+
+  return ZORAVM_ERROR_OK;
+}
 
 // push to the memory stack
 ZORAVM_ERROR ZoraVME_Push(ZoraVM *vm, ZoraVM_Data data) {
@@ -39,33 +69,6 @@ ZORAVM_ERROR ZoraVME_Pop(ZoraVM *vm) {
     return ZORAVM_ERROR_MEMORY_EMPTY;
 
   vm->mem[--vm->mp] = (ZoraVM_Data){0};
-  vm->ip++;
-
-  return ZORAVM_ERROR_OK;
-}
-
-// store to the stack from mem
-ZORAVM_ERROR ZoraVME_Store(ZoraVM *vm, ZoraVM_Data data) {
-  if (vm->sp >= vm->size)
-    return ZORAVM_ERROR_STACK_OVERFLOW;
-  if (vm->mp < 1)
-    return ZORAVM_ERROR_MEMORY_EMPTY;
-
-  vm->stack[data.val.integer] = vm->mem[--vm->mp];
-  vm->sp++;
-  vm->ip++;
-
-  return ZORAVM_ERROR_OK;
-}
-
-// load from stack to the mem
-ZORAVM_ERROR ZoraVME_Load(ZoraVM *vm, ZoraVM_Data data) {
-  if (vm->sp < 1)
-    return ZORAVM_ERROR_STACK_UNDERFLOW;
-  if (vm->mp >= vm->size)
-    return ZORAVM_ERROR_MEMORY_FULL;
-
-  vm->mem[vm->mp++] = vm->stack[data.val.integer];
   vm->ip++;
 
   return ZORAVM_ERROR_OK;
@@ -641,11 +644,30 @@ ZORAVM_ERROR ZoraVME_JmpIfNot(ZoraVM *vm, ZoraVM_Program prog) {
   return ZORAVM_ERROR_OK;
 }
 
-ZORAVM_ERROR ZoraVME_Ret(ZoraVM *vm, ZoraVM_Program prog) {
-  vm->mem[vm->mp].kind = ZORASM_DATA_INT;
-  vm->mem[vm->mp].val.integer = prog.entry.val.integer;
-  vm->mp++;
-  vm->ip++;
+ZORAVM_ERROR ZoraVME_Call(ZoraVM *vm) {
+  if (vm->mp < 1)
+    return ZORAVM_ERROR_MEMORY_EMPTY;
+  
+  assert(0 && "notimpl");
+
+  return ZORAVM_ERROR_OK;
+}
+
+ZORAVM_ERROR ZoraVME_CallIf(ZoraVM *vm) {
+  if (vm->mp < 1)
+    return ZORAVM_ERROR_MEMORY_EMPTY;
+  
+  assert(0 && "notimpl");
+
+  return ZORAVM_ERROR_OK;
+}
+
+ZORAVM_ERROR ZoraVME_CallIfNot(ZoraVM *vm) {
+  if (vm->mp < 1)
+    return ZORAVM_ERROR_MEMORY_EMPTY;
+  
+  assert(0 && "notimpl");
+
   return ZORAVM_ERROR_OK;
 }
 
@@ -711,6 +733,31 @@ ZORAVM_ERROR ZoraVME_SizeOf(ZoraVM *vm) {
   return ZORAVM_ERROR_OK;
 }
 
+ZORAVM_ERROR ZoraVME_Env(ZoraVM* vm) {
+  if (vm->mp > vm->memsize) return ZORAVM_ERROR_MEMORY_FULL;
+
+  ZoraVM_Data data = vm->mem[vm->mp - 1];
+
+  if (data.kind != ZORASM_DATA_STRING) return ZORAVM_ERROR_UNKNOWN_TYPE;
+
+  vm->mem[vm->mp - 1] = (ZoraVM_Data) {
+    .kind = ZORASM_DATA_STRING,
+    .val.string = getenv(data.val.string),
+  };
+
+  vm->ip++;
+  return ZORAVM_ERROR_OK;
+}
+
+// return value from func
+ZORAVM_ERROR ZoraVME_Ret(ZoraVM *vm, ZoraVM_Program prog) {
+  vm->mem[vm->mp].kind = ZORASM_DATA_INT;
+  vm->mem[vm->mp].val.integer = prog.entry.val.integer;
+  vm->mp++;
+  vm->ip++;
+  return ZORAVM_ERROR_OK;
+}
+
 // halt the vm
 ZORAVM_ERROR ZoraVME_Halt(ZoraVM *vm, ZoraVM_Program prog) {
   vm->state = 0;
@@ -727,7 +774,7 @@ ZORAVM_ERROR ZoraVME_Dump_Stack(ZoraVM *vm) {
   printf("\n[CPU]\n");
   printf("\tIP: %d", vm->ip);
   printf("\tSP: %d", vm->sp);
-  printf("\n[Stack]\n");
+  printf("\n[Stack] [%d]\n", vm->stacksize);
   if (vm->sp < 1) {
     printf("\t<empty>\n");
     return ZORAVM_ERROR_OK;
@@ -736,16 +783,13 @@ ZORAVM_ERROR ZoraVME_Dump_Stack(ZoraVM *vm) {
     ZoraVM_Data entry = vm->stack[i];
     switch (entry.kind) {
     case ZORASM_DATA_INT:
-      printf("\t %d: \t %lld \t [%s]\n", i, entry.val.integer,
-             ZoraVM_KindAsStr(entry.kind));
+      printf("\t %d: \t %lld \t [%s]\n", i, entry.val.integer, Zorasm_Datakind[entry.kind]);
       break;
     case ZORASM_DATA_FLOAT:
-      printf("\t %d: \t %lf \t [%s]\n", i, entry.val.floating,
-             ZoraVM_KindAsStr(entry.kind));
+      printf("\t %d: \t %lf \t [%s]\n", i, entry.val.floating, Zorasm_Datakind[entry.kind]);
       break;
     case ZORASM_DATA_STRING:
-      printf("\t %d: \t %s \t [%s]\n", i, entry.val.string,
-             ZoraVM_KindAsStr(entry.kind));
+      printf("\t %d: \t %s \t [%s]\n", i, entry.val.string, Zorasm_Datakind[entry.kind]);
       break;
     default:
       return ZORAVM_ERROR_UNKNOWN_TYPE;
@@ -760,7 +804,7 @@ ZORAVM_ERROR ZoraVME_Dump_Mem(ZoraVM *vm) {
   printf("\n[CPU]\n");
   printf("\tIP: %d", vm->ip);
   printf("\tMP: %d", vm->mp);
-  printf("\n[Memory]\n");
+  printf("\n[Memory] [%d]\n", vm->memsize);
   if (vm->mp < 1) {
     printf("\t<empty>\n");
     return ZORAVM_ERROR_OK;
@@ -769,16 +813,13 @@ ZORAVM_ERROR ZoraVME_Dump_Mem(ZoraVM *vm) {
     ZoraVM_Data entry = vm->mem[i];
     switch (entry.kind) {
     case ZORASM_DATA_INT:
-      printf("\t %d: \t %lld \t [%s]\n", i, entry.val.integer,
-             ZoraVM_KindAsStr(entry.kind));
+      printf("\t %d: \t %lld \t [%s]\n", i, entry.val.integer, Zorasm_Datakind[entry.kind]);
       break;
     case ZORASM_DATA_FLOAT:
-      printf("\t %d: \t %lf \t [%s]\n", i, entry.val.floating,
-             ZoraVM_KindAsStr(entry.kind));
+      printf("\t %d: \t %lf \t [%s]\n", i, entry.val.floating, Zorasm_Datakind[entry.kind]);
       break;
     case ZORASM_DATA_STRING:
-      printf("\t %d: \t %s \t [%s]\n", i, entry.val.string,
-             ZoraVM_KindAsStr(entry.kind));
+      printf("\t %d: \t %s \t [%s]\n", i, entry.val.string, Zorasm_Datakind[entry.kind]);
       break;
     default:
       return ZORAVM_ERROR_UNKNOWN_TYPE;

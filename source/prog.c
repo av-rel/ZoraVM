@@ -76,20 +76,24 @@ ZoraVM_Program ZoraVM_Parse_Inst(ZORASM_INST inst, Zorasm_token_t* tokens, unsig
             Zorasm_token_t token = tokens[(*c)++];
             prog = (ZoraVM_Program)ZoraVM_Halt(atoll(token.value));
         } break;
-        case ZORASM_INST_SIZEOF: prog = (ZoraVM_Program)ZoraVM_SizeOf(); break;
-        case ZORASM_INST_PRINT: prog = (ZoraVM_Program)ZoraVM_Print(); break;
-        case ZORASM_INST_SCAN: prog = (ZoraVM_Program)ZoraVM_Scan(); break;
+
         case ZORASM_INST_DUP: prog = (ZoraVM_Program)ZoraVM_Dup(); break;
         case ZORASM_INST_SWAP: prog = (ZoraVM_Program)ZoraVM_Swap(); break;
         case ZORASM_INST_POP: prog = (ZoraVM_Program)ZoraVM_Pop(); break;
-        case ZORASM_INST_INC: prog = (ZoraVM_Program)ZoraVM_Inc(); break;
-        case ZORASM_INST_DEC: prog = (ZoraVM_Program)ZoraVM_Dec(); break;
-        case ZORASM_INST_POW: prog = (ZoraVM_Program)ZoraVM_Pow(); break;
+
+        case ZORASM_INST_PRINT: prog = (ZoraVM_Program)ZoraVM_Print(); break;
+        case ZORASM_INST_SCAN: prog = (ZoraVM_Program)ZoraVM_Scan(); break;
+        case ZORASM_INST_SIZEOF: prog = (ZoraVM_Program)ZoraVM_SizeOf(); break;
+
         case ZORASM_INST_ADD: prog = (ZoraVM_Program)ZoraVM_Add(); break;
         case ZORASM_INST_SUB: prog = (ZoraVM_Program)ZoraVM_Sub(); break;
         case ZORASM_INST_MUL: prog = (ZoraVM_Program)ZoraVM_Mul(); break;
         case ZORASM_INST_DIV: prog = (ZoraVM_Program)ZoraVM_Div(); break;
         case ZORASM_INST_MOD: prog = (ZoraVM_Program)ZoraVM_Mod(); break;
+        case ZORASM_INST_INC: prog = (ZoraVM_Program)ZoraVM_Inc(); break;
+        case ZORASM_INST_DEC: prog = (ZoraVM_Program)ZoraVM_Dec(); break;
+        case ZORASM_INST_POW: prog = (ZoraVM_Program)ZoraVM_Pow(); break;
+
         case ZORASM_INST_AND: prog = (ZoraVM_Program)ZoraVM_And(); break;
         case ZORASM_INST_OR: prog = (ZoraVM_Program)ZoraVM_Or(); break;
         case ZORASM_INST_XOR: prog = (ZoraVM_Program)ZoraVM_Xor(); break;
@@ -97,6 +101,7 @@ ZoraVM_Program ZoraVM_Parse_Inst(ZORASM_INST inst, Zorasm_token_t* tokens, unsig
         case ZORASM_INST_NEG: prog = (ZoraVM_Program)ZoraVM_Neg(); break;
         case ZORASM_INST_SHL: prog = (ZoraVM_Program)ZoraVM_Shl(); break;
         case ZORASM_INST_SHR: prog = (ZoraVM_Program)ZoraVM_Shr(); break;
+
         case ZORASM_INST_EQ: prog = (ZoraVM_Program)ZoraVM_CmpEq(); break;
         case ZORASM_INST_GT: prog = (ZoraVM_Program)ZoraVM_CmpGt(); break;
         case ZORASM_INST_GTE: prog = (ZoraVM_Program)ZoraVM_CmpGte(); break;
@@ -107,6 +112,9 @@ ZoraVM_Program ZoraVM_Parse_Inst(ZORASM_INST inst, Zorasm_token_t* tokens, unsig
         case ZORASM_INST_NGTE: prog = (ZoraVM_Program)ZoraVM_CmpNotGte(); break;
         case ZORASM_INST_NLT: prog = (ZoraVM_Program)ZoraVM_CmpNotLt(); break;
         case ZORASM_INST_NLTE: prog = (ZoraVM_Program)ZoraVM_CmpNotLte(); break;
+
+        case ZORASM_INST_ENV: prog = (ZoraVM_Program)ZoraVM_Env(); break;
+
         case ZORASM_INST_DUMP_STACK: prog = (ZoraVM_Program)ZoraVM_DumpStack(); break;
         case ZORASM_INST_DUMP_MEM: prog = (ZoraVM_Program)ZoraVM_DumpMem(); break;
         default: {assert(0 && "Unimplemented");}
