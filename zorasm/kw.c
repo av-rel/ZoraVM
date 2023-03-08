@@ -15,9 +15,11 @@ char *Zorasm_Inst[] = {
     [ZORASM_INST_POP]     =   "pop",
     [ZORASM_INST_DUP]     =   "dup",
     [ZORASM_INST_SWAP]    =   "swap",
+
     [ZORASM_INST_PRINT]   =   "print",
     [ZORASM_INST_SCAN]    =   "scan",
     [ZORASM_INST_SIZEOF]  =   "sizeof",
+
     [ZORASM_INST_AND]     =   "and",
     [ZORASM_INST_OR]      =   "or",
     [ZORASM_INST_XOR]     =   "xor",
@@ -25,6 +27,7 @@ char *Zorasm_Inst[] = {
     [ZORASM_INST_NEG]     =   "neg",
     [ZORASM_INST_SHL]     =   "shl",
     [ZORASM_INST_SHR]     =   "shr",
+
     [ZORASM_INST_ADD]     =   "add",
     [ZORASM_INST_SUB]     =   "sub",
     [ZORASM_INST_MUL]     =   "mul",
@@ -33,6 +36,12 @@ char *Zorasm_Inst[] = {
     [ZORASM_INST_POW]     =   "pow",
     [ZORASM_INST_INC]     =   "inc",
     [ZORASM_INST_DEC]     =   "dec",
+
+    [ZORASM_INST_SIN]     =   "sin",
+    [ZORASM_INST_COS]     =   "cos",
+    [ZORASM_INST_TAN]     =   "tan",
+    [ZORASM_INST_FACTORIAL]=  "fact",
+
     [ZORASM_INST_EQ]      =   "eq",
     [ZORASM_INST_GT]      =   "gt",
     [ZORASM_INST_LT]      =   "lt",
@@ -43,15 +52,19 @@ char *Zorasm_Inst[] = {
     [ZORASM_INST_NLT]     =   "nlt",
     [ZORASM_INST_NGTE]    =   "ngte",
     [ZORASM_INST_NLTE]    =   "nlte",
+
     [ZORASM_INST_CALL]    =   "call",
     [ZORASM_INST_CALLIF]  =   "callif",
     [ZORASM_INST_CALLIFN] =   "callifn",
     [ZORASM_INST_JMP]     =   "jmp",
     [ZORASM_INST_JMPIF]   =   "jmpif",
     [ZORASM_INST_JMPIFN]   =  "jmpifn",
+
     [ZORASM_INST_ENV]      =  "env",
+
     [ZORASM_INST_DUMP_STACK]= "dump_stack",
     [ZORASM_INST_DUMP_MEM] =  "dump_mem",
+
     [ZORASM_INST_RET]     =   "ret",
     [ZORASM_INST_HALT]    =   "halt"
 };

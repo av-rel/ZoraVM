@@ -77,6 +77,15 @@ ZORAVM_ERROR ZoraVME_Execute(ZoraVM *vm, ZoraVM_Program prog) {
   case ZORASM_INST_POW:
     return ZoraVME_Pow(vm);
 
+  case ZORASM_INST_SIN:
+    return ZoraVME_Sin(vm);
+  case ZORASM_INST_COS:
+    return ZoraVME_Cos(vm);
+  case ZORASM_INST_TAN:
+    return ZoraVME_Tan(vm);
+  case ZORASM_INST_FACTORIAL:
+    return ZoraVME_Factorial(vm);
+
   case ZORASM_INST_AND:
     return ZoraVME_And(vm);
   case ZORASM_INST_OR:

@@ -94,6 +94,11 @@ ZoraVM_Program ZoraVM_Parse_Inst(ZORASM_INST inst, Zorasm_token_t* tokens, unsig
         case ZORASM_INST_DEC: prog = (ZoraVM_Program)ZoraVM_Dec(); break;
         case ZORASM_INST_POW: prog = (ZoraVM_Program)ZoraVM_Pow(); break;
 
+        case ZORASM_INST_SIN: prog = (ZoraVM_Program)ZoraVM_Sin(); break;
+        case ZORASM_INST_COS: prog = (ZoraVM_Program)ZoraVM_Cos(); break;
+        case ZORASM_INST_TAN: prog = (ZoraVM_Program)ZoraVM_Tan(); break;
+        case ZORASM_INST_FACTORIAL: prog = (ZoraVM_Program)ZoraVM_Factorial(); break;
+
         case ZORASM_INST_AND: prog = (ZoraVM_Program)ZoraVM_And(); break;
         case ZORASM_INST_OR: prog = (ZoraVM_Program)ZoraVM_Or(); break;
         case ZORASM_INST_XOR: prog = (ZoraVM_Program)ZoraVM_Xor(); break;

@@ -5,11 +5,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 
 #include "./zoravm.h"
 #include "./trap.c"
 #include "../zorasm/kw.c"
+#include "../inc/math.c"
 
 
 // store to the stack from mem
@@ -117,8 +117,7 @@ ZORAVM_ERROR ZoraVME_Add(ZoraVM *vm) {
     vm->mem[vm->mp - 2].val.integer += two.val.integer;
     vm->mem[vm->mp - 2].kind = ZORASM_DATA_INT;
   } else if (one.kind == ZORASM_DATA_STRING && two.kind == ZORASM_DATA_STRING) {
-    char *tmp = strcat(strcpy(tmp, one.val.string), two.val.string);
-    vm->mem[vm->mp - 2].val.string = tmp;
+    vm->mem[vm->mp - 2].val.string = strcat(vm->mem[vm->mp - 2].val.string, two.val.string);
     vm->mem[vm->mp - 2].kind = ZORASM_DATA_STRING;
   } else if (one.kind == ZORASM_DATA_FLOAT && two.kind == ZORASM_DATA_FLOAT) {
     vm->mem[vm->mp - 2].val.floating += two.val.floating;
@@ -242,7 +241,7 @@ ZORAVM_ERROR ZoraVME_Inc(ZoraVM *vm) {
   else if (vm->mem[vm->mp - 1].kind == ZORASM_DATA_FLOAT)
     ++vm->mem[vm->mp - 1].val.floating;
   else if (vm->mem[vm->mp - 1].kind == ZORASM_DATA_STRING)
-    return ZORAVM_ERROR_ILLEGAL_INST;
+    ++vm->mem[vm->mp - 1].val.string;
   else
     return ZORAVM_ERROR_UNKNOWN_TYPE;
 
@@ -260,7 +259,7 @@ ZORAVM_ERROR ZoraVME_Dec(ZoraVM *vm) {
   else if (vm->mem[vm->mp - 1].kind == ZORASM_DATA_FLOAT)
     --vm->mem[vm->mp - 1].val.floating;
   else if (vm->mem[vm->mp - 1].kind == ZORASM_DATA_STRING)
-    return ZORAVM_ERROR_ILLEGAL_INST;
+    return --vm->mem[vm->mp - 1].val.floating;
   else
     return ZORAVM_ERROR_UNKNOWN_TYPE;
   vm->ip++;
@@ -278,10 +277,10 @@ ZORAVM_ERROR ZoraVME_Pow(ZoraVM *vm) {
     return ZORAVM_ERROR_ILLEGAL_INST;
 
   if (one.kind == ZORASM_DATA_INT) {
-    vm->mem[vm->mp - 2].val.integer = pow(one.val.integer, two.val.integer);
+    vm->mem[vm->mp - 2].val.integer = (long long int)ZORA_M_pow(one.val.integer, two.val.integer);
     vm->mem[vm->mp - 2].kind = ZORASM_DATA_INT;
   } else if (one.kind == ZORASM_DATA_FLOAT) {
-    vm->mem[vm->mp - 2].val.floating = pow(one.val.floating, two.val.floating);
+    vm->mem[vm->mp - 2].val.floating = ZORA_M_pow(one.val.floating, two.val.floating);
     vm->mem[vm->mp - 2].kind = ZORASM_DATA_FLOAT;
   } else if (one.kind == ZORASM_DATA_STRING)
     return ZORAVM_ERROR_UNIMPLEMENTED;
@@ -291,6 +290,70 @@ ZORAVM_ERROR ZoraVME_Pow(ZoraVM *vm) {
   vm->mem[--vm->mp] = (ZoraVM_Data){0};
   vm->ip++;
 
+  return ZORAVM_ERROR_OK;
+}
+
+ZORAVM_ERROR ZoraVME_Sin(ZoraVM *vm) {
+  if (vm->mp < 1)
+    return ZORAVM_ERROR_MEMORY_EMPTY;
+
+  ZoraVM_Data exp = vm->mem[vm->mp - 1];
+
+  if (exp.kind != ZORASM_DATA_INT)
+    return ZORAVM_ERROR_ILLEGAL_INST_TYPE;
+
+  vm->mem[vm->mp - 1].val.floating = ZORA_M_sin(exp.val.integer);
+  vm->mem[vm->mp - 1].kind = ZORASM_DATA_FLOAT;
+
+  vm->ip++;
+  return ZORAVM_ERROR_OK;
+}
+
+ZORAVM_ERROR ZoraVME_Cos(ZoraVM *vm) {
+  if (vm->mp < 1)
+    return ZORAVM_ERROR_MEMORY_EMPTY;
+
+  ZoraVM_Data exp = vm->mem[vm->mp - 1];
+
+  if (exp.kind != ZORASM_DATA_INT)
+    return ZORAVM_ERROR_ILLEGAL_INST_TYPE;
+
+  vm->mem[vm->mp - 1].val.floating = ZORA_M_cos(exp.val.integer);
+  vm->mem[vm->mp - 1].kind = ZORASM_DATA_FLOAT;
+
+  vm->ip++;
+  return ZORAVM_ERROR_OK;
+}
+
+ZORAVM_ERROR ZoraVME_Tan(ZoraVM *vm) {
+  if (vm->mp < 1)
+    return ZORAVM_ERROR_MEMORY_EMPTY;
+
+  ZoraVM_Data exp = vm->mem[vm->mp - 1];
+
+  if (exp.kind != ZORASM_DATA_INT)
+    return ZORAVM_ERROR_ILLEGAL_INST_TYPE;
+
+  vm->mem[vm->mp - 1].val.floating = ZORA_M_tan(exp.val.integer);
+  vm->mem[vm->mp - 1].kind = ZORASM_DATA_FLOAT;
+
+  vm->ip++;
+  return ZORAVM_ERROR_OK;
+}
+
+ZORAVM_ERROR ZoraVME_Factorial(ZoraVM *vm) {
+  if (vm->mp < 1)
+    return ZORAVM_ERROR_MEMORY_EMPTY;
+
+  ZoraVM_Data data = vm->mem[vm->mp - 1];
+
+  if (data.kind != ZORASM_DATA_INT)
+    return ZORAVM_ERROR_ILLEGAL_INST_TYPE;
+
+  vm->mem[vm->mp - 1].val.integer = ZORA_M_factorial(data.val.integer);
+  vm->mem[vm->mp - 1].kind = ZORASM_DATA_INT;
+
+  vm->ip++;
   return ZORAVM_ERROR_OK;
 }
 
