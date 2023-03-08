@@ -2,6 +2,8 @@
 
 # Description
 ## ZoraVM is a virtual machine written for Zora Programming Language using its own assembly code for cross-platform compatibility.
+## This is rather incomplete.
+
 
 # Features
 - [x] Assembly
