@@ -35,7 +35,7 @@
 	!halt 0							 ; exit with status code 0
 ```
 
-[Math](./examples/math.zsm)
+[Exponent](./examples/math.zsm)
 ```zorasm
 
 #main
