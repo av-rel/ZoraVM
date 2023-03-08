@@ -8,6 +8,7 @@
 #include "../inc/sys.c"
 #include "../inc/utils.c"
 
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -16,6 +17,7 @@
 void help();
 void version();
 int run(char* path);
+int sim(char* path);
 int com(char* path);
 
 typedef struct {
@@ -25,27 +27,12 @@ typedef struct {
 } Command_t;
 
 Command_t command[] = {
-  [0] = {
-    .name = "help",
-    .flag = "h",
-    .desc = "Prints this help message."
-  },
-  [1] = {
-    .name = "version",
-    .flag = "v",
-    .desc = "Prints the version"
-  },
-  [2] = {
-    .name = "run",
-    .flag = "r",
-    .desc = "Run a Zorasm program"
-  },
-  [3] = {
-    .name = "com",
-    .flag = "c",
-    .desc = "Compile a Zorasm program to bytecode"
-  }
+  [0] = { .name = "help", .flag = "h", .desc = "Prints this help message." },
+  [1] = { .name = "version", .flag = "v", .desc = "Prints the version" },
+  [2] = { .name = "run", .flag = "r", .desc = "Run program" },
+  [3] = { .name = "com", .flag = "c", .desc = "Compile program to bytecode" }
 };
+
 
 int main(int argc, char** argv) {
     int rtn = 0;
@@ -104,34 +91,36 @@ void version() {
 }
 
 int run(char* path) {
-  int rtn;
-  ZoraVM_Program *prog = {0};
-  Zora_file_t file = Zora_file_obj(path);
+    int rtn = 0;
+    ZoraVM_Program *prog = {0};
+    Zora_file_t file = Zora_file_obj(path);
 
-  int ntok = 0, err = 0, progc = 0;
-  Zorasm_token_t* tokens = Zorasm(&file, &ntok , &err);
-  if (err != 0) goto end;
+    int ntok = 0, err = 0, progc = 0;
+    Zorasm_token_t* tokens = Zorasm(&file, &ntok , &err);
+    if (err != 0) goto end;
 
-  prog = malloc(sizeof(ZoraVM_Program) * (ntok + 1));
-  if (!prog) {
-    err = -1;
-    #if ZORAVM_LOG
-    printf("Error: Could not allocate memory for program.\n");
-    #endif
-  }
-  progc = ZoraVM_Program_from_tokens(tokens, ntok, prog);
-  rtn = ZoraVME(prog, progc, ntok);
+    prog = malloc(sizeof(ZoraVM_Program) * (ntok + 1));
+    if (!prog) {
+        err = -1;
+        #if ZORAVM_LOG
+        printf("Error: Could not allocate memory for program.\n");
+        #endif
+    }
+    progc = ZoraVM_Program_from_tokens(tokens, ntok, prog);
+    rtn = ZoraVME(prog, progc, ntok);
 
 end:
-  Zorasm_free_tokens(tokens);
-  if (prog) free(prog);
-  return err != 0 ? err : rtn;
+    Zorasm_free_tokens(tokens);
+    if (prog) free(prog);
+    return err != 0 ? err : rtn;
 }
 
 int com(char* path) {
-  int rtn = 0;
-  printf("TODO: Compile '%s'\n", path);
+    int rtn = 0;
 
-  return rtn;
+    assert(rtn && "Unimpl");
+
+end:
+    return rtn;
 }
 

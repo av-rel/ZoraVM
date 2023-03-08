@@ -1,12 +1,14 @@
 #ifndef ZORAVM_PROG_C
 #define ZORAVM_PROG_C
 
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "./zoravm.h"
 #include "./inst.h"
 #include "../zorasm/token.h"
 #include "../zorasm/kw.h"
-#include <assert.h>
-#include <stdlib.h>
 
 ZoraVM_Program ZoraVM_Parse_Inst(ZORASM_INST inst, Zorasm_token_t* tokens, unsigned int* c);
 
@@ -111,6 +113,6 @@ ZoraVM_Program ZoraVM_Parse_Inst(ZORASM_INST inst, Zorasm_token_t* tokens, unsig
     }
 
     return prog;
-};
+}
 
 #endif
