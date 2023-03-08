@@ -47,6 +47,15 @@
 #define ZoraVM_Pow()                                                                  \
   { .inst = ZORASM_INST_POW, }
 
+#define ZoraVM_Sin()                                                                   \
+  { .inst = ZORASM_INST_SIN, }
+#define ZoraVM_Cos()                                                                  \
+  { .inst = ZORASM_INST_COS, }
+#define ZoraVM_Tan()                                                                  \
+  { .inst = ZORASM_INST_TAN, }
+#define ZoraVM_Factorial()                                                                  \
+  { .inst = ZORASM_INST_FACTORIAL, }
+
 #define ZoraVM_Neg()                                                                  \
   { .inst = ZORASM_INST_NEG, }
 #define ZoraVM_Not()                                                                  \
