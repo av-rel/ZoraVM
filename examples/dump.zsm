@@ -1,0 +1,9 @@
+
+#main
+	!push 10
+	!push 20
+	!store @0
+	!store @1
+	!dump_mem
+	!dump_stack
+	!halt 0
