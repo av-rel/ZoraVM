@@ -2,14 +2,18 @@
 
 # Description
 ## ZoraVM is a virtual machine written for Zora Programming Language using its own assembly code for cross-platform compatibility.
+
 ## This is rather incomplete.
 
-
 # Features
-- [x] Assembly
-- [x] Cross-platform
-- [] C Wrapper
-- [] Compiler
+	- [x] Assembly
+	- [x] Cross-platform
+	- [] C Wrapper
+	- [] Compiler
+
+# Cons
+	* Assembly is rather incomplete
+	* Needs single label defined but cannot jump between other
 
 # How will it work?
 ## ZVM will be able to run Zora Assembly Code.
@@ -29,4 +33,16 @@
 	!push "Hello, world\n"			 ; push to the stack
 	!print							 ; Print the top of the mem stack
 	!halt 0							 ; exit with status code 0
+```
+
+[Math](./examples/math.zsm)
+```zorasm
+
+#main
+    !push 2
+    !push 32
+    !pow
+    !print
+    !halt 0
+
 ```
