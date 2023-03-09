@@ -9,7 +9,6 @@
 #include "./error.c"
 #include "./token.h"
 #include "../inc/utils.h"
-#include "lexer.h"
 
 int Zorasm_tokenizer(Zorasm_lexer_t *lexer) {
   int lexing = 1;
@@ -150,9 +149,10 @@ int Zorasm_tokenizer(Zorasm_lexer_t *lexer) {
       if (Zora_is_digit(lexer->cur)) {
         int i = 0, dot = 0;
         char *num = calloc(1, sizeof(char) * (lexer->file->len + 1));
+
+        num[i++] = lexer->cur;
         while (Zora_is_digit(lexer->cur)) {
-          num[i++] = lexer->cur;
-          Zorasm_lexer_advance(lexer);
+          num[i++] = Zorasm_lexer_advance(lexer);
           if (lexer->cur == '.') {
             if (dot > 0) break;
             num[i++] = Zorasm_lexer_advance(lexer);
@@ -170,7 +170,7 @@ int Zorasm_tokenizer(Zorasm_lexer_t *lexer) {
         return -3;
       }
     }
-    }
+      }
   }
   return 0;
 }
