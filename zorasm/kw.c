@@ -76,7 +76,8 @@ char *Zorasm_Datakind[] = {
 };
 
 ZORASM_INST Zorasm_char_to_inst(char *s) {
-  for (int i = 0; i < ZORASM_INST_HALT; i++)
+  int i;
+  for (i = 0; i < ZORASM_INST_HALT; i++)
     if (strcmp(s, Zorasm_Inst[i]) == 0)
       return i;
   return ZORASM_INST_HALT;

@@ -846,7 +846,9 @@ ZORAVM_ERROR ZoraVME_Dump_Stack(ZoraVM *vm) {
     printf("\t<empty>\n");
     return ZORAVM_ERROR_OK;
   }
-  for (int i = 0; i < vm->sp; i++) {
+
+  int i;
+  for (i = 0; i < vm->sp; i++) {
     ZoraVM_Data entry = vm->stack[i];
     switch (entry.kind) {
     case ZORASM_DATA_INT:
@@ -876,7 +878,9 @@ ZORAVM_ERROR ZoraVME_Dump_Mem(ZoraVM *vm) {
     printf("\t<empty>\n");
     return ZORAVM_ERROR_OK;
   }
-  for (int i = 0; i < vm->mp; i++) {
+
+  int i;
+  for (i = 0; i < vm->mp; i++) {
     ZoraVM_Data entry = vm->mem[i];
     switch (entry.kind) {
     case ZORASM_DATA_INT:
