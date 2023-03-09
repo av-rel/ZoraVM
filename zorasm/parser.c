@@ -13,7 +13,7 @@ int Zorasm_parser_expect(Zorasm_lexer_t *lexer, Zorasm_token_t token, Zorasm_Tok
     if (expect == got) return 0;
     if (expect == ZORASM_TK_KIND && (got == ZORASM_TK_STRING || got == ZORASM_TK_INT || got == ZORASM_TK_FLOAT)) return 0;
 #if ZORASM_LOG
-    printf("\n%s:%d:%d: Expected `%s` but got `%s` as `` \n\n", lexer->file->argfile, token.pos.start.line, token.pos.start.col, Zorasm_token_as_str(expect), Zorasm_token_as_str(got));
+    printf("\n%s:%d:%d: Expected `%s` but got `%s`\n\n", lexer->file->argfile, token.pos.start.line, token.pos.start.col, Zorasm_token_as_str(expect), Zorasm_token_as_str(got));
     Zorasm_log_error_line(lexer->file->src, token.pos.start.line);
 #endif
 
@@ -54,20 +54,20 @@ int Zorasm_parser_analyze(Zorasm_lexer_t *lexer) {
   Zorasm_token_t token = lexer->tokens[c];
 
   for (; token.kind != ZORASM_TK_EOF; ) {
-    if (token.kind == ZORASM_TK_NATIVE) {
+    if (token.kind == ZORASM_TK_INST) {
       if (token.len < 1) {
         #if ZORASM_LOG
-        printf("\n%s:%d:%d: Empty native call\n\n", lexer->file->argfile, token.pos.start.line, token.pos.start.col);
+        printf("\n%s:%d:%d: Empty inst call\n\n", lexer->file->argfile, token.pos.start.line, token.pos.start.col);
         Zorasm_log_error_line(lexer->file->src, token.pos.start.line);
         #endif
         return -3;
       }
       else if (!Zorasm_is_inst(token.value)) {
         #if ZORASM_LOG
-        printf("\n%s:%d:%d: Unknown native call `%s`\n\n", lexer->file->argfile, token.pos.start.line, token.pos.start.col, token.value);
+        printf("\n%s:%d:%d: Unknown inst call `%s`\n\n", lexer->file->argfile, token.pos.start.line, token.pos.start.col, token.value);
         Zorasm_log_error_line(lexer->file->src, token.pos.start.line);
-        printf("Available Native calls:\n");
-        Zorasm_print_all_natives();
+        printf("Available Insts:\n");
+        Zorasm_print_all_insts();
         #endif
         return -3;
       }

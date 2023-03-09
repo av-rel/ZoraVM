@@ -146,7 +146,7 @@ int Zorasm_is_datakind(char *str) {
   return data;
 }
 
-void Zorasm_print_all_natives() {
+void Zorasm_print_all_insts() {
   unsigned int i, len  = sizeof(Zorasm_Inst)/sizeof(Zorasm_Inst[0]);
   for (i = 0; i < len ; i++) {
     printf("%s", Zorasm_Inst[i]);

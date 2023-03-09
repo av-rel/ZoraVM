@@ -17,7 +17,7 @@ int ZoraVM_Program_from_tokens(Zorasm_token_t* tokens, unsigned int ctok , ZoraV
     Zorasm_token_t token = tokens[c++];
 
     for (; token.kind != ZORASM_TK_EOF;) {
-        if (token.kind == ZORASM_TK_NATIVE) {
+        if (token.kind == ZORASM_TK_INST) {
             ZORASM_INST inst = Zorasm_char_to_inst(token.value);
             program[progc++] = ZoraVM_Parse_Inst(inst, tokens, &c);
         }

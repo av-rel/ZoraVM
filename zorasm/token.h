@@ -4,7 +4,7 @@
 typedef enum {
   ZORASM_TK_EOF = 0,         // EOF
   ZORASM_TK_REGISTER,    // register - @1, @818
-  ZORASM_TK_NATIVE,      // !call
+  ZORASM_TK_INST,      // !call
   ZORASM_TK_LABEL,       // #main
   ZORASM_TK_KIND,
   ZORASM_TK_INT,         // 118191

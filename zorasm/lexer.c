@@ -13,7 +13,7 @@ Zorasm_lexer_t Zorasm_init_lexer(Zora_file_t *file) {
   lexer.col = lexer.pos + 1;
   lexer.line = 1;
   lexer.cur = file->src[lexer.pos];
-  lexer.tokens = malloc(sizeof(Zorasm_lexer_t) * (file->len + 1));
+  lexer.tokens = malloc(sizeof(Zorasm_token_t) * (file->len + 1));
   lexer.ntok = 0;
 
   return lexer;

@@ -54,14 +54,14 @@ int Zorasm_tokenizer(Zorasm_lexer_t *lexer) {
     case '!': {
       Zorasm_position_t beforepos = (Zorasm_position_t){lexer->line, lexer->col};
       int i = 0;
-      char *native = calloc(1, (lexer->file->len + 1) * sizeof(char));
+      char *inst = calloc(1, (lexer->file->len + 1) * sizeof(char));
 
-      while (Zora_is_valid_identifier(Zorasm_lexer_advance(lexer))) native[i++] = lexer->cur;
+      while (Zora_is_valid_identifier(Zorasm_lexer_advance(lexer))) inst[i++] = lexer->cur;
 
       Zorasm_position_t afterpos = (Zorasm_position_t){lexer->line, lexer->col};
-      lexer->tokens[lexer->ntok++] = Zorasm_init_token((char *)strdup(native), ZORASM_TK_NATIVE, i,
+      lexer->tokens[lexer->ntok++] = Zorasm_init_token((char *)strdup(inst), ZORASM_TK_INST, i,
                      (Zorasm_node_position){beforepos, afterpos});
-      free(native);
+      free(inst);
       break;
     }
     case '@': {
@@ -95,7 +95,7 @@ int Zorasm_tokenizer(Zorasm_lexer_t *lexer) {
     case '\"' : {
       Zorasm_position_t beforepos = (Zorasm_position_t){lexer->line, lexer->col};
       int s = 0, len = 0;
-      char *str = (char*)calloc(1, (lexer->file->len + 1) * sizeof(char));
+      char *str = calloc(1, (lexer->file->len + 1) * sizeof(char));
       while (Zorasm_lexer_advance(lexer) != '\"') {
         if (lexer->cur == '\0') {
           #if ZORASM_LOG
@@ -179,8 +179,8 @@ char *Zorasm_token_as_str(Zorasm_TokenKind kind) {
     return "label";
   case ZORASM_TK_REGISTER:
     return "register";
-  case ZORASM_TK_NATIVE:
-    return "native";
+  case ZORASM_TK_INST:
+    return "inst";
   case ZORASM_TK_KIND:
     return "data";
   case ZORASM_TK_EOF:
