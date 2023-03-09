@@ -6,22 +6,26 @@
 #include <string.h>
 #include "./sys.h"
 
+
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+  #define ZORA_ABS_PATH(path) (_fullpath(0, path, 259))
+  #define ZORA_PATH_TRAIL '\\'
+#else
+  #define ZORA_ABS_PATH(path) realpath(path, 0)
+  #define ZORA_PATH_TRAIL '/'
+#endif
+
 void Zora_sys_exec(char *command) {
   FILE *fp = (FILE *)popen(command, "r");
   pclose(fp);
 }
 
 char *Zora_absolute_path(char *path) {
-  const int MAXPATH = 259;
-  #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-    return _fullpath(0, path, MAXPATH);
-  #else
-    return realpath(path, 0);
-  #endif
+  return ZORA_ABS_PATH(path);
 }
 
 char *Zora_join_path(char *base, char *trail) {
-  return (char *)strcat((char *)strcat(Zora_absolute_path(base), "/"), trail);
+  return (char *)strcat((char *)strcat(Zora_absolute_path(base), (char*)ZORA_PATH_TRAIL), trail);
 }
 
 long long Zora_filesize_from_fp(FILE *fp) {
@@ -65,9 +69,9 @@ long long Zora_filewriter(char *path, char *content) {
 }
 
 char *Zora_get_file_extract(char *file) {
-  char *extract = (char *)strrchr((char *)strdup(file), '\\');
+  char *extract = (char *)strrchr((char *)strdup(file), ZORA_PATH_TRAIL);
 
-  if (!extract) extract = (char *)strrchr(extract, '/');
+  if (!extract) extract = (char *)strrchr(extract, ZORA_PATH_TRAIL);
   if (extract) *extract = '\0';
 
   return (char *)++extract;
@@ -88,6 +92,8 @@ char *Zora_load_file_content(char *path) {
   char *content = Zora_filereader(path);
   return content;
 }
+
+#include <assert.h>
 
 Zora_file_t Zora_file_obj(char *path) {
   Zora_file_t fl =  {0};
