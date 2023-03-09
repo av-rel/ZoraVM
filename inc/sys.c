@@ -12,8 +12,12 @@ void Zora_sys_exec(char *command) {
 }
 
 char *Zora_absolute_path(char *path) {
-  const int MAXPATH = 260;
-  return (char *)_fullpath(NULL, path, MAXPATH);
+  const int MAXPATH = 259;
+  #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+    return _fullpath(0, path, MAXPATH);
+  #else
+    return realpath(path, 0);
+  #endif
 }
 
 char *Zora_join_path(char *base, char *trail) {
