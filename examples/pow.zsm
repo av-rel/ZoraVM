@@ -1,7 +1,0 @@
-
-#main
-    !push 2
-    !push 32
-    !pow
-    !print
-    !halt 0

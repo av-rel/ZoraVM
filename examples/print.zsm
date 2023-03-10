@@ -1,5 +1,0 @@
-
-#main
-	!push "Hello, from ZoraVM"
-	!print
-    !halt 0

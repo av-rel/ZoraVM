@@ -1,12 +1,11 @@
-#ifndef _ZORAVM_H
-#define _ZORAVM_H
+#ifndef ZORAVM_H
+#define ZORAVM_H
 
-#include "../zorasm/kw.h"
+#include "./trap.h"
 #include "./inst.h"
-#include "./trap.c"
 
 typedef struct {
-  ZORASM_DATAKIND kind;
+  ZORAVM_DATAKIND kind;
   union {
     char *string;
     long long int integer;
@@ -16,15 +15,15 @@ typedef struct {
 } ZoraVM_Data;
 
 typedef struct {
-  ZORASM_INST inst;
+  ZORAVM_INST inst;
   ZoraVM_Data entry;
 } ZoraVM_Program;
 
 typedef struct {
   int state;  // state of vm
-  int size;     //no. of programs
-  int memsize;
-  int stacksize;
+  unsigned int size;     //no. of programs
+  unsigned int memsize;
+  unsigned int stacksize;
   int ip;    // instruction pointer
   int sp;    // stack pointer
   int mp;    // mem pointer
