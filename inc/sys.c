@@ -93,8 +93,6 @@ char *Zora_load_file_content(char *path) {
   return content;
 }
 
-#include <assert.h>
-
 Zora_file_t Zora_file_obj(char *path) {
   Zora_file_t fl =  {0};
 
@@ -105,15 +103,8 @@ Zora_file_t Zora_file_obj(char *path) {
   fl.ext = Zora_get_file_ext(fl.file);
   fl.src = Zora_filereader(fl.path);
 
-  if (!fl.src) {
-  #if ZORA_LOG
-    printf("ERROR: Unable to read from file `%s`\n", path);
-  #endif
-  fl.len = -1;
-    return fl;
-  }
-
-  fl.len = strlen(fl.src);
+  if (fl.src == 0) fl.len = -1;
+  else fl.len = strlen(fl.src);
 
   return fl;
 }
