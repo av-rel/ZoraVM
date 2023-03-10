@@ -21,9 +21,7 @@ int ZoraVME(ZoraVM_Program *program, unsigned int program_size, unsigned int cap
   }
 
   if (vm_err != ZORAVM_ERROR_OK) {
-    #if ZORAVM_LOG
     printf("\n%s%s%s\n", "" , "ERROR: ", ZoraVM_Errors[vm_err]);
-    #endif
     goto dispose;
   }
 
