@@ -35,7 +35,7 @@ char *ZoraVM_Inst[] = {
     [ZORAVM_INST_SIN]     =   "sin",
     [ZORAVM_INST_COS]     =   "cos",
     [ZORAVM_INST_TAN]     =   "tan",
-    [ZORAVM_INST_FACTORIAL]=  "fact",
+    [ZORAVM_INST_FACTORIAL]=  "factorial",
 
     [ZORAVM_INST_EQ]      =   "eq",
     [ZORAVM_INST_GT]      =   "gt",
