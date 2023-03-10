@@ -117,11 +117,11 @@ ZORAVM_ERROR ZoraVME_Execute(ZoraVM *vm, ZoraVM_Program prog) {
   case ZORAVM_INST_JMPIFN:
     return ZoraVME_JmpIfNot(vm, prog);
   case ZORAVM_INST_CALL:
-    return ZoraVME_Call(vm);
+    return ZoraVME_Call(vm, prog);
   case ZORAVM_INST_CALLIF:
-    return ZoraVME_CallIf(vm);
+    return ZoraVME_CallIf(vm, prog);
   case ZORAVM_INST_CALLIFN:
-    return ZoraVME_CallIfNot(vm);
+    return ZoraVME_CallIfNot(vm, prog);
 
   case ZORAVM_INST_PRINT:
     return ZoraVME_Print(vm);
@@ -159,8 +159,9 @@ ZoraVM ZoraVM_Init(unsigned int cap) {
   vm.size = cap;
   vm.stacksize = vm.size + 1;
   vm.memsize = vm.size + 1;
-  vm.stack = malloc(sizeof(ZoraVM_Data) * (vm.size + 1));
-  vm.mem = malloc(sizeof(ZoraVM_Data) * (vm.size + 1));
+
+  vm.stack = malloc(sizeof(ZoraVM_Data) * (vm.stacksize));
+  vm.mem = malloc(sizeof(ZoraVM_Data) * (vm.memsize));
 
   vm.state = 1;
 

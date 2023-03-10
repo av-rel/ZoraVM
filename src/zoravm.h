@@ -20,14 +20,16 @@ typedef struct {
 } ZoraVM_Program;
 
 typedef struct {
-  int state;  // state of vm
-  unsigned int size;     //no. of programs
-  unsigned int memsize;
-  unsigned int stacksize;
-  int ip;    // instruction pointer
-  int sp;    // stack pointer
-  int mp;    // mem pointer
-  int fp;   // frame pointer
+  char state;  // state of vm
+  unsigned long int size;     //no. of programs
+  unsigned long int memsize;
+  unsigned long int stacksize;
+
+  long int ip;    // instruction pointer
+  long int sp;    // stack pointer
+  long int mp;    // mem pointer
+  long int fp;   // frame pointer
+
   ZoraVM_Data *mem;     // mem stack
   ZoraVM_Data *stack; // stack
 } ZoraVM;

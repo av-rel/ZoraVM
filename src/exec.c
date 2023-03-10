@@ -682,8 +682,7 @@ ZORAVM_ERROR ZoraVME_CmpNotLte(ZoraVM *vm) {
 }
 
 ZORAVM_ERROR ZoraVME_Jmp(ZoraVM *vm, ZoraVM_Program prog) {
-  /* vm->ip = prog.entry.val.integer; */
-  return ZORAVM_ERROR_UNIMPLEMENTED;
+  vm->ip = prog.entry.val.integer;
   return ZORAVM_ERROR_OK;
 }
 
@@ -699,8 +698,7 @@ ZORAVM_ERROR ZoraVME_JmpIf(ZoraVM *vm, ZoraVM_Program prog) {
 }
 
 ZORAVM_ERROR ZoraVME_JmpIfNot(ZoraVM *vm, ZoraVM_Program prog) {
-  if (vm->mp < 1)
-    return ZORAVM_ERROR_MEMORY_EMPTY;
+  if (vm->mp < 1) return ZORAVM_ERROR_MEMORY_EMPTY;
 
   if (vm->mem[vm->mp - 1].kind != ZORAVM_DATA_INT)
     return ZORAVM_ERROR_ILLEGAL_INST;
@@ -711,36 +709,45 @@ ZORAVM_ERROR ZoraVME_JmpIfNot(ZoraVM *vm, ZoraVM_Program prog) {
   return ZORAVM_ERROR_OK;
 }
 
-ZORAVM_ERROR ZoraVME_Call(ZoraVM *vm) {
-  if (vm->mp < 1)
-    return ZORAVM_ERROR_MEMORY_EMPTY;
-  
-  assert(0 && "notimpl");
+ZORAVM_ERROR ZoraVME_Call(ZoraVM *vm, ZoraVM_Program prog) {
+  if (vm->mp < 1) return ZORAVM_ERROR_MEMORY_EMPTY;
+
+  vm->mem[vm->mp++] = (ZoraVM_Data){.kind = ZORAVM_DATA_INT, .val.integer = vm->fp};
+  vm->mem[vm->mp++] = (ZoraVM_Data){.kind = ZORAVM_DATA_INT, .val.integer = vm->ip};
+  vm->fp = vm->sp;
+  vm->ip = prog.entry.val.integer;
 
   return ZORAVM_ERROR_OK;
 }
 
-ZORAVM_ERROR ZoraVME_CallIf(ZoraVM *vm) {
-  if (vm->mp < 1)
-    return ZORAVM_ERROR_MEMORY_EMPTY;
-  
-  assert(0 && "notimpl");
+ZORAVM_ERROR ZoraVME_CallIf(ZoraVM *vm, ZoraVM_Program prog) {
+  if (vm->mp < 1) return ZORAVM_ERROR_MEMORY_EMPTY;
+
+  if (vm->mem[vm->mp - 1].val.integer == 0) return ZORAVM_ERROR_OK;
+
+  vm->mem[vm->mp++] = (ZoraVM_Data){.kind = ZORAVM_DATA_INT, .val.integer = vm->fp};
+  vm->mem[vm->mp++] = (ZoraVM_Data){.kind = ZORAVM_DATA_INT, .val.integer = vm->ip};
+  vm->fp = vm->sp;
+  vm->ip = prog.entry.val.integer;
 
   return ZORAVM_ERROR_OK;
 }
 
-ZORAVM_ERROR ZoraVME_CallIfNot(ZoraVM *vm) {
-  if (vm->mp < 1)
-    return ZORAVM_ERROR_MEMORY_EMPTY;
+ZORAVM_ERROR ZoraVME_CallIfNot(ZoraVM *vm, ZoraVM_Program prog) {
+  if (vm->mp < 1) return ZORAVM_ERROR_MEMORY_EMPTY;
+
+  if (vm->mem[vm->mp - 1].val.integer != 0) return ZORAVM_ERROR_OK;
   
-  assert(0 && "notimpl");
+  vm->mem[vm->mp++] = (ZoraVM_Data){.kind = ZORAVM_DATA_INT, .val.integer = vm->fp};
+  vm->mem[vm->mp++] = (ZoraVM_Data){.kind = ZORAVM_DATA_INT, .val.integer = vm->ip};
+  vm->fp = vm->sp;
+  vm->ip = prog.entry.val.integer; 
 
   return ZORAVM_ERROR_OK;
 }
 
 ZORAVM_ERROR ZoraVME_Print(ZoraVM *vm) {
-  if (vm->mp < 1)
-    return ZORAVM_ERROR_MEMORY_EMPTY;
+  if (vm->mp < 1) return ZORAVM_ERROR_MEMORY_EMPTY;
 
   switch (vm->mem[vm->mp - 1].kind) {
   case ZORAVM_DATA_INT:
@@ -818,10 +825,16 @@ ZORAVM_ERROR ZoraVME_Env(ZoraVM* vm) {
 
 // return value from func
 ZORAVM_ERROR ZoraVME_Ret(ZoraVM *vm, ZoraVM_Program prog) {
-  vm->mem[vm->mp].kind = ZORAVM_DATA_INT;
-  vm->mem[vm->mp].val.integer = prog.entry.val.integer;
-  vm->mp++;
+
+  vm->sp = vm->fp;
+  vm->ip = vm->stack[--vm->sp].val.integer;
+  vm->fp = vm->stack[--vm->sp].val.integer;
+  
+  long long int argc = vm->stack[--vm->sp].val.integer;
+  vm->sp -= argc;
+
   vm->ip++;
+
   return ZORAVM_ERROR_OK;
 }
 
@@ -839,9 +852,9 @@ ZORAVM_ERROR ZoraVME_Halt(ZoraVM *vm, ZoraVM_Program prog) {
 ZORAVM_ERROR ZoraVME_Dump_Stack(ZoraVM *vm) {
   vm->ip++;
   printf("\n[CPU]\n");
-  printf("\tIP: %d", vm->ip);
-  printf("\tSP: %d", vm->sp);
-  printf("\n[Stack] [%d]\n", vm->stacksize);
+  printf("\tIP: %ld", vm->ip);
+  printf("\tSP: %ld", vm->sp);
+  printf("\n[Stack] [%ld]\n", vm->stacksize);
   if (vm->sp < 1) {
     printf("\t<empty>\n");
     return ZORAVM_ERROR_OK;
@@ -871,9 +884,9 @@ ZORAVM_ERROR ZoraVME_Dump_Stack(ZoraVM *vm) {
 ZORAVM_ERROR ZoraVME_Dump_Mem(ZoraVM *vm) {
   vm->ip++;
   printf("\n[CPU]\n");
-  printf("\tIP: %d", vm->ip);
-  printf("\tMP: %d", vm->mp);
-  printf("\n[Memory] [%d]\n", vm->memsize);
+  printf("\tIP: %ld", vm->ip);
+  printf("\tMP: %ld", vm->mp);
+  printf("\n[Memory] [%ld]\n", vm->memsize);
   if (vm->mp < 1) {
     printf("\t<empty>\n");
     return ZORAVM_ERROR_OK;
