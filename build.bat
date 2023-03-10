@@ -1,9 +1,9 @@
 @echo off
 
-set com=tcc
+set com=gcc
 set fl=source\main.c
 set bin=bin\zvm.exe
-set args=-std=c99 -O3
+set args=-O3
 
 if not exist bin mkdir bin
 @echo on
