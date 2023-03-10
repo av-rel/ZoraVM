@@ -44,3 +44,11 @@
     !halt 0
 
 ```
+
+## Build from source
+```bash
+gcc source/main.c -O3
+# or
+tcc source/main.c -O3
+```
+
