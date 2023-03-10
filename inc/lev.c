@@ -18,6 +18,8 @@ int Zora_levensthein_distance(char *s, char *t) {
     if (m == 0) return n;
     if (n == 0) return m;
 
+    if (m > ZORA_LEV_MAX/3 || n > ZORA_LEV_MAX/3) return 0;
+
     int d[ZORA_LEV_MAX][ZORA_LEV_MAX];
     int i, j;
 
