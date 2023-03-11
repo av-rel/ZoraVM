@@ -20,7 +20,7 @@ int ZoraVME(ZoraVM_Program *program, unsigned int program_size, unsigned int cap
     vm_err = ZoraVME_Execute(&vm, program[vm.ip]);
 
   if (vm_err != ZORAVM_ERROR_OK) {
-    printf("\n%s%s\n", "ERROR: ", ZoraVM_Errors[vm_err]);
+    printf("\n%s%s\n", "Error: ", ZoraVM_Errors[vm_err]);
     goto dispose;
   }
 
@@ -61,29 +61,6 @@ ZORAVM_ERROR ZoraVME_Execute(ZoraVM *vm, ZoraVM_Program prog) {
     return ZoraVME_Inc(vm);
   case ZORAVM_INST_DEC:
     return ZoraVME_Dec(vm);
-  case ZORAVM_INST_POW:
-    return ZoraVME_Pow(vm);
-
-  case ZORAVM_INST_SIN:
-    return ZoraVME_Sin(vm);
-  case ZORAVM_INST_COS:
-    return ZoraVME_Cos(vm);
-  case ZORAVM_INST_TAN:
-    return ZoraVME_Tan(vm);
-  case ZORAVM_INST_FACTORIAL:
-    return ZoraVME_Factorial(vm);
-
-  case ZORAVM_INST_PI:
-    return ZoraVME_Pi(vm);
-
-  case ZORAVM_INST_ABS:
-    return ZoraVME_Abs(vm);
-  case ZORAVM_INST_SQRT:
-    return ZoraVME_Sqrt(vm);
-  case ZORAVM_INST_MAX:
-    return ZoraVME_Max(vm);
-  case ZORAVM_INST_MIN:
-    return ZoraVME_Min(vm);
 
   case ZORAVM_INST_AND:
     return ZoraVME_And(vm);

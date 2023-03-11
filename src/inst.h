@@ -32,21 +32,8 @@ typedef enum {
   ZORAVM_INST_MUL,
   ZORAVM_INST_DIV,
   ZORAVM_INST_MOD,
-  ZORAVM_INST_POW,
   ZORAVM_INST_INC,
   ZORAVM_INST_DEC,
-
-  ZORAVM_INST_SIN,
-  ZORAVM_INST_COS,
-  ZORAVM_INST_TAN,
-  ZORAVM_INST_FACTORIAL,
-  
-  ZORAVM_INST_PI,
-  
-  ZORAVM_INST_ABS,
-  ZORAVM_INST_SQRT,
-  ZORAVM_INST_MAX,
-  ZORAVM_INST_MIN,
 
   ZORAVM_INST_EQ,
   ZORAVM_INST_GT,
@@ -121,29 +108,6 @@ typedef enum {
   { .inst = ZORAVM_INST_INC, }
 #define ZoraVM_Dec()                                                                  \
   { .inst = ZORAVM_INST_DEC, }
-#define ZoraVM_Pow()                                                                  \
-  { .inst = ZORAVM_INST_POW, }
-
-#define ZoraVM_Sin()                                                                   \
-  { .inst = ZORAVM_INST_SIN, }
-#define ZoraVM_Cos()                                                                  \
-  { .inst = ZORAVM_INST_COS, }
-#define ZoraVM_Tan()                                                                  \
-  { .inst = ZORAVM_INST_TAN, }
-#define ZoraVM_Factorial()                                                                  \
-  { .inst = ZORAVM_INST_FACTORIAL, }
-
-#define ZoraVM_Pi()                                                                       \
-  { .inst = ZORAVM_INST_PI, }
-
-#define ZoraVM_Abs()                                                                       \
-  { .inst = ZORAVM_INST_ABS, }
-#define ZoraVM_Sqrt()                                                                       \
-  { .inst = ZORAVM_INST_SQRT, }
-#define ZoraVM_Max()                                                                       \
-  { .inst = ZORAVM_INST_MAX, }
-#define ZoraVM_Min()                                                                       \
-  { .inst = ZORAVM_INST_MIN, }
 
 #define ZoraVM_Neg()                                                                  \
   { .inst = ZORAVM_INST_NEG, }

@@ -28,21 +28,8 @@ char *ZoraVM_Inst[] = {
     [ZORAVM_INST_MUL]     =   "mul",
     [ZORAVM_INST_DIV]     =   "div",
     [ZORAVM_INST_MOD]     =   "mod",
-    [ZORAVM_INST_POW]     =   "pow",
     [ZORAVM_INST_INC]     =   "inc",
     [ZORAVM_INST_DEC]     =   "dec",
-
-    [ZORAVM_INST_SIN]     =   "sin",
-    [ZORAVM_INST_COS]     =   "cos",
-    [ZORAVM_INST_TAN]     =   "tan",
-    [ZORAVM_INST_FACTORIAL]=  "factorial",
-
-    [ZORAVM_INST_PI]      =   "pi",
-
-    [ZORAVM_INST_ABS]     =   "abs",
-    [ZORAVM_INST_SQRT]    =   "sqrt",
-    [ZORAVM_INST_MAX]     =   "max",
-    [ZORAVM_INST_MIN]     =   "min",
 
     [ZORAVM_INST_EQ]      =   "eq",
     [ZORAVM_INST_GT]      =   "gt",
