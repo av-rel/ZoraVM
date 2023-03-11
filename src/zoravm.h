@@ -38,7 +38,7 @@ typedef struct {
 } ZoraVM;
 
 
-ZoraVM ZoraVM_Init(unsigned int cap, int argc, char** argv);
+ZoraVM ZoraVM_Init(unsigned int cap, int argc, char** argv, unsigned int entry);
 void ZoraVM_Dispose(ZoraVM *vm);
 ZORAVM_ERROR ZoraVME_Execute(ZoraVM *vm, ZoraVM_Program prog);
 

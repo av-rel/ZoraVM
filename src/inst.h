@@ -178,8 +178,8 @@ typedef enum {
 #define ZoraVM_DumpMem()                                                              \
   { .inst = ZORAVM_INST_DUMP_MEM, }
 
-#define ZoraVM_Ret(a)                                                                  \
-  { .inst = ZORAVM_INST_RET, .entry = ZoraVM_EntryInt(a)}
+#define ZoraVM_Ret()                                                                  \
+  { .inst = ZORAVM_INST_RET, }
 #define ZoraVM_Halt(a)                                                                \
   { .inst = ZORAVM_INST_HALT, .entry = ZoraVM_EntryInt(a) }
 

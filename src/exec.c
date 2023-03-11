@@ -345,10 +345,8 @@ ZORAVM_ERROR ZoraVME_CmpEq(ZoraVM *vm) {
   else if (one.kind == ZORAVM_DATA_FLOAT && two.kind == ZORAVM_DATA_FLOAT)
     vm->mem[vm->mp - 2].val.integer = one.val.floating == two.val.floating;
   else if (one.kind == ZORAVM_DATA_STRING && two.kind == ZORAVM_DATA_STRING)
-    vm->mem[vm->mp - 2].val.integer =
-        strcmp(one.val.string, two.val.string) == 0;
-  else
-    vm->mem[vm->mp - 2].val.integer = 0;
+    vm->mem[vm->mp - 2].val.integer = strcmp(one.val.string, two.val.string) == 0;
+  else vm->mem[vm->mp - 2].val.integer = 0;
 
   vm->mem[vm->mp - 2].kind = ZORAVM_DATA_INT;
   vm->mem[--vm->mp] = (ZoraVM_Data){0};
@@ -556,7 +554,7 @@ ZORAVM_ERROR ZoraVME_Jmp(ZoraVM *vm, ZoraVM_Program prog) {
 ZORAVM_ERROR ZoraVME_JmpIf(ZoraVM *vm, ZoraVM_Program prog) {
   if (vm->mp < 1) return ZORAVM_ERROR_MEMORY_EMPTY;
 
-  if (vm->mem[vm->mp - 1].kind != ZORAVM_DATA_INT) return ZORAVM_ERROR_ILLEGAL_INST;
+  if (vm->mem[vm->mp - 1].kind != ZORAVM_DATA_INT) return ZORAVM_ERROR_UNEXPECTED_TYPE;
 
   if (vm->mem[vm->mp - 1].val.integer == 0) vm->ip++;
   else vm->ip = prog.entry.val.integer;
@@ -568,11 +566,10 @@ ZORAVM_ERROR ZoraVME_JmpIf(ZoraVM *vm, ZoraVM_Program prog) {
 ZORAVM_ERROR ZoraVME_JmpIfNot(ZoraVM *vm, ZoraVM_Program prog) {
   if (vm->mp < 1) return ZORAVM_ERROR_MEMORY_EMPTY;
 
-  if (vm->mem[vm->mp - 1].kind != ZORAVM_DATA_INT) return ZORAVM_ERROR_ILLEGAL_INST;
+  if (vm->mem[vm->mp - 1].kind != ZORAVM_DATA_INT) return ZORAVM_ERROR_UNEXPECTED_TYPE;
 
   if (vm->mem[vm->mp - 1].val.integer != 0) vm->ip++;
   else vm->ip = prog.entry.val.integer;
-
 
   vm->mp--;
   return ZORAVM_ERROR_OK;
@@ -581,27 +578,29 @@ ZORAVM_ERROR ZoraVME_JmpIfNot(ZoraVM *vm, ZoraVM_Program prog) {
 ZORAVM_ERROR ZoraVME_Call(ZoraVM *vm, ZoraVM_Program prog) {
   if (vm->mp < 1) return ZORAVM_ERROR_MEMORY_EMPTY;
   
-  unsigned long int rtnum = vm->mem[--vm->mp].val.integer;
+  unsigned long int argc = vm->mem[vm->mp - 1].val.integer;
+
   vm->mem[vm->mp++] = (ZoraVM_Data){.kind = ZORAVM_DATA_INT, .val.integer = vm->fp};
   vm->mem[vm->mp++] = (ZoraVM_Data){.kind = ZORAVM_DATA_INT, .val.integer = vm->ip};
-  vm->fp = vm->sp;
+  vm->fp = vm->mp;
   vm->ip = prog.entry.val.integer;
-  vm->mem[vm->mp++]= (ZoraVM_Data){.kind = ZORAVM_DATA_INT, .val.integer = rtnum};
+  vm->mem[vm->mp++]= (ZoraVM_Data){.kind = ZORAVM_DATA_INT, .val.integer = argc};
 
   return ZORAVM_ERROR_OK;
 }
 
 ZORAVM_ERROR ZoraVME_CallIf(ZoraVM *vm, ZoraVM_Program prog) {
-  if (vm->mp < 1) return ZORAVM_ERROR_MEMORY_EMPTY;
+  if (vm->mp < 2) return ZORAVM_ERROR_MEMORY_EMPTY;
+
+  unsigned long int argc = vm->mem[--vm->mp].val.integer;
 
   if (vm->mem[--vm->mp].val.integer == 0) return ZORAVM_ERROR_OK;
 
-  unsigned long int rtnum = vm->mem[--vm->mp].val.integer;
   vm->mem[vm->mp++] = (ZoraVM_Data){.kind = ZORAVM_DATA_INT, .val.integer = vm->fp};
   vm->mem[vm->mp++] = (ZoraVM_Data){.kind = ZORAVM_DATA_INT, .val.integer = vm->ip};
-  vm->fp = vm->sp;
+  vm->fp = vm->mp;
   vm->ip = prog.entry.val.integer;
-  vm->mem[vm->mp++]= (ZoraVM_Data){.kind = ZORAVM_DATA_INT, .val.integer = rtnum};
+  vm->mem[vm->mp++]= (ZoraVM_Data){.kind = ZORAVM_DATA_INT, .val.integer = argc};
 
   return ZORAVM_ERROR_OK;
 }
@@ -609,14 +608,15 @@ ZORAVM_ERROR ZoraVME_CallIf(ZoraVM *vm, ZoraVM_Program prog) {
 ZORAVM_ERROR ZoraVME_CallIfNot(ZoraVM *vm, ZoraVM_Program prog) {
   if (vm->mp < 1) return ZORAVM_ERROR_MEMORY_EMPTY;
 
+  unsigned long int argc = vm->mem[--vm->mp].val.integer;
+
   if (vm->mem[--vm->mp].val.integer != 0) return ZORAVM_ERROR_OK;
-  
-  unsigned long int rtnum = vm->mem[--vm->mp].val.integer;
+
   vm->mem[vm->mp++] = (ZoraVM_Data){.kind = ZORAVM_DATA_INT, .val.integer = vm->fp};
   vm->mem[vm->mp++] = (ZoraVM_Data){.kind = ZORAVM_DATA_INT, .val.integer = vm->ip};
-  vm->fp = vm->sp;
-  vm->ip = prog.entry.val.integer; 
-  vm->mem[vm->mp++]= (ZoraVM_Data){.kind = ZORAVM_DATA_INT, .val.integer = rtnum};
+  vm->fp = vm->mp;
+  vm->ip = prog.entry.val.integer;
+  vm->mem[vm->mp++]= (ZoraVM_Data){.kind = ZORAVM_DATA_INT, .val.integer = argc};
 
   return ZORAVM_ERROR_OK;
 }
@@ -727,20 +727,15 @@ ZORAVM_ERROR ZoraVME_Argv(ZoraVM* vm) {
   return ZORAVM_ERROR_OK;
 }
 
-
-
 // return value from func
-ZORAVM_ERROR ZoraVME_Ret(ZoraVM *vm, ZoraVM_Program prog) {
+ZORAVM_ERROR ZoraVME_Ret(ZoraVM *vm) {
 
-  vm->sp = vm->fp;
-  vm->ip = vm->stack[--vm->sp].val.integer;
-  vm->fp = vm->stack[--vm->sp].val.integer;
-  
-  long long int argc = vm->stack[--vm->sp].val.integer;
-  vm->sp -= argc;
+  vm->mp = vm->fp;
+  vm->ip = vm->mem[--vm->mp].val.integer;
+  vm->fp = vm->mem[--vm->mp].val.integer;
+  vm->mp -= vm->mem[--vm->mp].val.integer;
 
   vm->ip++;
-
   return ZORAVM_ERROR_OK;
 }
 
