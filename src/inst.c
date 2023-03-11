@@ -64,6 +64,9 @@ char *ZoraVM_Inst[] = {
 
     [ZORAVM_INST_ENV]      =  "env",
 
+    [ZORAVM_INST_ARGC]     =  "argc",
+    [ZORAVM_INST_ARGV]     =  "argv",
+
     [ZORAVM_INST_DUMP_STACK]= "dump_stack",
     [ZORAVM_INST_DUMP_MEM] =  "dump_mem",
 

@@ -9,12 +9,12 @@
 #include "./exec.c"
 #include "./trap.c"
 
-int ZoraVME(ZoraVM_Program *program, unsigned int program_size, unsigned int cap) {
+int ZoraVME(ZoraVM_Program *program, unsigned int program_size, unsigned int cap, int argc, char** argv) {
   ZoraVM vm;
   ZORAVM_ERROR vm_err = ZORAVM_ERROR_OK;
 
   if (program_size < 1) goto dispose;
-  vm = ZoraVM_Init(cap);
+  vm = ZoraVM_Init(cap, argc, argv);
 
   while (vm.state && vm_err == ZORAVM_ERROR_OK && vm.ip < program_size)
     vm_err = ZoraVME_Execute(&vm, program[vm.ip]);
@@ -144,6 +144,11 @@ ZORAVM_ERROR ZoraVME_Execute(ZoraVM *vm, ZoraVM_Program prog) {
   case ZORAVM_INST_ENV:
     return ZoraVME_Env(vm);
 
+  case ZORAVM_INST_ARGC:
+    return ZoraVME_Argc(vm);
+  case ZORAVM_INST_ARGV:
+    return ZoraVME_Argv(vm);
+
   case ZORAVM_INST_RET:
     return ZoraVME_Ret(vm, prog);
   case ZORAVM_INST_HALT:
@@ -159,8 +164,11 @@ ZORAVM_ERROR ZoraVME_Execute(ZoraVM *vm, ZoraVM_Program prog) {
   return ZORAVM_ERROR_OK;
 }
 
-ZoraVM ZoraVM_Init(unsigned int cap) {
+ZoraVM ZoraVM_Init(unsigned int cap, int argc, char** argv) {
   ZoraVM vm = {0};
+
+  vm.argc = argc;
+  vm.argv = argv;
 
   vm.ip = 0;
   vm.mp = 0;

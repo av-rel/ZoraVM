@@ -68,6 +68,9 @@ typedef enum {
 
   ZORAVM_INST_ENV,
 
+  ZORAVM_INST_ARGC,
+  ZORAVM_INST_ARGV,
+
   ZORAVM_INST_DUMP_STACK,
   ZORAVM_INST_DUMP_MEM,
 
@@ -200,6 +203,11 @@ typedef enum {
 
 #define ZoraVM_Env()                                                                  \
   { .inst = ZORAVM_INST_ENV, }
+
+#define ZoraVM_Argc()                                                                  \
+  { .inst = ZORAVM_INST_ARGC, }
+#define ZoraVM_Argv()                                                                  \
+  { .inst = ZORAVM_INST_ARGV, }
 
 #define ZoraVM_DumpStack()                                                            \
   { .inst = ZORAVM_INST_DUMP_STACK, }
