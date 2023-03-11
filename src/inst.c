@@ -37,6 +37,13 @@ char *ZoraVM_Inst[] = {
     [ZORAVM_INST_TAN]     =   "tan",
     [ZORAVM_INST_FACTORIAL]=  "factorial",
 
+    [ZORAVM_INST_PI]      =   "pi",
+
+    [ZORAVM_INST_ABS]     =   "abs",
+    [ZORAVM_INST_SQRT]    =   "sqrt",
+    [ZORAVM_INST_MAX]     =   "max",
+    [ZORAVM_INST_MIN]     =   "min",
+
     [ZORAVM_INST_EQ]      =   "eq",
     [ZORAVM_INST_GT]      =   "gt",
     [ZORAVM_INST_LT]      =   "lt",

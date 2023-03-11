@@ -40,6 +40,13 @@ typedef enum {
   ZORAVM_INST_COS,
   ZORAVM_INST_TAN,
   ZORAVM_INST_FACTORIAL,
+  
+  ZORAVM_INST_PI,
+  
+  ZORAVM_INST_ABS,
+  ZORAVM_INST_SQRT,
+  ZORAVM_INST_MAX,
+  ZORAVM_INST_MIN,
 
   ZORAVM_INST_EQ,
   ZORAVM_INST_GT,
@@ -122,6 +129,18 @@ typedef enum {
   { .inst = ZORAVM_INST_TAN, }
 #define ZoraVM_Factorial()                                                                  \
   { .inst = ZORAVM_INST_FACTORIAL, }
+
+#define ZoraVM_Pi()                                                                       \
+  { .inst = ZORAVM_INST_PI, }
+
+#define ZoraVM_Abs()                                                                       \
+  { .inst = ZORAVM_INST_ABS, }
+#define ZoraVM_Sqrt()                                                                       \
+  { .inst = ZORAVM_INST_SQRT, }
+#define ZoraVM_Max()                                                                       \
+  { .inst = ZORAVM_INST_MAX, }
+#define ZoraVM_Min()                                                                       \
+  { .inst = ZORAVM_INST_MIN, }
 
 #define ZoraVM_Neg()                                                                  \
   { .inst = ZORAVM_INST_NEG, }
